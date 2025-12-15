@@ -1,0 +1,429 @@
+.login-page {
+    background: #000;
+
+    .wrapper {
+        width: 100%;
+        display: flex;
+        min-height: 100vh;
+        justify-content: center;
+        align-items: center;
+
+        overflow: hidden;
+
+        #overlay {
+            position: absolute;
+            content: '';
+            width: 100%;
+            height: 100%;
+            animation: ken 60s ease-in-out infinite;
+            background-position: center;
+            left: 0;
+            top: 0;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        &::after {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            content: '';
+            background: radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, .1) 0%, #000 100%);
+            padding: 1em 2em;
+            opacity: .8;
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            pointer-events: none;
+            background: #fff;
+
+            .login-logo {
+                margin: 0;
+
+                a {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    .logo {
+                        max-height: 32px;
+                        margin-right: 5px;
+                        position: relative;
+                        top: 2px;
+                    }
+                }
+            }
+
+            form,
+            a {
+                pointer-events: all;
+                position: relative;
+                z-index: 2;
+            }
+
+            .card {
+                margin: 0 !important;
+            }
+        }
+
+    }
+
+    footer {
+        display: none !important;
+    }
+}
+
+.register-page {
+    footer {
+        display: none !important;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .login-box,
+    .register-box {
+        width: 100%;
+    }
+}
+
+@keyframes ken {
+    0% {
+        transform: scale(1) translateY(0);
+        transform-origin: 50% 16%;
+    }
+
+    50% {
+        transform: scale(1.25) translateY(-15px);
+        transform-origin: center;
+
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+        transform-origin: 50% 16%;
+    }
+}
+
+
+.nav-item {
+    .router-link-exact-active {
+        background-color: rgba(201, 55, 55, 0.9);
+        color: #fff !important;
+    }
+
+    &:hover {
+        .router-link-exact-active {
+            background-color: rgba(201, 55, 55, 0.9) !important;
+            color: #fff !important;
+
+        }
+    }
+}
+
+.brand-image {
+    width: 35px;
+    height: 35px;
+}
+
+.router-anim-enter-active {
+    animation: coming .6s ease;
+    animation-delay: .6s;
+    opacity: 0;
+}
+
+.router-anim-leave-active {
+    animation: going .3s ease;
+
+}
+
+@keyframes going {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+}
+
+@keyframes coming {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+// tables
+.formframe {
+    min-height: 420px;
+    width: 100%;
+}
+
+.insurances .btn-group a {
+    font-size: 12px;
+}
+
+
+#quotesTable .active,
+#quotesTable .prevActive {
+    background: green;
+    color: #fff;
+}
+
+.vuetable {
+    .searchtable {
+        &:before {
+            content: "\F002";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 800;
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ccc;
+        }
+
+        input {
+            padding-left: 50px;
+        }
+    }
+
+    th.sortable {
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+
+        &:after {
+            content: "\f106";
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 800;
+            margin: 0 0 0 .15em;
+            opacity: 0;
+            transition: all .3s ease;
+            display: inline-block;
+        }
+
+        &:after {
+            content: "\f107";
+            top: unset;
+        }
+
+        &.asc {
+            &:after {
+                color: red;
+                opacity: 1;
+                transform: rotate(180deg);
+            }
+        }
+
+        &.desc {
+            &:after {
+                color: red;
+                opacity: 1;
+
+            }
+        }
+    }
+}
+
+// loader
+.loader {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+.spinner {
+    box-sizing: border-box;
+    stroke: #673AB7;
+    stroke-width: 3px;
+    transform-origin: 50%;
+    animation: line 1.6s cubic-bezier(0.4, 0.0, 0.2, 1) infinite, rotate 1.6s linear infinite;
+    -webkit-animation: line 1.6s cubic-bezier(0.4, 0.0, 0.2, 1) infinite, rotate 1.6s linear infinite;
+}
+
+@-webkit-keyframes rotate {
+    from {
+        transform: rotate(0)
+    }
+
+    to {
+        transform: rotate(450deg);
+    }
+}
+
+@-webkit-keyframes line {
+    0% {
+        stroke-dasharray: 2, 85.964;
+        transform: rotate(0);
+    }
+
+    50% {
+        stroke-dasharray: 65.973, 21.9911;
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dasharray: 2, 85.964;
+        stroke-dashoffset: -65.973;
+        transform: rotate(90deg);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0)
+    }
+
+    to {
+        transform: rotate(450deg);
+    }
+}
+
+@keyframes line {
+    0% {
+        stroke-dasharray: 2, 85.964;
+        transform: rotate(0);
+    }
+
+    50% {
+        stroke-dasharray: 65.973, 21.9911;
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dasharray: 2, 85.964;
+        stroke-dashoffset: -65.973;
+        transform: rotate(90deg);
+    }
+}
+
+// quote grid
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 1em;
+
+    .grid-item {
+        transform: translateY(0);
+        transition: all .3s ease;
+        box-shadow: none;
+        padding: 1em;
+        cursor: pointer;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 0 1px #ccc;
+        border: 1px solid transparent;
+
+        .icon {
+            opacity: 0;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+
+            i {
+                transform: scale(0);
+                transition: all .3s ease;
+                font-size: 4em;
+                color: #28A745;
+            }
+        }
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 5px #ccc;
+        }
+
+        .quoteprice {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        &.active {
+            border-color: #28A745;
+
+            .quoteprice {
+                color: #28A745;
+            }
+
+            .icon {
+                opacity: .25;
+
+                i {
+                    transform: scale(1);
+                }
+            }
+        }
+
+        &.prevActive {
+            border-color: rgb(21, 82, 35);
+            border-width: 3px;
+
+            .quoteprice {
+                color: rgb(21, 82, 35);
+            }
+
+        }
+    }
+}
+
+.status-btn {
+    opacity: .5;
+    transition: all 1s ease;
+    border: none;
+
+    &:focus {
+        outline: none;
+    }
+
+    &.active {
+        opacity: 1;
+    }
+}
+
+.small-box {
+    min-height: 105px;
+}
+
+.profile-user-img {
+    border-radius: 50%;
+    border: none;
+    overflow: hidden;
+    padding: 0;
+}
+
+.btn {
+    &.disabled {
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
