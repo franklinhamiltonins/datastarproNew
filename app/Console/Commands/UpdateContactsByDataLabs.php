@@ -71,6 +71,8 @@ class UpdateContactsByDataLabs extends Command
 			// ->where('prospect_verified', 'unavailable') 
 			->orderBy('id', 'asc')->limit(30)->get();
 
+		// echo "<pre>";print_r($this->prospectVerified);exit;
+
 		// $notUpdatedContacts = Contact::
 		// 	// whereIn('contacts.prospect_verified', $this->prospectVerified)
 		// 	where('contacts.added_by_scrap_apis', 1)
