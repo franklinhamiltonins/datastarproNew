@@ -780,6 +780,7 @@
         </div>
     </div>
 </div>
+
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
@@ -1300,11 +1301,10 @@
 	document.getElementById('printBtn').addEventListener('click', () => {
 	    const printSection = document.getElementById('printSection');
 
-	    // Add custom print styles dynamically
 	    const printStyles = `
 	    	.modal-dialog {
 			    width: 90%;
-			    max-width: 793px; /* A4 width in pixels at 96 DPI */
+			    max-width: 793px;
 			    height: auto;
 			    margin: auto;
 			}
@@ -1312,10 +1312,10 @@
 			.modal-content {
 			    height: auto;
 			    border-radius: 10px;
-			    aspect-ratio: 1 / 1.414; /* A4 aspect ratio (1:√2) */
+			    aspect-ratio: 1 / 1.414; 
 			    padding: 20px; /* Add some padding for A4 look */
 			    box-sizing: border-box;
-			    background-color: white; /* Ensure it's white for printing */
+			    background-color: white; 
 			}
 
 			.modal-body {
@@ -1332,12 +1332,12 @@
 				font-size: 10px;
 			}
 	        .a4-style {
-	            width: 793px; /* A4 width in pixels */
+	            width: 793px; 
 	            max-width: 100%;
 	            height: auto;
-	            aspect-ratio: 1 / 1.414; /* A4 aspect ratio */
-	            background-color: white; /* Ensure white background for PDF */
-	            padding: 20px; /* Padding for content */
+	            aspect-ratio: 1 / 1.414; 
+	            background-color: white; 
+	            padding: 20px;
 	            font-family: Arial, sans-serif;
 	            font-size: 14px;
 	            line-height: 1.5;
@@ -1359,11 +1359,6 @@
 	            padding: 15px 10px 10px;
 	        }
 	        .print_gap{padding-bottom:20px}
-	        // .a4-style .gap {
-	        //     padding-bottom: 30px !important;
-	        // }
-	        /* Form Row Layout */
-	        /* Ensure .form-row wraps properly */
 			.form-row {
 			    display: flex;
 			    flex-wrap: wrap; /* Allow wrapping for smaller screens */
@@ -1436,12 +1431,10 @@
 				padding-right : 0 !important;
 			}
 
-			/* Strong elements styling for clarity */
 			strong {
 			    font-weight: 600;
 			}
 
-			/* Word wrapping for content */
 			.form-group span {
 			    display: inline-block;
 			    word-wrap: break-word;
@@ -1493,56 +1486,60 @@
 			    margin-bottom: 0.25rem;
 			}
 
-			/* Section Header */
 			.section-head {
 			    font-weight: bold;
 			    background-color: #fff;
 			    padding: 0 5px;
 			    position: absolute;
-			    top: -10px; /* Adjust this to move the section label into the desired position */
-			    left: 10px; /* Adjust this based on your layout */
+			    top: -10px;
+			    left: 10px; 
 			    z-index: 5;
 			}
 
-			/* Small Text */
 			.small {
 			    font-size: 0.875rem;
 			    color: #6c757d;
 			}
 			.longtextarea {
-			    display: inline !important; /* Force inline display */
-			    word-wrap: break-word !important; /* Ensure text wraps properly */
-			    white-space: normal !important; /* Prevent forced single-line behavior */
+			    display: inline !important; 
+			    word-wrap: break-word !important;
+			    white-space: normal !important;
 			}
 
 	    `;
 
-	    // Create an iframe to ensure a clean print environment
-	    const printWindow = window.open('', '_blank');
-	    printWindow.document.open();
+	    const printWindow = window.open('about:blank', '_blank');
+		printWindow.document.open('text/html', 'replace');
 
-	    // Write content and styles to the new window
-	    printWindow.document.write(`
-	        <html>
-	            <head>
-	                <title>Print Lead Preview</title>
-	                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-	                <style>${printStyles}</style>
-	            </head>
-	            <body class="a4-style">
-	                ${printSection.innerHTML}
-	            </body>
-	        </html>
-	    `);
-	    printWindow.document.close();
+		const clonedSection = printSection.cloneNode(true);
+		clonedSection.querySelectorAll('script').forEach(s => s.remove());
 
-	    // Wait for the content to load and then trigger the print dialog
-	    printWindow.onload = () => {
-	        printWindow.focus();
-	        printWindow.print();
-	        printWindow.close();
-	    };
+		printWindow.document.write(`<!DOCTYPE html>
+		<html>
+		<head>
+		    <title>Print Lead Preview</title>
+		    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+		    <style>
+		        ${printStyles.replace(/\/\/.*$/gm, '')}
+		    </style>
+		</head>
+		<body class="a4-style">
+		    ${clonedSection.innerHTML}
+		</body>
+		</html>
+		`);
+
+		printWindow.document.close();
+
+		printWindow.addEventListener('load', () => {
+		    printWindow.focus();
+		    printWindow.print();
+		    printWindow.close();
+		});
+
 	});
+
+	
 
 
 

@@ -32,8 +32,8 @@
     <!-- for pusher and websocket -->
     <!-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
 
-    @toastr_css
     @stack('styles')
+    @flasher_render
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
     <!-- for pusher and websocket -->
@@ -68,8 +68,6 @@
 
 
     @stack('scripts')
-    @toastr_js
-    @toastr_render
     @if($errors)
     <script>
     // @foreach($errors -> all() as $error)
