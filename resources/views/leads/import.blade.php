@@ -53,7 +53,7 @@
 
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" name="create_campaign"
-                                    id="create_campaign" data-toggle="collapse" href="#collapseCampaign" role="button"
+                                    id="create_campaign" data-bs-toggle="collapse" href="#collapseCampaign" role="button"
                                     aria-expanded="false" aria-controls="collapseCampaign">
                                 <label class="form-check-label" for="create_campaign">
                                     Create Campaign? *
@@ -124,7 +124,7 @@
                             <div class="card">
                                 <div class=" p-2 d-flex align-items-center justify-content-between">
                                     <h5 class="mb-0">
-                                        <button class="btn" data-toggle="collapse" data-target="#error"
+                                        <button class="btn" data-bs-toggle="collapse" data-bs-target="#error"
                                             aria-expanded="false" aria-controls="error">
                                             <i class="fas fa-exclamation text-danger"></i> Errors happened while
                                             importing the file
@@ -171,7 +171,7 @@
                             <div class="card">
                                 <div class=" p-2 d-flex align-items-center justify-content-between">
                                     <h5 class="mb-0">
-                                        <button class="btn " data-toggle="collapse" data-target="#success"
+                                        <button class="btn " data-bs-toggle="collapse" data-bs-target="#success"
                                             aria-expanded="false" aria-controls="success">
                                             <i class="fas fa-check text-success"></i> Successfull Imports
                                         </button>
@@ -218,7 +218,7 @@
                             <div class="">
                                 <div class="card-header pt-1 pb-1 px-0" id="headingOne">
                                     <h5 class="mb-0">
-                                        <button class="btn px-0" data-toggle="collapse" data-target="#collapseOne"
+                                        <button class="btn px-0" data-bs-toggle="collapse" data-bs-target="#collapseOne"
                                             aria-expanded="true" aria-controls="collapseOne">
                                             Required CSV Table Column Names
                                         </button>
@@ -258,7 +258,7 @@
                             <div class="">
                                 <div class="card-header pt-1 pb-1 px-0" id="headingTwo">
                                     <h5 class="mb-0">
-                                        <button class="btn px-0 collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                        <button class="btn px-0 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
                                             aria-expanded="false" aria-controls="collapseTwo">
                                             CSV Cell Data Validation Information
                                         </button>
@@ -386,8 +386,8 @@
                             <div class="">
                                 <div class="card-header pt-1 pb-1 px-0" id="headingThree">
                                     <h5 class="mb-0">
-                                        <button class="btn px-0 collapsed" data-toggle="collapse"
-                                            data-target="#collapseThree" aria-expanded="false"
+                                        <button class="btn px-0 collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseThree" aria-expanded="false"
                                             aria-controls="collapseThree">
                                             Leads and Contact CSV table structure
                                         </button>
@@ -451,7 +451,7 @@
                             <div class="">
                                 <div class="card-header pt-1 pb-1 px-0" id="headingFour">
                                     <h5 class="mb-0">
-                                        <button class="btn px-0 collapsed" data-toggle="collapse" data-target="#collapseFour"
+                                        <button class="btn px-0 collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
                                             aria-expanded="false" aria-controls="collapseFour">
                                             Sample CSV File
                                         </button>

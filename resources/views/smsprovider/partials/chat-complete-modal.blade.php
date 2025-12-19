@@ -3,7 +3,7 @@
 		<div class="modal-content border border-danger p-0">
 			<div class="modal-header p-2 p-lg-3 align-items-center">
 				<h5 class="modal-title">Are you Sure?</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">×</span>
 				</button>
 			</div>
@@ -12,7 +12,7 @@
 			</div>
 			<input type="hidden" id="chat_confirm_value">
 			<div class="modal-footer p-2 p-lg-3 justify-content-between">
-				<button type="button" class="btn btn-dark" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">No</button>
 				<button type="button" id="confirm_chat" class="btn btn-success">Yes</button>
 			</div>
 		</div>

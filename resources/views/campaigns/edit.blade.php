@@ -78,7 +78,7 @@
 									<a href="{{ route('file.retrieve_files_fromStorage',['id'=>$file->id,'filename'=>$file->name]) }}" target="_blank">{{ $file->name}}</a>
 
 
-									<a href="#" data-toggle="modal" data-target="#deleteModal" onclick="delete_file(this,'{{$file->id}}')" class="btn btn-sm  deletebtn action-btn">
+									<a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="delete_file(this,'{{$file->id}}')" class="btn btn-sm  deletebtn action-btn">
 										<i class="fa fa-trash text-danger"></i>
 									</a>
 

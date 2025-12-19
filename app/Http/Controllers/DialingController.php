@@ -59,7 +59,7 @@ class DialingController extends Controller
 		$is_admin_user = auth()->user()->can('agent-create');
 		$agents = User::role('Agent')->get();
 		$agent_users = [];
-		$agent_users[0] = 'Select Agent';
+		// $agent_users[0] = 'Select Agent';
 		foreach ($agents as $key => $agent) {
 			$agent_users[$agent->id] = $agent->name . '(' . $agent->email . ')';
 		}

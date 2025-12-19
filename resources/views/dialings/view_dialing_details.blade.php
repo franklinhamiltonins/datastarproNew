@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         actionsHtml +=
-            '<a href="#" title="Delete Dialing List" data-toggle="modal" data-target="#moduledeleteModal" onclick="setModal(this, \'' +
+            '<a href="#" title="Delete Dialing List" data-bs-toggle="modal" data-bs-target="#moduledeleteModal" onclick="setModal(this, \'' +
             item.id + '\', \'' + moduleName +
             '\')" class="btn btn-sm btn-danger deletebtn action-btn p-1 white-img">';
         actionsHtml += '<img src="{{asset(' / images / module / delete - slick

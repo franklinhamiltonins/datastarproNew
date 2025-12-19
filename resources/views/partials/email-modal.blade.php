@@ -2,7 +2,7 @@
     <div class="modal-overlay modal-toggle"></div>
     <div class="modal-wrapper modal-transition">
         <div class="modal-header">
-            <!-- <button class="modal-close modal-toggle email_modal_close_class" id="email_modal_close" data-dismiss="modal" aria-label="Close"> -->
+            <!-- <button class="modal-close modal-toggle email_modal_close_class" id="email_modal_close" data-bs-dismiss="modal" aria-label="Close"> -->
                 <!-- <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M9.29563 8.18259C9.60867 8.49563 9.60867 8.98259 9.29563 9.29563C9.13911 9.45215 8.9478 9.52172 8.73911 9.52172C8.53041 9.52172 8.33911 9.45215 8.18259 9.29563L4.99998 6.11302L1.81737 9.29563C1.66085 9.45215 1.46954 9.52172 1.26085 9.52172C1.05215 9.52172 0.860848 9.45215 0.704326 9.29563C0.391283 8.98259 0.391283 8.49563 0.704326 8.18259L3.88693 4.99998L0.704326 1.81737C0.391283 1.50433 0.391283 1.01737 0.704326 0.704326C1.01737 0.391283 1.50433 0.391283 1.81737 0.704326L4.99998 3.88693L8.18259 0.704326C8.49563 0.391283 8.98259 0.391283 9.29563 0.704326C9.60867 1.01737 9.60867 1.50433 9.29563 1.81737L6.11302 4.99998L9.29563 8.18259Z"
@@ -12,7 +12,7 @@
             </button> -->
             <h2 class="modal-heading show-create-form" style="display:none">Add new template</h2>
             <h2 class="modal-heading hide-create-form">Send email to <span id="emailToContact"></span></h2>
-            <button type="button" class="close email_modal_close_class" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close email_modal_close_class" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
             </button>
         </div>

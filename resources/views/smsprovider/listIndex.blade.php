@@ -41,12 +41,12 @@
                                 <div class="d-flex flexwrap-wrap action-dropdown">
                                     <div class="dropdown">
                                         <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Actions
                                         </button>
                                         <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="actionbtn">
                                             <button class="btn btn-teal rounded-0 btn-sm btn-block m-0"
-                                                type="button" data-toggle="collapse" data-target="#filterByDate"
+                                                type="button" data-bs-toggle="collapse" data-bs-target="#filterByDate"
                                                 aria-expanded="true" aria-controls="filterByDate">
                                                 <i class="fas fa-filter"></i>
                                                 <span class="d-none d-md-inline">Filter Your Search</span>

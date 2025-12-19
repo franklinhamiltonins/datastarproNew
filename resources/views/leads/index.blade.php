@@ -22,28 +22,32 @@
                                 @can('lead-action')
                                 <div class="dropdown">
                                     <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         Actions
                                     </button>
+
                                     <div class="dropdown-menu rounded-top-0 p-0 m-0 text-nowrap"
                                         aria-labelledby="actionbtn" data-id="1">
-                                        <div class="dropdown d-flex dropright">
-                                            <button class="btn btn-block rounded-0 btn-primary btn-sm dropdown-toggle"
-                                                type="button" id="filtersec" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                                <i class="fas fa-filter"></i>
-                                                Filters
+
+                                        <!-- Filters -->
+                                        <div class="dropdown d-flex dropend">
+                                            <button class="btn btn-block rounded-0 btn-primary btn-sm dropdown-toggle dropdown-item"
+                                                type="button" id="filtersec" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-filter"></i> Filters
                                             </button>
+
                                             <div class="dropdown-menu p-0 m-0" aria-labelledby="filtersec" data-id="2">
-                                                @can ('lead-filters')
+                                                @can('lead-filters')
                                                 <input type="text" id="selected_filter_name" class="d-none" value="" />
                                                 <input type="text" id="selected_filter_id" class="d-none" value="0" />
+
                                                 <button class="btn btn-teal rounded-0 btn-sm btn-block m-0"
-                                                    type="button" data-toggle="collapse" data-target="#filterByDate"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#filterByDate"
                                                     aria-expanded="true" aria-controls="filterByDate" id="filter_your_search">
                                                     <i class="fas fa-filter"></i>
                                                     <span class="d-none d-md-inline">Filter Your Search</span>
                                                 </button>
+
                                                 <button class="btn btn-secondary rounded-0 btn-sm btn-block m-0"
                                                     type="button" onclick="openSavedFiltersNav()">
                                                     <i class="fas fa-save"></i>
@@ -52,69 +56,69 @@
                                                 @endcan
                                             </div>
                                         </div>
-                                        <div class="dropdown d-flex dropright">
-                                            <button class="btn btn-block rounded-0 btn-success btn-sm dropdown-toggle"
-                                                type="button" id="searchsec" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                                Maps
+
+                                        <!-- Maps -->
+                                        <div class="dropdown d-flex dropend">
+                                            <button class="btn btn-block rounded-0 btn-success btn-sm dropdown-toggle dropdown-item"
+                                                type="button" id="searchsec" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-map-marker-alt"></i> Maps
                                             </button>
+
                                             <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="searchsec" data-id="2">
-                                                @can ('lead-mapsearch')
+                                                @can('lead-mapsearch')
                                                 <button class="rounded-0 btn btn-teal btn-sm btn-block m-0"
-                                                    data-toggle="modal" id="mapSearchId" data-target="#mapsearch">
-                                                    <i class="fas fa-map" aria-hidden="true"></i>
+                                                    data-bs-toggle="modal" id="mapSearchId" data-bs-target="#mapsearch">
+                                                    <i class="fas fa-map"></i>
                                                     <span class="d-none d-md-inline">All</span>
                                                 </button>
-                                                @endcan
 
-                                                @can ('lead-mapsearch')
                                                 <button class="rounded-0 btn btn-primary btn-sm btn-block m-0"
-                                                    data-toggle="modal" data-target="#mapsearch" id="clientSearch">
-                                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                                    data-bs-toggle="modal" data-bs-target="#mapsearch" id="clientSearch">
+                                                    <i class="fa fa-map-marker"></i>
                                                     <span class="d-none d-md-inline">Client Search</span>
                                                 </button>
                                                 @endcan
                                             </div>
                                         </div>
-                                        <div class="dropdown d-flex dropright">
-                                            <button class="rounded-0 btn-block btn btn-secondary btn-sm dropdown-toggle"
-                                                type="button" id="createlist" data-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
-                                                <i class="fa fa-file-alt"></i>
-                                                Lists
+
+                                        <!-- Lists -->
+                                        <div class="dropdown d-flex dropend">
+                                            <button class="rounded-0 btn-block btn btn-secondary btn-sm dropdown-toggle dropdown-item"
+                                                type="button" id="createlist" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-file-alt"></i> Lists
                                             </button>
+
                                             <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="createlist" data-id="2">
                                                 @can('lead-export')
-                                                <button data-href="/export" id="export"
+                                                <button data-href="/export"
                                                     class="rounded-0 btn btn-sm btn-primary btn-block m-0"
-                                                    data-toggle="modal" data-target="#saveCampaign">
+                                                    data-bs-toggle="modal" data-bs-target="#saveCampaign">
                                                     <i class="fas fa-mail-bulk"></i>
                                                     <span class="d-none d-md-inline">Mailing</span>
                                                 </button>
-                                                @endcan
-                                                @can('lead-export')
-                                                <button data-href="/export" id="export"
+
+                                                <button data-href="/export"
                                                     class="rounded-0 btn btn-sm btn-teal btn-block m-0"
-                                                    data-toggle="modal" data-target="#saveagentlist">
+                                                    data-bs-toggle="modal" data-bs-target="#saveagentlist">
                                                     <i class="fas fa-phone-alt"></i>
                                                     <span class="d-none d-md-inline">Dialing</span>
                                                 </button>
                                                 @endcan
                                             </div>
                                         </div>
+
+                                        <!-- Remove -->
                                         @can('lead-delete')
-                                        {{-- <a href="javascript:void(0)"
-                                    class="bulk_lead_remove rounded-0 btn btn-info text-left btn-sm btn-sm closebtn mr-1" 
-                                    id="bulk_lead_remove"> --}}
                                         <a href="javascript:void(0)" id="bulk_lead_remove_2"
-                                            class="bulk_lead_remove text-left rounded-0 text-nowrap btn-block btn btn-danger btn-sm btn-sm closebtn mr-1">
-                                            <i class="fas fa-trash-alt mr-1"></i>
+                                            class="bulk_lead_remove text-left rounded-0 text-nowrap btn-block btn btn-danger btn-sm closebtn m-1">
+                                            <i class="fas fa-trash-alt me-1"></i>
                                             <span class="d-none d-md-inline">Remove</span>
                                         </a>
                                         @endcan
+
                                     </div>
                                 </div>
+
                                 @endcan
                                 <div class="custom_search_page d-flex align-items-center justify-content-between ml-2">
                                     <div id="custom_length_menu">
@@ -132,12 +136,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- @can('lead-export')
-					<a data-href="javascript:void(0)" id="generatelat_log" class="btn btn-success btn-sm" data-toggle="modal" data-target="#saveagentlist">
-						<i class="fa fa-file-alt"></i>
-						<span class="d-none d-md-inline">Generate Lat & Longs</span>
-					</a>
-					@endcan -->
                             <div class="d-flex flex-wrap">
                                 <div id="leads_datatable_filter" class="dataTables_filter search-sec mb-0">
                                     <label
@@ -238,7 +236,6 @@
 <!-- /.content -->
 @endsection
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
 <style>
 	table.dataTable span.highlight {
 		background-color: #FFFF88;
@@ -1042,13 +1039,13 @@ function set_filtered_section(elem, color, text) {
     $(elem).fadeIn();
 }
 
-jQuery('.action-dropdown').find('.dropdown.dropright').children('.dropdown-toggle').click(function() {
-    jQuery(this).parent('.dropdown').siblings().children('.dropdown-menu').removeClass('show');
-})
-jQuery('.action-dropdown').children('.dropdown').children('.dropdown-toggle').click(function() {
-    jQuery(this).siblings('.dropdown-menu').find('.dropdown.dropright').children('.dropdown-menu')
-        .removeClass('show');
-})
+// jQuery('.action-dropdown').find('.dropdown.dropright').children('.dropdown-toggle').click(function() {
+//     jQuery(this).parent('.dropdown').siblings().children('.dropdown-menu').removeClass('show');
+// })
+// jQuery('.action-dropdown').children('.dropdown').children('.dropdown-toggle').click(function() {
+//     jQuery(this).siblings('.dropdown-menu').find('.dropdown.dropright').children('.dropdown-menu')
+//         .removeClass('show');
+// })
 /**** Click on Close Info Search ****/
 function closeInfoSearch() {
     //remove all sessions and campaign param
@@ -1870,15 +1867,15 @@ $(document).on("change", 'input[name="map_marker_distance_op"]', function(event)
 
 /**** Agent List ****/
 $(document).on("keyup", 'input[name="agent_list_name"]', function(event) {
-    if (event.target.value.trim() && parseInt($('select[name="agent_list"]').val())) {
+    if (event.target.value.trim() && $('#agent_list_dialing').val() &&  $('#agent_list_dialing').val().length > 0) {
         $('#save_agent_list_button').removeAttr('disabled');
     } else {
         $('#save_agent_list_button').attr('disabled', 'disabled');
     }
 });
 
-$(document).on("change", 'select[name="agent_list"]', function(event) {
-    if (parseInt(event.target.value) && $('input[name="agent_list_name"]').val().trim()) {
+$(document).on("change", '#agent_list_dialing', function(event) {
+    if (event.target.value && event.target.value.length > 0 && $('input[name="agent_list_name"]').val().trim()) {
         $('#save_agent_list_button').removeAttr('disabled');
     } else {
         $('#save_agent_list_button').attr('disabled', 'disabled');
@@ -1887,7 +1884,7 @@ $(document).on("change", 'select[name="agent_list"]', function(event) {
 
 $(document).on('click', '#save_agent_list_button', function() {
     var agent_list_name = $('input[name="agent_list_name"]').val();
-    var agent_list = $('select[name="agent_list"]').val();
+    var agent_list = $('#agent_list_dialing').val();
     if (!agent_list_name || !agent_list) {
         toastr.error('Please add proper agent details');
         return false;

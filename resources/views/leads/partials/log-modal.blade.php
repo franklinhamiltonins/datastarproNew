@@ -4,7 +4,7 @@
         <div class="modal-content p-0">
             <div class="modal-header p-2 p-lg-3 align-items-center">
                 <h5 class="modal-title">Log for: {{$lead->name}}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
@@ -33,7 +33,7 @@
 
             </div>
             <div class="modal-footer justify-content-start p-2 p-lg-3">
-                <button type="button" class="btn btn-sm px-3 py-2 m-0 btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm px-3 py-2 m-0 btn-outline-secondary" data-bs-dismiss="modal">Close</button>
 
             </div>
         </div>

@@ -10,7 +10,7 @@
 		</a>
 		{!! Form::open(['method' => 'DELETE','route' => ['templates.destroy', $row->id],'style'=>'display:inline','class' => ['leadForm-'.$row->id]]) !!}
 			{{-- trigger confirmation modal --}}
-			<a href="#" title="Delete Template" data-toggle="modal" data-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" 
+			<a href="#" title="Delete Template" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" 
 				class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
 				<i class="fa fa-trash"></i>
 			</a>

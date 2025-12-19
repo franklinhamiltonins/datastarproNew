@@ -33,7 +33,7 @@
                             <div class="d-flex flexwrap-wrap action-dropdown">
                                 <div class="dropdown">
                                     <!-- <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Actions
                                     </button> -->
                                     <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="actionbtn">

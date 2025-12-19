@@ -49,7 +49,7 @@
 							<tr>
 								<td>8. Modal creation</td>
 								<td class="selected_to_merge_highlight">
-									<button class="btn btn-info btn-sm mt-3" data-toggle="modal" data-target="#contactStatusModal">Change Contact Status</button>
+									<button class="btn btn-info btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#contactStatusModal">Change Contact Status</button>
 									Refer the above code
 								</td>
 							</tr>

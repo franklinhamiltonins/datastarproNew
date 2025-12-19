@@ -32,21 +32,21 @@
                             <div class="d-flex align-items-center flex-wrap action-dropdown pb-2">
                                 <div class="dropdown">
                                     <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Actions
                                     </button>
                                     <div class="dropdown-menu rounded-top-0 p-0 m-0 text-nowrap"
                                         aria-labelledby="actionbtn" data-id="1">
                                         <div class="dropdown d-flex dropright">
                                             <button class="btn btn-block rounded-0 btn-primary btn-sm dropdown-toggle"
-                                                type="button" id="filtersec" data-toggle="dropdown" aria-haspopup="true"
+                                                type="button" id="filtersec" data-bs-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
                                                 <i class="fas fa-filter"></i>
                                                 Filters
                                             </button>
                                             <div class="dropdown-menu p-0 m-0" aria-labelledby="filtersec" data-id="2">
                                                 <button class="btn btn-teal rounded-0 btn-sm btn-block m-0"
-                                                    type="button" data-toggle="collapse" onclick="filterDatatable('mail')">
+                                                    type="button" data-bs-toggle="collapse" onclick="filterDatatable('mail')">
                                                     <i class="fas fa-envelope"></i>
                                                     <span class="d-none d-md-inline">Filter By Email</span>
                                                 </button>

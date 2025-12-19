@@ -50,7 +50,7 @@
                                 @can('role-delete')
                                     {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy',
                                         $role->id],'style'=>'display:inline','class'=>['roleForm_'.$role->id]]) !!}
-                                        <a href="#" data-toggle="modal" data-target="#deleteModal" onclick="setModal(this,'{{$role->id}}')" class="btn btn-sm btn-danger deletebtn action-btn" title="Delete">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$role->id}}')" class="btn btn-sm btn-danger deletebtn action-btn" title="Delete">
                                             <i class="fa fa-trash"></i>
                                         </a>
                                     {!! Form::close() !!}

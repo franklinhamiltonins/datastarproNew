@@ -25,14 +25,14 @@
                             onclick="changeBackButtonLink(event)"><i class="fas fa-arrow-circle-left"></i> Back</a>
                     </div>
                     <div class="actions">
-                        <button class="btn btn-sm btn-secondary mb-0" type="button" data-toggle="modal"
-                            data-target="#logModal">
+                        <button class="btn btn-sm btn-secondary mb-0" type="button" data-bs-toggle="modal"
+                            data-bs-target="#logModal">
                             <i class="fa fa-comment-dots"></i>
                             <span class="d-none d-lg-inline">Lead Log</span>
                         </button>
                         @can('lead-action')
-                        <button class="btn btn-sm btn-warning action-btn m-0" data-toggle="modal"
-                            data-target="#userLeadActions">
+                        <button class="btn btn-sm btn-warning action-btn m-0" data-bs-toggle="modal"
+                            data-bs-target="#userLeadActions">
                             <i class="fas fa-mouse-pointer"></i>
                             <span class="d-none d-lg-inline">Add Lead Actions</span>
                         </button>
@@ -47,7 +47,7 @@
                         {!! Form::open(['method' => 'DELETE','route' => ['leads.destroy',
                         $lead->id],'style'=>'display:inline','class' => ['leadForm-'.$lead->id]]) !!}
                         {{-- trigger confirmation modal --}}
-                        <a href="#" data-toggle="modal" data-target="#deleteModal"
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
                             onclick="setModal(this,'{{$lead->id}}')"
                             class="btn btn-sm btn-danger deletebtn action-btn m-0">
                             <i class="fa fa-trash"></i>
@@ -77,25 +77,25 @@
         <!-- <h6 class=" pb-3 card-header text-secondary" style="background: rgba(40,167,69 , 0.05);">{{ $lead->name }}</h6> -->
         <ul class="nav nav-tabs nav-justified " id="pills-tab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active upperpaneltab_leads" id="pills-Lead-tab" data-toggle="pill" href="#pills-Lead" role="tab"
+                <a class="nav-link active upperpaneltab_leads" id="pills-Lead-tab" data-bs-toggle="pill" href="#pills-Lead" role="tab"
                     aria-controls="pills-Lead" aria-selected="true">Lead</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-client-insurance-info-tab" data-toggle="pill"
+                <a class="nav-link upperpaneltab_leads" id="pills-client-insurance-info-tab" data-bs-toggle="pill"
                     href="#pills-client-insurance-info" role="tab" aria-controls="pills-client-insurance-info"
                     aria-selected="true">Client Insurance Info</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-lead-actions-tab" data-toggle="pill" href="#pills-lead-actions" role="tab"
+                <a class="nav-link upperpaneltab_leads" id="pills-lead-actions-tab" data-bs-toggle="pill" href="#pills-lead-actions" role="tab"
                     aria-controls="pills-lead-actions" aria-selected="true"> Lead Actions</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-lead-campaigns-tab" data-toggle="pill" href="#pills-lead-campaigns"
+                <a class="nav-link upperpaneltab_leads" id="pills-lead-campaigns-tab" data-bs-toggle="pill" href="#pills-lead-campaigns"
                     role="tab" aria-controls="pills-lead-campaigns" aria-selected="true"> Lead Campaigns</a>
             </li>
             @can('lead-file-list')
             <li class="nav-item">
-                <a class="nav-link t upperpaneltab_leads" id="pills-File-tab" data-toggle="pill" href="#pills-File" role="tab"
+                <a class="nav-link t upperpaneltab_leads" id="pills-File-tab" data-bs-toggle="pill" href="#pills-File" role="tab"
                     aria-controls="pills-File" aria-selected="false">Uploaded Files</a>
             </li>
             @endcan
@@ -115,15 +115,15 @@
                             ]) !!}
                                 <ul class="nav nav-tabs nav-justified" id="pills-tab-2" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active small px-1 lowerpaneltab_leads" id="pills-Lead-tab-2" data-toggle="pill" href="#pills-Lead-2" role="tab"
+                                        <a class="nav-link active small px-1 lowerpaneltab_leads" id="pills-Lead-tab-2" data-bs-toggle="pill" href="#pills-Lead-2" role="tab"
                                             aria-controls="pills-Lead-2" aria-selected="true">Appraisal</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-actions-tab-2" data-toggle="pill" href="#pills-lead-actions-2" role="tab"
+                                        <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-actions-tab-2" data-bs-toggle="pill" href="#pills-lead-actions-2" role="tab"
                                             aria-controls="pills-lead-actions-2" aria-selected="false">Wind Mitigation</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-campaigns-tab-2" data-toggle="pill" href="#pills-lead-campaigns-2"
+                                        <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-campaigns-tab-2" data-bs-toggle="pill" href="#pills-lead-campaigns-2"
                                             role="tab" aria-controls="pills-lead-campaigns-2" aria-selected="false">Prospect’s Insurance</a>
                                     </li>
                                 </ul>
@@ -262,7 +262,7 @@
                                                                     <a href="javascript:void(0)"
                                                                         title="Action"
                                                                         class="btn btn-warning text-white contact-actions btn-sm m-0 text-light action-btn"
-                                                                        data-toggle="modal" data-target="#userLeadActions"
+                                                                        data-bs-toggle="modal" data-bs-target="#userLeadActions"
                                                                         onClick="event.stopPropagation(); setActionModal(this, {{ $contact->id }})">
                                                                         <i class="fas fa-mouse-pointer"></i>
                                                                     </a>
@@ -276,8 +276,8 @@
                                                                         @method('delete')
                                                                         {{-- {!! Form::open(['method' => 'DELETE','route' => ['leads.contact_destroy', $contact->id],'style'=>'display:inline','class' => ['leadContactForm-'.$contact->id]]) !!} --}}
                                                                         {{-- trigger confirmation modal --}}
-                                                                        <a href="javascript:void(0)" data-toggle="modal"
-                                                                            data-target="#deleteModal"
+                                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                                            data-bs-target="#deleteModal"
                                                                             title="Delete"
                                                                             onclick="event.stopPropagation(); setModal(this,'{{$contact->id}}')"
                                                                             class="btn btn-sm text-white btn-danger deletebtn action-btn contact-actions m-0">
@@ -316,12 +316,12 @@
                                 @endif
                                 <div class="card-footer">
                                     @can('contact-create')
-                                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#addContactModal">
+                                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addContactModal">
                                             Add Contact
                                         </button>
                                     @endcan
                                     @if (count($contacts))
-                                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#contactStatusModal">
+                                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#contactStatusModal">
                                             Change Contact Status
                                         </button>
                                     @endif
@@ -399,7 +399,7 @@
                                                         $note->id],'style'=>'display:flex','class' =>
                                                         ['leadNotesForm-'.$note->id]]) !!}
                                                         {{-- trigger confirmation modal --}}
-                                                        <a href="#" data-toggle="modal" data-target="#deleteModal"
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                             onclick="setModal(this,'{{$note->id}}')"
                                                             class="btn btn-sm rounded-left-0 m-0 btn-danger deletebtn action-btn contactDeleteBtn">
                                                             <i class="fa fa-trash"></i>
@@ -422,8 +422,8 @@
                                 @endif
                                 @can('lead-edit')
                                 <div class="card-footer">
-                                    <button class="btn btn-info btn-sm" data-toggle="modal" id="add_note_lead_page"
-                                        data-target="#addNoteModal">Add Note</button>
+                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" id="add_note_lead_page"
+                                        data-bs-target="#addNoteModal">Add Note</button>
                                 </div>
                                 @endcan
                             </div>
@@ -839,6 +839,7 @@ if (contactId) {
             toastr.error("Business Type is required");
             isValid = false;
         }
+        // return false;
 
         if (name === "") {
             toastr.error("Business Name is required");
@@ -996,11 +997,6 @@ if (contactId) {
                 isValid = false;
             }
         });
-
-
-
-
-
 
         // Return false to prevent form submission if validation fails
         return isValid;
@@ -1510,18 +1506,22 @@ $('.insert-placeholder').on('click', function () {
 });
 
 // keep the open tab on window refresh
-$('a[data-toggle="pill"]').on('shown.bs.tab', function(e) {
-
-    sessionStorage.setItem('activeTab', $(e.target).attr('href'));
+document.addEventListener('shown.bs.tab', function (e) {
+    sessionStorage.setItem('activeTab', e.target.getAttribute('href'));
 });
 
-var activeTab = sessionStorage.getItem('activeTab');
-// console.log(activeTab);
-if (activeTab && $('.nav-tabs a[href="' + activeTab + '"]').length > 0) {
-    $(".upperpaneltab_leads").removeClass('active');
-    $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
-    $('.nav-tabs a[href="' + activeTab + '"]').addClass('active');
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const activeTab = sessionStorage.getItem('activeTab');
+    if (!activeTab) return;
+
+    const tabTrigger = document.querySelector(
+        `a[data-bs-toggle="pill"][href="${activeTab}"]`
+    );
+
+    if (tabTrigger) {
+        new bootstrap.Tab(tabTrigger).show();
+    }
+});
 
 function scroll_to_el(el) {
     $("body,html").animate({

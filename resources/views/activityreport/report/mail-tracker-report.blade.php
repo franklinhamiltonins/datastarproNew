@@ -16,12 +16,12 @@
                             <div class="d-flex flex-wrap action-dropdown pb-2">
                                 <div class="dropdown">
                                     <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Actions
                                     </button>
                                     <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="actionbtn">
-                                        <button class="btn btn-sm rounded-0 btn-block btn-info" data-toggle="collapse"
-                                            data-target="#filters">
+                                        <button class="btn btn-sm rounded-0 btn-block btn-info" data-bs-toggle="collapse"
+                                            data-bs-target="#filters">
                                             <i class="fas fa-filter"></i>
                                             <span>Filters</span>
                                         </button>

@@ -73,7 +73,7 @@
         <div class="modal-content ">
             <div class="modal-header p-2 p-lg-3 align-items-center">
                 <h5 class="modal-title">Map Search</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
@@ -81,7 +81,7 @@
                 <div id="map-canvas"></div>
             </div>
             <div class="modal-footer justify-content-between p-2 p-lg-3">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-success" id="map_marker_confirm_button" disabled>Search</button>
             </div>
         </div>

@@ -90,8 +90,8 @@
         <button type="submit" class="btn btn-outline-primary text-nowrap btn-sm mr-3 d-none" id="btn_save_as_filter"
             onclick="openSaveFilterModal(event, 'save_as', 'save-filter')">Save as Filter</button>
 
-        <button type="submit" class="btn btn-outline-primary text-nowrap btn-sm mr-3" id="btn_dailing_list" data-toggle="modal" data-target="#saveagentlist">Create Dialing List</button>
-        <button type="submit" class="btn btn-outline-primary text-nowrap btn-sm mr-3" id="btn_dailing_list" data-toggle="modal" data-target="#saveCampaign">Create Mailing List</button>
+        <button type="button" class="btn btn-outline-primary text-nowrap btn-sm mr-3" id="btn_dailing_list" data-bs-toggle="modal" data-bs-target="#saveagentlist" onclick="event.stopPropagation()">Create Dialing List</button>
+        <button type="button" class="btn btn-outline-primary text-nowrap btn-sm mr-3" id="btn_mailing_list" data-bs-toggle="modal" data-bs-target="#saveCampaign" onclick="event.stopPropagation()">Create Mailing List</button>
     </div>
     <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end  align-items-md-center">
         <button type="button" class="btn btn-outline-danger btn-sm andClose"

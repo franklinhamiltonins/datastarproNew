@@ -56,7 +56,7 @@
                         {{-- {!! Form::submit('<i class="fa fa-trash"></i>', ['class' => 'btn  btn-sm btn-danger deletebtn']) !!} --}}
 
                         {{-- trigger confirmation modal --}}
-                        <a href="#" data-toggle="modal" data-target="#deleteModal"
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
                             onclick="setModal(this,'{{$user->id}}')"
                             class="btn  btn-sm btn-danger deletebtn action-btn">
                             <i class="fa fa-trash"></i>

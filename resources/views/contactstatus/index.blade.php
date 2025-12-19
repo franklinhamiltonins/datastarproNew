@@ -29,7 +29,7 @@
                             <div class="d-flex align-items-center flexwrap-wrap action-dropdown">
                                 <div class="dropdown">
                                     <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Actions
                                     </button>
                                     <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="actionbtn">
@@ -223,7 +223,7 @@ function draw_table() {
                             </a>
                             <form method="get" action="{{url('contactstatus/destroy')}}/`+data+`" accept-charset="UTF-8" style="display:inline" class="leadForm-3"><input name="_method" type="hidden" value="DELETE"><input name="_token" type="hidden" value="{{ csrf_token() }}">
                         
-                                <a href="#" title="Delete Sms Provider" data-toggle="modal" data-target="#deleteModal" onclick="setModal(this,'3')" class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
+                                <a href="#" title="Delete Sms Provider" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'3')" class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
                                     <i class="fa fa-trash"></i>
                                 </a>
                             </form>

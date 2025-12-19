@@ -45,26 +45,35 @@
                         <div class="col-lg-12 margin-tb d-flex align-items-center flex-wrap justify-content-between table-top-sec">
                             <div class="d-flex flex-wrap action-dropdown">
                                 <div class="dropdown">
-                                    <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="actionbtn"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn btn-info btn-sm dropdown-toggle"
+                                            type="button"
+                                            id="actionbtn"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
                                         Actions
                                     </button>
+
                                     <div class="dropdown-menu p-0 m-0 text-nowrap" aria-labelledby="actionbtn">
+
                                         @can('contact-filters')
-                                        <button class="btn btn-sm rounded-0 btn-block btn-info" data-toggle="collapse"
-                                            data-target="#filters">
-                                            <i class="fas fa-filter"></i>
-                                            <span>Filters</span>
+                                        <button type="button"
+                                                class="dropdown-item btn-sm"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#filters">
+                                            <i class="fas fa-filter me-1"></i>
+                                            Filters
                                         </button>
                                         @endcan
+
                                         @can('contact-delete')
                                         <a href="javascript:void(0)"
-                                            class="rounded-0 btn-block btn btn-danger text-left btn-sm mt-0"
-                                            id="bulk_contact_remove">
-                                            <i class="fas fa-trash-alt mr-1"></i>
+                                           class="dropdown-item text-danger btn-sm"
+                                           id="bulk_contact_remove">
+                                            <i class="fas fa-trash-alt me-1"></i>
                                             <span class="d-none d-md-inline">Remove</span>
                                         </a>
                                         @endcan
+
                                     </div>
                                 </div>
                                 <div class="custom_search_page d-flex align-items-center justify-content-between ml-2">

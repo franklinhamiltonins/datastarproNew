@@ -397,50 +397,57 @@ $(document).ready(function () {
 	});
 
 
-    $(document).on('click', function (e) {
-        if (!$(e.target).closest('.dropdown').length) {
-            $('.dropdown-menu').hide(); // Hide all dropdowns if clicked outside
-        }
-    });
+    // $(document).on('click', function (e) {
+    //     if (!$(e.target).closest('.dropdown').length) {
+    //         $('.dropdown-menu').hide(); // Hide all dropdowns if clicked outside
+    //     }
+    // });
 
     // Handle click on any dropdown toggle (parent or child)
-    $('.dropdown-toggle').on('click', function (e) {
-        var $el = $(this).next('.dropdown-menu');
-        var isVisible = $el.is(':visible');
+    // $('.dropdown-toggle').on('click', function (e) {
+    //     var $el = $(this).next('.dropdown-menu');
+    //     var isVisible = $el.is(':visible');
 
-        // console.log($el.data("id"));
-        // var $parent = $(this).closest('.dropdown');
+    //     // console.log($el.data("id"));
+    //     // var $parent = $(this).closest('.dropdown');
 
-        if($el.data("id") == undefined){
-        	$('.dropdown-menu').hide();
-        }
-        else{
-        	$('.dropdown-menu').each(function () {
-        		if($(this).data("id") == undefined){
-        			$(this).hide();
-        		}
-        		else{
-        			if($(this).data("id")  >= $el.data("id")){
-        				$(this).hide();
-        			}
-        		}
-        	});
-        }
+    //     if($el.data("id") == undefined){
+    //     	$('.dropdown-menu').hide();
+    //     }
+    //     else{
+    //     	$('.dropdown-menu').each(function () {
+    //     		if($(this).data("id") == undefined){
+    //     			$(this).hide();
+    //     		}
+    //     		else{
+    //     			if($(this).data("id")  >= $el.data("id")){
+    //     				$(this).hide();
+    //     			}
+    //     		}
+    //     	});
+    //     }
 
-        // Toggle visibility of the current dropdown
-        if (!isVisible) {
-            $el.show();
-            // $e1.addClass("show");
-        }
+    //     // Toggle visibility of the current dropdown
+    //     if (!isVisible) {
+    //         $el.show();
+    //         // $e1.addClass("show");
+    //     }
 
-        // Prevent event propagation to stop closing parent dropdown
-        e.stopPropagation();
-    });
+    //     // Prevent event propagation to stop closing parent dropdown
+    //     e.stopPropagation();
+    // });
 
     // Prevent closing of parent dropdown when clicking on nested dropdown
-    $('.dropdown-menu').on('click', function (e) {
-        e.stopPropagation(); // Prevent the parent from closing
-    });
+    // $('.dropdown-menu').on('click', function (e) {
+    //     e.stopPropagation(); // Prevent the parent from closing
+    // });
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+	    menu.addEventListener('click', function (e) {
+	        if (!e.target.closest('[data-bs-toggle="modal"]')) {
+	            e.stopPropagation();
+	        }
+	    });
+	});
 
 	// Close all dropdowns when clicking anywhere outside
 	// $(document).on('click', function () {
@@ -454,62 +461,108 @@ $(document).ready(function () {
     //     }
     // });
 
-    $("#toggleSidebar").on('click', function (e) {
-    	console.log($('.sidebar').length); // should be > 0
-		console.log($('.main-content').length); // should be > 0
-        $('.sidebar').toggleClass('open'); // Toggle sidebar visibility
-        $('.main-content').toggleClass('shifted'); // Shift content to the right
-    });
-
-    $('[data-toggle="collapse"]').on('click', function (e) {
-        var target = $(this).attr('href') || $(this).data('target');
-        $(target).collapse('toggle');
-    });
-
-    $('[data-toggle="modal"]').on('click', function (e) {
-	    e.preventDefault(); // Prevent default link behavior
-	    var target = $(this).data('target'); // Get the target modal ID
-
-	    if (target) {
-	        $(target).modal('show'); // Show the modal using Bootstrap's modal method
-
-	        // Manually adjust the backdrop for Bootstrap 3 compatibility
-	        setTimeout(function () {
-	            $('.modal-backdrop').removeClass('in').addClass('show'); // Ensure correct class is added
-	        }, 0); // Ensure it's executed after modal is shown
-	    }
-	});
-
-	// Hide Modal
-	$('[data-dismiss="modal"]').on('click', function () {
-	    var target = $(this).closest('.modal'); // Find the closest modal element
-
-	    if (target.length) {
-	        target.modal('hide'); // Hide the modal using Bootstrap's modal method
-
-	        // Manually remove the backdrop classes to avoid issues
-	        // setTimeout(function () {
-	        //     $('.modal-backdrop').remove(); 
-	        // }, 300);
-	    }
-	});
-
-    // // Close Modal on Click
-    // $('[data-dismiss="modal"]').on('click', function (e) {
-    //     var target = $(this).closest('.modal');
-    //     if (target.length) {
-    //         target.modal('hide');
-    //         // console.log("yes");
-    //     }
-    //     else{
-    //     	// target = $(this).closest('.othermodalsection');
-    //     	// if (target.length) {
-    //     	// 	target.removeClass('is-visible');
-    //     	// 	$('body').removeClass('overflow-hidden');
-    //     	// }
-    //     }
+    // $("#toggleSidebar").on('click', function (e) {
+    // 	console.log($('.sidebar').length); // should be > 0
+	// 	console.log($('.main-content').length); // should be > 0
+    //     $('.sidebar').toggleClass('open'); // Toggle sidebar visibility
+    //     $('.main-content').toggleClass('shifted'); // Shift content to the right
     // });
 
+    // $('[data-toggle="collapse"]').on('click', function (e) {
+    //     var target = $(this).attr('href') || $(this).data('target');
+    //     $(target).collapse('toggle');
+    // });
+
+    // document.addEventListener('click', function (e) {
+	//     const collapseBtn = e.target.closest('[data-toggle="collapse"]');
+	//     if (!collapseBtn) return;
+
+	//     e.preventDefault();
+
+	//     const targetSelector =
+	//         collapseBtn.getAttribute('data-target') ||
+	//         collapseBtn.getAttribute('href');
+
+	//     if (!targetSelector) return;
+
+	//     const targetEl = document.querySelector(targetSelector);
+	//     if (!targetEl) return;
+
+	//     const collapseInstance =
+	//         bootstrap.Collapse.getInstance(targetEl) ||
+	//         new bootstrap.Collapse(targetEl, { toggle: false });
+
+	//     collapseInstance.toggle();
+	// });
+
+
+
+    // console.log("I am here in the page");
+
+    // $('[data-toggle="modal"]').on('click', function (e) {
+	//     e.preventDefault();
+	//     var target = $(this).data('target');
+
+	//     console.log(target);
+
+	//     if (target) {
+	//         $(target).modal('show'); // Show the modal using Bootstrap's modal method
+
+	//         // Manually adjust the backdrop for Bootstrap 3 compatibility
+	//         setTimeout(function () {
+	//             $('.modal-backdrop').removeClass('in').addClass('show'); // Ensure correct class is added
+	//         }, 0); // Ensure it's executed after modal is shown
+	//     }
+	// });
+
+	// document.addEventListener('click', function (e) {
+	//     const trigger = e.target.closest('[data-toggle="modal"]');
+	//     if (!trigger) return;
+
+	//     e.preventDefault();
+
+	//     const target = trigger.getAttribute('data-target');
+	//     if (!target) return;
+
+	//     const modalEl = document.querySelector(target);
+	//     if (!modalEl) return;
+
+	//     const modal = new bootstrap.Modal(modalEl);
+	//     modal.show();
+	// });
+
+	// document.addEventListener('click', function (e) {
+	//     const dismissBtn = e.target.closest('[data-dismiss="modal"]');
+	//     if (!dismissBtn) return;
+
+	//     e.preventDefault();
+
+	//     const modalEl = dismissBtn.closest('.modal');
+	//     if (!modalEl) return;
+
+	//     const modalInstance = bootstrap.Modal.getInstance(modalEl)
+	//         || new bootstrap.Modal(modalEl);
+
+	//     modalInstance.hide();
+	// });
+
+
+
+	// Hide Modal
+	// $('[data-dismiss="modal"]').on('click', function () {
+	//     var target = $(this).closest('.modal'); // Find the closest modal element
+
+	//     if (target.length) {
+	//         target.modal('hide'); // Hide the modal using Bootstrap's modal method
+
+	//         // Manually remove the backdrop classes to avoid issues
+	//         // setTimeout(function () {
+	//         //     $('.modal-backdrop').remove(); 
+	//         // }, 300);
+	//     }
+	// });
+
+   
     const tabSelectors = [".lowerpaneltab_leads",".upperpaneltab_leads"];
 
     // Loop through each tab selector

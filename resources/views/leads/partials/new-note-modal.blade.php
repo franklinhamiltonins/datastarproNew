@@ -3,7 +3,7 @@
 		<div class="modal-content p-0">
 			<div class="modal-header p-2 p-lg-3 align-items-center">
 				<h5 class="modal-title" id="exampleModalLongTitle">Add New Note</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -90,7 +90,6 @@ function handleSubmit() {
 }
 
 </script> -->
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

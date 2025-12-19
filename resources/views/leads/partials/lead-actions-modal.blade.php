@@ -4,7 +4,7 @@
         <div class="modal-content p-0">
             <div class="modal-header p-2 p-lg-3 align-items-center">
                 <h5 class="modal-title">Set action for: {{$lead->name}} </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
@@ -66,7 +66,7 @@
 
 
                 <div class="modal-footer justify-content-between p-2 p-lg-3">
-                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" id="confirm" class="btn btn-info">Add Action</button>
                 </div>
             </form>

@@ -928,21 +928,47 @@ class PipedriveLoginController extends ContactController
                 } else {
                     $agentId = $lead->pipeline_agent_id;
                 }
-                $contact = Contact::where('lead_id', $leadId)
+                if($specialType == 3){
+                    $contact = Contact::where('lead_id', $leadId)
+                    ->where('c_status','!=',8)
                     ->orderBy("c_status","DESC")
                     ->first();
 
-                if (!$contact) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Failed to update contact status',
-                        'newStatusId' => $agent_type_status->id,
-                        'new_status_name' => $agent_type_status->name
-                    ], 500);
+                    if (!$contact) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Failed to update contact status',
+                            'newStatusId' => $agent_type_status->id,
+                            'new_status_name' => $agent_type_status->name
+                        ], 500);
+                    }
+                    $contact->c_status = $agent_type_status->id;
+                    $contact->c_agent_id = $agentId;
+                    $contact->save();
+
+                    $contact_id = $contact->id;
+
                 }
-                $contact->c_status = $agent_type_status->id;
-                $contact->c_agent_id = $agentId;
-                $contact->save();
+                else{
+                    $contact = Contact::where('lead_id', $leadId)
+                    ->update([
+                        'c_status' => $agent_type_status->id,
+                        'c_agent_id' => $agentId
+                    ]);
+
+                    $lead->pipeline_status_id = $agent_type_status->id;
+                    $lead->pipeline_agent_id = $agentId;
+                    $lead->save();  
+
+                    $contact_id = 0;
+
+                    $contact = Contact::where('lead_id', $leadId)->first();
+                    if($contact){
+                        $contact_id = $contact->id;
+                    }
+
+                }
+
 
                 $this->contactbasedleadstatusupdate($leadId,$agentId,$agent_type_status->id);
 
@@ -951,13 +977,13 @@ class PipedriveLoginController extends ContactController
                 if ($agent_type_status) {
                     // if(empty($agent_type_status->false_status)){
                         $own_status = $agent_type_status->display_in_pipedrive;
-                        $this->updateDialingLists($agent_type_status->id, $contact->id, $leadId,$agentId,$own_status);
+                        $this->updateDialingLists($agent_type_status->id, $contact_id, $leadId,$agentId,$own_status);
                         $this->setContactToQueue($lead);
 
-                        $message = User::where("id",$agentId)->value("name") . ' has updated status of contact : ' . $contact->id . ' to ' . $agent_type_status->id . ' present in lead: ' . $leadId;
+                        $message = User::where("id",$agentId)->value("name") . ' has updated status of contact : ' . $contact_id . ' to ' . $agent_type_status->id . ' present in lead: ' . $leadId;
                         Agentlog::updateOrCreate(
-                            ['user_id' => $agentId, 'contact_id' => $contact->id],
-                            ['message' => $message, 'user_id' => $agentId, 'lead_id' => $leadId, 'contact_id' => $contact->id, 'status' => 'call_status_updated']
+                            ['user_id' => $agentId, 'contact_id' => $contact_id],
+                            ['message' => $message, 'user_id' => $agentId, 'lead_id' => $leadId, 'contact_id' => $contact_id, 'status' => 'call_status_updated']
                         );
                     // }
                     // endif;
@@ -990,7 +1016,7 @@ class PipedriveLoginController extends ContactController
         $pageNumber = $request->input('page_number', 1); // Default to page 1 if not provided
         $pageSize = $request->input('page_size', 20);    // Default page size to 20 if not provided
 
-        if(empty($agentId) && !empty($filterData->agent_id)){
+        if(isset($filterData->agent_id)){
             $agentId = $filterData->agent_id;
         }
 

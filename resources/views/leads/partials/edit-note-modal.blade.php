@@ -3,7 +3,7 @@
 		<div class="modal-content p-0">
 			<div class="modal-header p-0 p-lg-3 align-items-center">
 				<h5 class="modal-title" id="exampleModalLongTitle">Update Note</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -32,7 +32,7 @@
 
 			</div>
 			<div class="modal-footer p-0 p-lg-3">
-				<button type="button" class="btn btn-sm btn-secondary closeNote" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-sm btn-secondary closeNote" data-bs-dismiss="modal">Close</button>
 				<button class="btn btn-sm btn-primary" id="saveNote">Update Note</button>
 			</div>
 

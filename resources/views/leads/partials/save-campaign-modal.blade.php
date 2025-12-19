@@ -3,7 +3,7 @@
     <div class="modal-content p-0">
       <div class="modal-header p-0 p-lg-3 align-items-center">
         <h5 class="modal-title">Save as Marketing Campaign</h5>
-        <button type="button" id="close_saveCampaign" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" id="close_saveCampaign" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

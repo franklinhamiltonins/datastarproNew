@@ -75,7 +75,7 @@
                             <div class="card">
                                 <div class=" p-2 d-flex align-items-center justify-content-between">
                                     <h5 class="mb-0">
-                                        <button class="btn " data-toggle="collapse" data-target="#error"
+                                        <button class="btn " data-bs-toggle="collapse" data-bs-target="#error"
                                             aria-expanded="false" aria-controls="error">
                                             <i class="fas fa-exclamation text-danger"></i> Errors happened while
                                             deleting leads
@@ -122,7 +122,7 @@
                             <div class="card">
                                 <div class=" p-2 d-flex align-items-center justify-content-between">
                                     <h5 class="mb-0">
-                                        <button class="btn " data-toggle="collapse" data-target="#success"
+                                        <button class="btn " data-bs-toggle="collapse" data-bs-target="#success"
                                             aria-expanded="false" aria-controls="success">
                                             <i class="fas fa-check text-success"></i> Successfull Deletion
                                         </button>
@@ -166,7 +166,7 @@
                             <div class="">
                                 <div class="card-header pt-1 pb-1 px-0" id="headingOne">
                                     <h5 class="mb-0">
-                                        <button class="btn" data-toggle="collapse" data-target="#collapseOne"
+                                        <button class="btn" data-bs-toggle="collapse" data-bs-target="#collapseOne"
                                             aria-expanded="true" aria-controls="collapseOne">
                                             Required CSV Table Column Names
                                         </button>
@@ -190,7 +190,7 @@
                             <div class="">
                                 <div class="card-header pt-1 pb-1 px-0" id="headingFour">
                                     <h5 class="mb-0">
-                                        <button class="btn collapsed" data-toggle="collapse" data-target="#collapseFour"
+                                        <button class="btn collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
                                             aria-expanded="false" aria-controls="collapseFour">
                                             Sample CSV File
                                         </button>

@@ -152,7 +152,7 @@ class ContactController extends Controller
 	            $actions .= '<a href="/leads/show/' . base64_encode($row->lead_id) . '" title="View Contact Lead Record" class="btn btn-sm btn-info action-btn m-0 d-flex justify-content-center align-items-center"><i class="fa fa-eye"></i></a>';
 
 	            if (auth()->user()->can('contact-delete')) {
-	                $actions .= '<a href="#" data-toggle="modal" data-target="#deleteModal" onclick="setDeleteModal(this, ' . $row->id . ')" class="btn btn-sm btn-danger action-btn m-0 d-flex justify-content-center align-items-center"><i class="fa fa-trash"></i></a>';
+	                $actions .= '<a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteModal(this, ' . $row->id . ')" class="btn btn-sm btn-danger action-btn m-0 d-flex justify-content-center align-items-center"><i class="fa fa-trash"></i></a>';
 	            }
 	            $actions .= '</div>';
 	            return $actions;
@@ -215,7 +215,7 @@ class ContactController extends Controller
 
 					if (auth()->user()->can('contact-delete')) {
 						// $actionBtn .= '<a href="#" onclick="handleDelete(`' . route('leads.contact_destroy', $row->id) . '`)" class="btn btn-sm btn-danger action-btn m-0 d-flex justify-content-center align-items-center"><i class="fa fa-trash"></i></a>';
-						$actionBtn .= '<a href="#" data-toggle="modal" data-target="#deleteModal" onclick="setDeleteModal(this, ' . $row->id . ')" class="btn btn-sm btn-danger action-btn m-0 d-flex justify-content-center align-items-center"><i class="fa fa-trash"></i></a>';
+						$actionBtn .= '<a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteModal(this, ' . $row->id . ')" class="btn btn-sm btn-danger action-btn m-0 d-flex justify-content-center align-items-center"><i class="fa fa-trash"></i></a>';
 					}
 					$actionBtn .= '</div>';
 					return $actionBtn;

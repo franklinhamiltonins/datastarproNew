@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header p-2 p-lg-3 align-items-center">
 				<h5 class="modal-title">Reassign Agent</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">×</span>
 				</button>
 			</div>

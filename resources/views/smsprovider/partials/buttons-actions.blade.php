@@ -12,7 +12,7 @@
 	@can('template-delete')
 	{!! Form::open(['method' => 'DELETE','route' => ['smsprovider.destroy', $row->id],'style'=>'display:inline','class' => ['leadForm-'.$row->id]]) !!}
 	{{-- trigger confirmation modal --}}
-	<a href="#" title="Delete Sms Provider" data-toggle="modal" data-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" 
+	<a href="#" title="Delete Sms Provider" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" 
 		class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
 		<i class="fa fa-trash"></i>
 	</a>

@@ -119,39 +119,13 @@ jQuery(document).ready(function() {
 });
 
 
-$(document).on('click', '.assign_agent', function() {
-    let id = $(this).attr("data-current");
-    let currently_assigned_to = $(this).attr("data-assigned_agents");
-
-    // Retrieve existing selected agent IDs from session storage
-    let selectedCheckboxes = sessionStorage.getItem("selectedAgentIds");
-    selectedCheckboxes = selectedCheckboxes ? JSON.parse(selectedCheckboxes) : [];
-
-    $("#agent_list").find("option").prop("selected", false);
-
-    if (currently_assigned_to) {
-        let agents_id_arr = currently_assigned_to.split(',');
-        agents_id_arr.forEach(function(value) {
-            $("#agent_list").find("option[value=" + value + "]").prop("selected", "selected");
-        });
-    }
-
-    // Check if the ID already exists in the array before adding it
-    if (selectedCheckboxes.indexOf(id) === -1) {
-        selectedCheckboxes.push(id);
-        // Store the updated array in session storage
-        sessionStorage.setItem("selectedAgentIds", JSON.stringify(selectedCheckboxes));
-    }
-});
-
-
 $(document).on('click', '#save_agent_list_button', function() {
     var selected_agent_id = $('#agent_list').val();
     var selected_agent_ids = "";
     if (sessionStorage.getItem("selectedAgentIds")) {
         selected_agent_ids = JSON.parse(sessionStorage.getItem("selectedAgentIds"));
     }
-    if (selected_agent_id < 1) {
+    if (!selected_agent_id || selected_agent_id.length === 0) {
         toastr.error('Please select an agent to assign');
         return false;
     }
@@ -336,10 +310,6 @@ function draw_table() {
 
 }
 
-
-
-// Updates "Select all" control in a data table 
-//
 function updateDataTableSelectAllCtrl(table) {
     var $table = table.table().node();
     var $chkbox_all = $('#agents_datatable tbody input[type="checkbox"]', $table);
@@ -372,7 +342,7 @@ function updateDataTableSelectAllCtrl(table) {
     }
 }
 </script>
-<script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js">
+<!-- <script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js">
 </script>
 <script src="//bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js" defer></script>
@@ -382,6 +352,6 @@ function updateDataTableSelectAllCtrl(table) {
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css"
     integrity="sha512-LDB28UFxGU7qq5q67S1iJbTIU33WtOJ61AVuiOnM6aTNlOLvP+sZORIHqbS9G+H40R3Pn2wERaAeJrXg+/nu6g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
 
 @endpush

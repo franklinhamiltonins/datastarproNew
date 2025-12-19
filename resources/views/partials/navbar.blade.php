@@ -26,7 +26,7 @@
 
     <ul class="nav navbar-nav horizontal-nav">
         <li class="dropdown messages-menu open">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                 <i class="fas fa-comments"></i>
                 <span class="label  badge label-success" id="notificationList">{{$notifications['msg_count']}}</span>
             </a>
@@ -40,7 +40,7 @@
         </li>
         @if($notifications['can_access_notification'])
             <li class="dropdown messages-menu open">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                     <i class="fas fa-inbox"></i>
                     <span class="label  badge label-success" id="inboundlist">{{$notifications['inbound_count']}}</span>
                 </a>
@@ -68,7 +68,7 @@
                 </ul>
             </li>
             <li class="dropdown messages-menu open">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                     <i class="fas fa-envelope"></i>
                     <span class="label  badge label-success" id="inboundlistnotification">{{$notifications['inbound_notification_count']}}</span>
                 </a>
@@ -98,7 +98,7 @@
         @endif
         @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
             <li class="dropdown messages-menu open">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                     <i class="fas fa-bell"></i>
                     <span class="label  badge label-success"
                         id="navbarNotification">{{$notifications['call_initiated_count']}}</span>
@@ -130,7 +130,7 @@
         @endif
 
         <li class="dropdown user user-menu open">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                 <i class="fas fa-user d-inline d-lg-none"></i>
                 <span class="d-none d-lg-inline" title="">{{ auth()->user()->name }}</span>
             </a>

@@ -3,7 +3,7 @@
 		<div class="modal-content p-0">
 			<div class="modal-header p-2 p-lg-3 align-items-center">
 				<h5 class="modal-title" id="exampleModalLongTitle">Add New Contact</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -20,7 +20,7 @@
 			</div>
 			<div class="modal-footer p-2 p-lg-3">
 				<button type="submit" class="btn btn-primary btn-sm" onclick="unsetSessionStorage('contact_id')">Save contact</button>
-				<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
 			</div>
 			{!! Form::close() !!}
 		</div>

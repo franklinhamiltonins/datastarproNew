@@ -19,14 +19,14 @@
                         onclick="redirectToLastLeadsManagementUrl(event)"><i class="fas fa-arrow-circle-left"></i>
                         Back</a>
                     <div>
-                        <button class="btn btn-sm btn-secondary m-0" type="button" data-toggle="modal"
-                            data-target="#logModal">
+                        <button class="btn btn-sm btn-secondary m-0" type="button" data-bs-toggle="modal"
+                            data-bs-target="#logModal">
                             <i class="fa fa-comment-dots"></i>
                             <span class="d-none d-lg-inline"> Lead Log</span>
                         </button>
                         @can('lead-action')
-                        <button class="btn btn-sm btn-warning action-btn m-0" data-toggle="modal"
-                            data-target="#userLeadActions">
+                        <button class="btn btn-sm btn-warning action-btn m-0" data-bs-toggle="modal"
+                            data-bs-target="#userLeadActions">
                             <i class="fas fa-mouse-pointer"></i>
                             <span class="d-none d-lg-inline"> Add Lead Actions</span>
                         </button>
@@ -148,8 +148,8 @@
                                                 <div class="custom_contact_class p-0 rounded">
                                                     <div class="card-header pt-1 pb-1 px-0 border-0">
                                                         <div class="d-flex justify-content-between align-items-center">
-                                                            <button class="btn w-100 p-0 pl-2 text-left" data-toggle="collapse"
-                                                                data-target="#collapse{{$i}}" aria-expanded="true"
+                                                            <button class="btn w-100 p-0 pl-2 text-left" data-bs-toggle="collapse"
+                                                                data-bs-target="#collapse{{$i}}" aria-expanded="true"
                                                                 aria-controls="collapse{{$i}}">
 
                                                                 <div class="d-flex justify-content-between align-items-center">
@@ -293,8 +293,8 @@
                                             <div class="card-header pt-1 pb-1 px-0" id="heading{{$i}}">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="mb-0">
-                                                        <button class="btn btn-sm text-left" data-toggle="collapse"
-                                                            data-target="#notecollapse{{$i}}" aria-expanded="true"
+                                                        <button class="btn btn-sm text-left" data-bs-toggle="collapse"
+                                                            data-bs-target="#notecollapse{{$i}}" aria-expanded="true"
                                                             aria-controls="collapse{{$i}}">
                                                             @if($note->contact_name)
                                                             <strong>{{$note->contact_name}} - </strong>

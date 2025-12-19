@@ -7,7 +7,7 @@
     
 
         
-            <a href="#" data-toggle="modal" data-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" class="btn btn-sm  deletebtn ">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" class="btn btn-sm  deletebtn ">
                 <i class="fa fa-trash text-danger"></i>
             </a>
         

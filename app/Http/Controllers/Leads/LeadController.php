@@ -1856,7 +1856,7 @@ class LeadController extends Controller
 
 		//create log
 		create_log($lead, 'Edit Lead', '');
-		flash()->success('Business ' . $lead->name . ' updated successfully');
+		toastr()->success('Business ' . $lead->name . ' updated successfully');
 		return redirect()->back();
 	}
 

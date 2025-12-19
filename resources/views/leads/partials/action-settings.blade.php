@@ -1,5 +1,5 @@
 <div class="dropdown col-adjst-dropdown ">
-    <button class="btn btn-transparent btn-sm px-1 dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+    <button class="btn btn-transparent btn-sm px-1 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
         <i class="fas fa-cog"></i>
     </button>
     <div class="dropdown-menu dropdown-menu-right adjust-column-dropdown px-2 text-sm">

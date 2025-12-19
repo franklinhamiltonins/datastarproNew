@@ -26,7 +26,7 @@
 			<div class="col-lg-12 margin-tb mb-3 d-flex flex-wrap">
 
 
-				<button class="btn btn-primary mb-3 " type="button" data-toggle="collapse" data-target="#filterActions" aria-expanded="false" aria-controls="filterActions">
+				<button class="btn btn-primary mb-3 " type="button" data-bs-toggle="collapse" data-bs-target="#filterActions" aria-expanded="false" aria-controls="filterActions">
 					<i class="fas fa-filter"></i>
 					<span class="d-none d-md-inline"> Filter Contact Report
 					</span>

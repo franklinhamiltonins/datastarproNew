@@ -4,7 +4,7 @@
 		<div class="modal-content">
 			<!--div class="modal-header">
 				<h4 class="modal-title">Are you Sure?</h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">×</span>
 				</button>
 			</div-->
@@ -22,7 +22,7 @@
 				<p>This action cannot be undone. All values<br>associated with this field will be lost.</p>
 				<div class="d-flex flex-column">
 					<button type="button" id="confirmDelete" class="btn btn-outline-light bg-danger py-2 mb-2">Yes, Delete</button>
-					<button type="button" class="btn btn-outline-light border-danger text-danger" data-dismiss="modal">No</button>
+					<button type="button" class="btn btn-outline-light border-danger text-danger" data-bs-dismiss="modal">No</button>
 				</div>
 			</div>
 		</div>
