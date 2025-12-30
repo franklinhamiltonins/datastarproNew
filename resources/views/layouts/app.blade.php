@@ -28,7 +28,6 @@
     <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
 
 
-
     <!-- for pusher and websocket -->
     <!-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
 

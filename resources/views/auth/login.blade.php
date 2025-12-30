@@ -79,7 +79,8 @@
 @stop
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+<script src="{{ asset('js/native/jquery-3.7.1.js') }}"></script>
 <script>
 $(function() {
     // Step 1 submit (email + password) — AJAX
