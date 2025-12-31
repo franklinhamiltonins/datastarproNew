@@ -165,7 +165,10 @@ jQuery(document).ready(function() {
             success: function(response) {
                 // console.log(response);
                 if(response.status){
-                    $("#newdeleteModal").modal("show");
+                    const modalElement = document.getElementById('newdeleteModal');
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                    // $("#newdeleteModal").modal("show");
                     let deleteBodyContent = $(".deleteBodyContent");
                     deleteBodyContent.empty(); // Clear existing content
 

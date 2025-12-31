@@ -1013,12 +1013,20 @@ let prevChatContactIds = [];
 let clickCount = 0;
 
 $(document).on("click",'#preview_btn',function () {
-    $("#previewLeadModal").modal("show");
+    const modalElement = document.getElementById('previewLeadModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    // $("#previewLeadModal").modal("show");
     loadPreviewData();
 });
 
 $(document).on("click",'.pre_filled_data',function () {
-    $("#previousFilledLeadModal").modal("show");
+    const modalElement = document.getElementById('previousFilledLeadModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    // $("#previousFilledLeadModal").modal("show");
 });
 
 function nextbuttonClicked(type) {
@@ -1811,7 +1819,10 @@ function setNoteModal(elem, $id) {
     }
 
     //show modal
-    $('#editNoteModal').modal('show');
+    // $('#editNoteModal').modal('show');
+    const modalElement = document.getElementById('editNoteModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
     $('#editNoteModal').attr('data-source', '#ordr_' + $id);
     //set url
     var url = window.location.origin + '/leads/show/note-update/' + $id;

@@ -348,7 +348,10 @@ $(document).on('click', '.edit-owner-icon', function () {
     $("#reassign_dialing_id").val(dialingId);
     $("#reassign_lead_id").val(leadId);
 
-    $("#newreassignModal").modal("show");
+    const modalElement = document.getElementById('newreassignModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    // $("#newreassignModal").modal("show");
     let reassignBodyContent = $(".reassignBodyContent");
     // reassignBodyContent.empty(); 
 });

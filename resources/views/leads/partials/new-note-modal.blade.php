@@ -51,7 +51,7 @@
 			</div>
 			<div class="modal-footer p-2 p-lg-3">
 				<button type="submit" class="btn btn-primary btn-sm">Save Note</button>
-				<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" aria-label="Close">Close</button>
 			</div>
 			{!! Form::close() !!}
 		</div>

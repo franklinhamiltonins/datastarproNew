@@ -36,7 +36,9 @@
                     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
                         name="password" required autocomplete="new-password">
                     <div class="input-group-append input-group-text">
-                        <span class="fas fa-key"></span>
+                        <span class="input-group-text" style="cursor:pointer" id="togglePassword">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </span>
                     </div>
                     @error('password')
                     <span class="invalid-feedback" role="alert">
@@ -49,7 +51,9 @@
                     <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
                         required autocomplete="new-password">
                     <div class="input-group-append input-group-text">
-                        <span class="fas fa-key"></span>
+                        <span class="input-group-text" style="cursor:pointer" id="togglePasswordConfirm">
+                            <i class="fas fa-eye" id="eyeIconConfirm"></i>
+                        </span>
                     </div>
                 </div>
                 <div class="row">
@@ -66,4 +70,48 @@
     </div>
 </div>
 <!-- /.login-box -->
-@endsection
+@stop
+
+@push('scripts')
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+<script src="{{ asset('js/native/jquery-3.7.1.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+
+            // Toggle input type
+            passwordInput.setAttribute(
+                'type',
+                isPassword ? 'text' : 'password'
+            );
+
+            // Toggle icon
+            eyeIcon.classList.toggle('fa-eye');
+            eyeIcon.classList.toggle('fa-eye-slash');
+        });
+
+        const passwordConfirmInput = document.getElementById('password-confirm');
+        const togglePasswordConfirm = document.getElementById('togglePasswordConfirm');
+        const eyeIconConfirm = document.getElementById('eyeIconConfirm');
+
+        togglePasswordConfirm.addEventListener('click', function () {
+            const isPasswordConfirm = passwordConfirmInput.getAttribute('type') === 'password';
+
+            // Toggle input type
+            passwordConfirmInput.setAttribute(
+                'type',
+                isPasswordConfirm ? 'text' : 'password'
+            );
+
+            // Toggle icon
+            eyeIconConfirm.classList.toggle('fa-eye');
+            eyeIconConfirm.classList.toggle('fa-eye-slash');
+        });
+    });
+</script>
+@endpush
