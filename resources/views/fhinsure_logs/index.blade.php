@@ -206,6 +206,7 @@
 @endpush
 @push('scripts')
 
+<!-- <script src="{{ asset('js/ckeditor-reuired-function.js') }}" defer></script> -->
 <script>
 /****  Document Ready ****/
 jQuery(document).ready(function() {
@@ -223,6 +224,23 @@ jQuery(document).ready(function() {
     window.addEventListener('pageshow', function(event) {
         $('body').find('#customSearchBox').val('');
         $('body').find('#customPageLength').val('25');
+    });
+
+    ClassicEditor
+        .create(document.querySelector('#email_content'))
+        .then(editor => {
+            theEmailEditor = editor; // Save for later use.
+        })
+        .catch(error => {
+            console.error(error);
+    });
+    ClassicEditor
+        .create(document.querySelector('#sms_template_content'))
+        .then(editor => {
+            theTemplateEditor = editor; // Save for later use.
+        })
+        .catch(error => {
+            console.error(error);
     });
 
 });
@@ -481,22 +499,6 @@ $('.form-check-input').change(function() {
     } else {
         jQuery('#fhinsure_datatable').DataTable().column(columnIndex).visible(false);
     }
-});
-ClassicEditor
-    .create(document.querySelector('#email_content'))
-    .then(editor => {
-        theEmailEditor = editor; // Save for later use.
-    })
-    .catch(error => {
-        console.error(error);
-});
-ClassicEditor
-    .create(document.querySelector('#sms_template_content'))
-    .then(editor => {
-        theTemplateEditor = editor; // Save for later use.
-    })
-    .catch(error => {
-        console.error(error);
 });
 function applySavedTemplate(templateId, singleContactId) {
     // getting data from contact table

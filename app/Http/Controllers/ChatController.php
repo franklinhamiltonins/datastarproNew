@@ -90,7 +90,10 @@ class ChatController extends Controller
 		$check_max_execution_time = $this->check_max_execution_time($chatContactId, $isNewsletter);
 		// dd($check_max_execution_time);
 		$dataOfExecute = json_decode($check_max_execution_time->getContent(), true);
-    	$responseValue = $dataOfExecute['response'];
+
+    	$responseValue = !empty($dataOfExecute['response'])?intval($dataOfExecute['response']):0;
+
+    	// echo "<pre>";print_r($responseValue);exit;
 		if ($responseValue > 0) { 
 			return response()->json([
 				'success' => false,
