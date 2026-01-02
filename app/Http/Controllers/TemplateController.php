@@ -303,7 +303,7 @@ class TemplateController extends Controller
 			$agent_name = "";
 			if(!is_null($searchQuery->user)) {
 				foreach($searchQuery->user as $user) {
-					$agent_name .= "<a href='/users/".$user->id."'>".$user->name."</a>, ";
+					$agent_name .= "<a href='/users/".base64_encode($user->id)."'>".$user->name."</a>, ";
 				}
 			}
             return rtrim($agent_name, ", ");
