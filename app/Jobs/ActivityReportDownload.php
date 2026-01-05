@@ -148,11 +148,11 @@ class ActivityReportDownload implements ShouldQueue
                         $message->cc($ccEmails);
                     }
                     $message->subject($subject)
+                    ->html($body)
                     ->attach($filePath, [
                         'as' => $fileName,
                         'mime' => 'text/csv',
-                    ])
-                    ->setBody($body, 'text/html');
+                    ]);
                 });
             }
             unset($setting_time_data);

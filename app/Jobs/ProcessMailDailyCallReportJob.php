@@ -103,11 +103,11 @@ class ProcessMailDailyCallReportJob implements ShouldQueue
                         $message->cc($ccEmails);
                     }
                     $message->subject('Daily Call Report CSV')
+                    ->html('Please find the attached Daily Call Report CSV file.')
                     ->attach($filePath, [
                         'as' => $fileName,
                         'mime' => 'text/csv',
-                    ])
-                    ->setBody('Please find the attached Daily Call Report CSV file.', 'text/html');
+                    ]);
                 });
             }
             unset($setting_time_data);

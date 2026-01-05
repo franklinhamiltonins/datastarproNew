@@ -143,7 +143,7 @@ class CreateCampaignJob implements ShouldQueue
                         'as' => $fileName,
                         'mime' => 'text/csv',
                     ])
-                    ->setBody('Please find the attached CSV file containing the campaign leads.', 'text/html');
+                    ->html('Please find the attached CSV file containing the campaign leads.');
                 });
             }
             unset($setting_time_data);

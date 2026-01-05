@@ -105,7 +105,7 @@ class AgentReassignJob implements ShouldQueue
                             $message->cc($ccEmails);
                         }
                         $message->subject('Dialing Agent Reassignment')
-                        ->setBody("Your dialing  ('" . $dialing->name . "') agent reassignment has been confirmed. Please check this URL: " . $this->redirect_project_url, 'text/html');
+                        ->html("Your dialing  ('" . $dialing->name . "') agent reassignment has been confirmed. Please check this URL: " . $this->redirect_project_url);
                     });
                 }
                 unset($setting_time_data);
