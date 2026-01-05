@@ -128,14 +128,14 @@
                         $('#step2').show();
                         $('#server-message').html('<div class="">' + res.message + '</div>');
                     } else {
-                        $('#server-message').html('<div class="">' + res.message + '</div>');
+                        $('#server-message').html('<div class="text-center alert alert-danger">' + res.message + '</div>');
                     }
                 },
                 error: function(xhr) {
                     $('#step1Submit').prop('disabled', false);
                     hideLoader();
                     let err = xhr.responseJSON?.message ?? 'Something went wrong';
-                    $('#server-message').html('<div class="alert alert-danger">' + err + '</div>');
+                    $('#server-message').html('<div class="text-center alert alert-danger">' + err + '</div>');
                 }
             });
         });
@@ -145,7 +145,7 @@
             e.preventDefault();
             $('#server-message').html('');
             if($('#otp').val() == ""){
-                $('#server-message').html('<div class="alert alert-danger">Please Enter 2FA Code</div>');
+                $('#server-message').html('<div class="text-center alert alert-danger">Please Enter 2FA Code</div>');
                 return false;
             }
             $('#verifyOtpBtn').prop('disabled', true);
@@ -167,7 +167,7 @@
                         // redirect to dashboard
                         window.location.href = res.redirectTo;
                     } else {
-                        $('#server-message').html('<div class="alert alert-danger">' + res.message + '</div>');
+                        $('#server-message').html('<div class="text-center alert alert-danger">' + res.message + '</div>');
                         if(res.triedAttempt > 0){
                             $('#totalAttempt').html(res.totalAttempt);
                             $('#leftAttempt').html(res.totalAttempt - res.triedAttempt);
@@ -186,7 +186,7 @@
                     $('#verifyOtpBtn').prop('disabled', false);
                     hideLoader();
                     let err = xhr.responseJSON?.message ?? 'Something went wrong';
-                    $('#server-message').html('<div class="alert alert-danger">' + err + '</div>');
+                    $('#server-message').html('<div class="text-center alert alert-danger">' + err + '</div>');
                 }
             });
         });
@@ -208,10 +208,10 @@
                 },
                 success: function(res) {
                     if (res.status) {
-                        $('#server-message').html('<div class="alert alert-success">Code Resent Successfully.</div>');
+                        $('#server-message').html('<div class="text-center alert alert-success">Code Resent Successfully.</div>');
                         // $('#login_user_id').val(res.user_id);
                     } else {
-                        $('#server-message').html('<div class="alert alert-danger">' + res.message + '</div>');
+                        $('#server-message').html('<div class="text-center alert alert-danger">' + res.message + '</div>');
                     }
                     $('#resendOtpBtn').prop('disabled', false);
                     hideLoader();

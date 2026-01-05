@@ -1836,7 +1836,7 @@ function setNoteModal(elem, $id) {
         }
         $.ajax({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                'X-CSRF-TOKEN': $('#editNoteModal input[name="_token"]').val()
             },
             url: url,
             dataType: "json",

@@ -749,26 +749,32 @@
 				    </div>
 
 				    @if(count($notes) > 0)
-					    <div class="card-body form-row text-md mt-2 p-0">
-					    	<div class="p-2 pt-3 pb-0 mx-0 rounded border position-relative">
-							    <div class="section-head position-absolute m-0 p-0 z-5 d-inline-block font-weight-bold px-1 bg-white">Notes :</div>
+					    <div class="p-2 mt-4 pt-3 pb-2 mx-0 rounded border position-relative">
+						    <div class="section-head position-absolute m-0 p-0 z-5 d-inline-block font-weight-bold px-1 bg-white">
+						        Notes :
+						    </div>
+
+						    <div class="form-row">
 						        <div class="form-group col-12 mb-1 px-2">
-						        	<div class="notearea" >
-							        	@foreach ($notes as $note )
-							        		<span class="small longtextarea notes" >
-								        		@if($note->contact_name)
-				                                	<strong>{{$note->contact_name}} - </strong>
-				                                @endif
-				                                @if($note->created_at)
-				                                	{{date("m/d/Y-H:m", strtotime($note->created_at))}}
-				                                @endif
-				                                <p> - {{$note->description}}</p>
-			                                </span>
-							        	@endforeach
-							        </div>
+						            <div class="notearea">
+						                @foreach ($notes as $note)
+						                    <p class="small longtextarea notes mb-1">
+						                        @if($note->contact_name)
+						                            <strong>{{ $note->contact_name }} - </strong>
+						                        @endif
+
+						                        @if($note->created_at)
+						                            <span>{{ date('m/d/Y - H:i', strtotime($note->created_at)) }} - </span>
+						                        @endif
+
+						                        <small>{!! $note->description !!}</small>
+						                    </p>
+						                @endforeach
+						            </div>
 						        </div>
-							</div>
-					    </div>
+						    </div>
+						</div>
+
 				    @endif
 			    </div>
 
