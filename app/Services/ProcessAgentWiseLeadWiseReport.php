@@ -213,7 +213,7 @@ class ProcessAgentWiseLeadWiseReport
                 ]);
             }
 
-            $message->setBody($body, 'text/html');
+            $message->html($body);
         });
     }
 

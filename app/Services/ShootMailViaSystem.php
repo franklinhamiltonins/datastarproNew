@@ -54,7 +54,7 @@ class ShootMailViaSystem
                     $message->cc($cc);
                 }
                 $message->subject($subject)
-                ->setBody($bodyMsg, 'text/html');
+                ->html($bodyMsg);
             });
         }
     }
