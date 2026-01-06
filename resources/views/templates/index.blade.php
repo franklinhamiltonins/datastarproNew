@@ -404,7 +404,7 @@ function draw_table() {
                 selectedValues: selectedValues
             },
             success: function(response) {
-                if (response.leadsCount) {
+                if (response.templateCount > 0) {
                     toastr.success(response.message);
                 } else {
                     toastr.error(response.message);
