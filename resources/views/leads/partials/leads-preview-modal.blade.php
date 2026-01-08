@@ -758,7 +758,7 @@
 						        <div class="form-group col-12 mb-1 px-2">
 						            <div class="notearea">
 						                @foreach ($notes as $note)
-						                    <p class="small longtextarea notes mb-1">
+						                    <div class="small longtextarea notes mb-1">
 						                        @if($note->contact_name)
 						                            <strong>{{ $note->contact_name }} - </strong>
 						                        @endif
@@ -767,8 +767,8 @@
 						                            <span>{{ date('m/d/Y - H:i', strtotime($note->created_at)) }} - </span>
 						                        @endif
 
-						                        <small>{!! $note->description !!}</small>
-						                    </p>
+						                        <strong >{!! $note->description !!}</strong>
+						                    </div>
 						                @endforeach
 						            </div>
 						        </div>

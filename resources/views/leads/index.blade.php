@@ -110,7 +110,7 @@
                                         <!-- Remove -->
                                         @can('lead-delete')
                                         <a href="javascript:void(0)" id="bulk_lead_remove_2"
-                                            class="bulk_lead_remove text-left rounded-0 text-nowrap btn-block btn btn-danger btn-sm closebtn m-1">
+                                            class="bulk_lead_remove text-left rounded-0 text-nowrap btn-block btn btn-danger btn-sm closebtn">
                                             <i class="fas fa-trash-alt me-1"></i>
                                             <span class="d-none d-md-inline">Remove</span>
                                         </a>

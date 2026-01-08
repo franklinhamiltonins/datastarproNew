@@ -65,7 +65,7 @@
                                             class="bulk_templates_remove text-nowrap btn-block rounded-left-0 btn btn-danger btn-sm btn-sm closebtn mr-1">
                                             <i class="fas fa-trash-alt mr-1"></i>
                                             <span class="d-none d-md-inline">Remove</span>
-                                        </a>
+                                        </a>+
                                     </div>
                                 </div>
                                 <div class="custom_search_page d-flex align-items-center justify-content-between ml-2">

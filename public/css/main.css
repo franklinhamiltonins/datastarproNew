@@ -3844,19 +3844,19 @@ input[type="submit"].btn-block {
 	padding: 0.25rem 1rem;
 	clear: both;
 	font-weight: 400;
-	color: #212529;
+	/*color: #212529;*/
 	text-align: inherit;
 	white-space: nowrap;
-	background-color: transparent;
+	/*background-color: transparent;*/
 	border: 0;
 }
 
-.dropdown-item:focus,
+/*.dropdown-item:focus,
 .dropdown-item:hover {
 	color: #16181b;
 	text-decoration: none;
-	background-color: #f8f9fa;
-}
+	/*background-color: #f8f9fa;*/
+}*/
 
 .dropdown-item.active,
 .dropdown-item:active {
