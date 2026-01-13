@@ -2,7 +2,6 @@
 @section('pagetitle', 'Show Role')
 @push('breadcrumbs')
 <li class="breadcrumb-item"><a href="{{route('roles.index')}}">All Roles</a></li>
-
 <li class="breadcrumb-item active">Show Role</li>
 @endpush
 @section('content')

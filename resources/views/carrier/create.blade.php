@@ -9,7 +9,7 @@
     @endif
 @endsection
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('carrier.index')}}">All Carrier</a></li>
+<li class="breadcrumb-item"><a href="{{route('carrier.index')}}">Carrier</a></li>
 <li class="breadcrumb-item active">
     @if($pending == 1) 
         @if($page_type == 1) Create Carrier

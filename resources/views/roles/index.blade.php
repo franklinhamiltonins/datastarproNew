@@ -2,7 +2,7 @@
 @section('pagetitle', 'All Roles')
 @push('breadcrumbs')
 
-<li class="breadcrumb-item active">Role Management</li>
+<li class="breadcrumb-item">Role Management</li>
 <li class="breadcrumb-item active">All Roles</li>
 @endpush
 @section('content')

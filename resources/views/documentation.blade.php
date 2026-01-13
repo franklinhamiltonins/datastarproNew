@@ -1,7 +1,8 @@
 @extends('layouts.app')
 @section('pagetitle', 'use App\Traits\CommonFunctionsTrait;')
 @push('breadcrumbs')
-<li class="breadcrumb-item active">use CommonFunctionsTrait;</li>
+
+<li class="breadcrumb-item active">Documentation</li>
 @endpush
 @section('content')
 <section class="content">

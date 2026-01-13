@@ -3,8 +3,7 @@
     Lead Source Management
 @endsection
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('leadsource.index')}}">Lead Source</a></li>
-<li class="breadcrumb-item active">Lead Source Management</li>
+<li class="breadcrumb-item active">Lead Source</li>
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">

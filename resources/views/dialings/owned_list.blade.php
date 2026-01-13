@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Owned Leads')
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('dialings.index')}}">Agent</a></li>
+<li class="breadcrumb-item"><a href="{{route('dialings.index')}}">Lists</a></li>
 <li class="breadcrumb-item active">Owned Leads</li>
 @endpush
 @section('content')

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'All Contacts')
 @push('breadcrumbs')
-<li class="breadcrumb-item">Business</a></li>
+<li class="breadcrumb-item"><a href="{{route('leads.index')}}">Business</a></a></li>
 <li class="breadcrumb-item active">All Contacts</li>
 @endpush
 

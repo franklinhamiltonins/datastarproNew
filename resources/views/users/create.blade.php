@@ -1,8 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Add New User')
 @push('breadcrumbs')
-<li class="breadcrumb-item">Users Management</li>
-
+<li class="breadcrumb-item"><a href="{{route('users.index')}}">All Users</a></li>
 <li class="breadcrumb-item active">Add New User</li>
 @endpush
 @section('content')

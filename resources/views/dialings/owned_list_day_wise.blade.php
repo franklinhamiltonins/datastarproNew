@@ -1,8 +1,8 @@
 @extends('layouts.app')
-@section('pagetitle', 'Own Leads')
+@section('pagetitle', 'Own Leads Time Wise')
 @push('breadcrumbs')
 <li class="breadcrumb-item"><a href="{{route('dialings.ownedleads')}}">Own Leads</a></li>
-<li class="breadcrumb-item active">Own Leads</li>
+<li class="breadcrumb-item active">Own Leads Time Wise</li>
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">

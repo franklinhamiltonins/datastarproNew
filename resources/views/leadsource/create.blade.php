@@ -6,7 +6,7 @@
     @endif 
 @endsection
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('leadsource.index')}}">All Lead Source</a></li>
+<li class="breadcrumb-item"><a href="{{route('leadsource.index')}}">Lead Source</a></li>
 <li class="breadcrumb-item active">
     @if($page_type == 1) Create Lead Source
     @elseif($page_type == 2) Edit Lead Source 

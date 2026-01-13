@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Show User' )
 @push('breadcrumbs')
-
+<li class="breadcrumb-item"><a href="{{route('users.index')}}">All Users</a></li>
 <li class="breadcrumb-item active">Show User </li>
 @endpush
 @section('content')

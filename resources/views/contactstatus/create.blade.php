@@ -9,7 +9,7 @@
     @endif
 @endsection
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('contactstatus.index')}}">All Contact Status</a></li>
+<li class="breadcrumb-item"><a href="{{route('contactstatus.index')}}">Contact Status</a></li>
 <li class="breadcrumb-item active">@if($page_type == 1) Create Contact Status @elseif($page_type == 2) Edit Contact Status @else Show Contact Status @endif </li>
 @endpush
 @section('content')

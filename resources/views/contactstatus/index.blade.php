@@ -1,8 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Contact Status Management')
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('smsprovider.index')}}">Contact Status</a></li>
-<li class="breadcrumb-item active">Contact Status Management</li>
+<li class="breadcrumb-item active">Contact Status</li>
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">

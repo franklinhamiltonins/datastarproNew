@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Show Template' )
 @push('breadcrumbs')
-
+<li class="breadcrumb-item"><a href="{{route('templates.index')}}">Templates Management</a></li>
 <li class="breadcrumb-item active">Show Template </li>
 @endpush
 @section('content')

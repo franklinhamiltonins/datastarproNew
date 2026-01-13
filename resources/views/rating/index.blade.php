@@ -5,8 +5,7 @@
     @endif
 @endsection
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('rating.index')}}">Rating</a></li>
-<li class="breadcrumb-item active">Rating Management</li>
+<li class="breadcrumb-item active">Rating</li>
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">

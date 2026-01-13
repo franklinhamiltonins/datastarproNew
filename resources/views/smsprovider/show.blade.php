@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Show SMS Provider' )
 @push('breadcrumbs')
-
+<li class="breadcrumb-item"><a href="{{route('smsprovider.index')}}">SMS Provider Management</a></li>
 <li class="breadcrumb-item active">Show SMS Provider </li>
 @endpush
 @section('content')

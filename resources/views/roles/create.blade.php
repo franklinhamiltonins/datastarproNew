@@ -1,8 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Add New Role')
 @push('breadcrumbs')
-<li class="breadcrumb-item">Role Management</li>
-
+<li class="breadcrumb-item"><a href="{{route('roles.index')}}">All Roles</a></li>
 <li class="breadcrumb-item active">Add New Role</li>
 @endpush
 @section('content')

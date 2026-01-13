@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('pagetitle', 'Show SMTP' )
 @push('breadcrumbs')
-
+<li class="breadcrumb-item"><a href="{{route('smtps.index')}}">SMTPs Management</a></li>
 <li class="breadcrumb-item active">Show SMTP Configuration </li>
 @endpush
 @section('content')

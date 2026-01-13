@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('pagetitle', 'Newsletter')
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('newsletter.index')}}">All Newsletter</a></li>
 <li class="breadcrumb-item active">Newsletter</li>
 @endpush
 @section('content')

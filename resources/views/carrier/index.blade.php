@@ -5,8 +5,7 @@
     @endif
 @endsection
 @push('breadcrumbs')
-<li class="breadcrumb-item"><a href="{{route('carrier.index')}}">Carrier</a></li>
-<li class="breadcrumb-item active">Carrier Management</li>
+<li class="breadcrumb-item active">Carrier</li>
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
