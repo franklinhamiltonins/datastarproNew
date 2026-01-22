@@ -57,7 +57,7 @@
 
                                         @can('contact-filters')
                                         <button type="button"
-                                                class="dropdown-item btn-sm"
+                                                class="dropdown-item btn-sm btn-primary"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target="#filters">
                                             <i class="fas fa-filter me-1"></i>
@@ -67,7 +67,7 @@
 
                                         @can('contact-delete')
                                         <a href="javascript:void(0)"
-                                           class="dropdown-item text-danger btn-sm"
+                                           class="dropdown-item btn-sm btn-danger"
                                            id="bulk_contact_remove">
                                             <i class="fas fa-trash-alt me-1"></i>
                                             <span class="d-none d-md-inline">Remove</span>

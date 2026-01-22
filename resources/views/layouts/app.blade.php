@@ -45,7 +45,7 @@
     <div class="wrapper">
         @include('partials.navbar')
         @include('partials.sidebar')
-        <div class="content-wrapper">
+        <div class="content-wrapper main-content">
             @include('partials.breadcrumbs')
             @yield('content')
         </div>

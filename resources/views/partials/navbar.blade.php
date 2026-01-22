@@ -2,26 +2,30 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav d-flex align-items-center pl-2 pl-lg-3">
         <li class="nav-item pr-2 pr-lg-3">
-            <a class="nav-link p-0" id="toggleSidebar" data-widget="pushmenu" href="javascript:void(0)"><i class="fas fa-bars"></i></a>
+            <a class="nav-link p-0" id="toggleSidebar" data-widget="pushmenu" href="javascript:void(0)">
+                <i class="fas fa-bars"></i>
+            </a>
         </li>
         <li class="nav-item d-none d-sm-inline-block pr-2 pr-lg-3">
-            <a href="{{route('home')}}" class="nav-link p-0"><i class="fas fa-home"></i></a>
+            <a href="{{ route('home') }}" class="nav-link p-0">
+                <i class="fas fa-home"></i>
+            </a>
         </li>
         @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
-        <div class="impersonate position-relative">
-            <input type="text" class="form-control" placeholder="Impersonate an agent" name="impersonate"
-                id="impersonate_user" />
-            <div id="suggestions" class="list-group position-absolute top-100 left-0 right-0 w-100" style="display: none;">
-            </div>
-
-        </div>
+            <li class="nav-item pr-2">
+                <div class="impersonate position-relative">
+                    <input type="text" class="form-control form-control-sm" placeholder="Impersonate an agent" name="impersonate" id="impersonate_user" />
+                    <div id="suggestions" class="list-group position-absolute w-100" style="display: none;"></div>
+                </div>
+            </li>
         @endif
         @if (session()->has('impersonate'))
-        <a href="/leave-impersonation" class="lh-1 btn btn-sm btn-outline-primary"> <i
-                class="fas fa-arrow-left pr-2"></i> Leave
-            Impersonation</a>
+            <li class="nav-item">
+                <a href="/leave-impersonation" class="btn btn-sm btn-outline-primary d-flex align-items-center">
+                    <i class="fas fa-arrow-left pr-2"></i>Leave Impersonation
+                </a>
+            </li>
         @endif
-
     </ul>
 
     <ul class="nav navbar-nav horizontal-nav">
@@ -100,8 +104,7 @@
             <li class="dropdown messages-menu open">
                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                     <i class="fas fa-bell"></i>
-                    <span class="label  badge label-success"
-                        id="navbarNotification">{{$notifications['call_initiated_count']}}</span>
+                    <span class="label  badge label-success" id="navbarNotification">{{$notifications['call_initiated_count']}}</span>
                 </a>
                 <ul id="navbarNotification" class="dropdown-menu main-dropdown">
                     <li class="footer p-2 px-3" id="seeAllmsgNavbar"></li>
@@ -121,14 +124,11 @@
                                 @endforeach
                             </ul>
                         </li>
-                        
-                            <li class="footer"><a href="/agents/reports">See All Agent Logs</a></li>
-                        
+                        <li class="footer"><a href="/agents/reports">See All Agent Logs</a></li>
                     @endif
                 </ul>
             </li>
         @endif
-
         <li class="dropdown user user-menu open">
             <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                 <i class="fas fa-user d-inline d-lg-none"></i>
@@ -141,7 +141,6 @@
                         <small>Member since {{ auth()->user()->created_at->format('M, Y') }}</small>
                     </p>
                 </li>
-
                 <li class="user-footer">
                     <div class="pull-left float-left">
                         <a href="{{route('profile', auth()->user()->id)}}" class="btn btn-sm btn-default btn-flat px-3 py-2">Profile</a>

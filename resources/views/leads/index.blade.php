@@ -387,7 +387,7 @@ function checkSunBizSessionDataApplyFilter() {
     const sunbizName = sessionStorage.getItem("sunbiz_registered_name");
     const sunbizAddress = sessionStorage.getItem("sunbiz_registered_address");
 
-    console.log(sunbizName,sunbizAddress);
+    // console.log(sunbizName,sunbizAddress);
 
     if (!sunbizName && !sunbizAddress) return;
 
@@ -733,7 +733,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            console.log("Selected values:", selectedValues);
+            // console.log("Selected values:", selectedValues);
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }
@@ -844,7 +844,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('cross clicked');
+            // console.log('cross clicked');
             let localCustomSearchVal = localStorage.getItem('DataTables_leads_datatable_/leads');
             let updatedLocalCustomSearchVal = JSON.parse(localCustomSearchVal);
             updatedLocalCustomSearchVal.search.search = '';
@@ -1633,7 +1633,7 @@ function applySavedFilterConfirm(id, name, conditions) {
                 }
             },
             cancel: function() {
-                console.log('the user clicked cancel');
+                // console.log('the user clicked cancel');
             }
         }
     });
@@ -1674,7 +1674,7 @@ function deleteSavedFilterConfirm(id, name) {
                 }
             },
             cancel: function() {
-                console.log('the user clicked cancel');
+                // console.log('the user clicked cancel');
             }
         }
     });
@@ -1771,7 +1771,7 @@ $('#clientSearch').click(function(e) {
 $('#mapsearch').on('shown.bs.modal', function(e) {
     var sessionMapSearch = sessionStorage.getItem('map_search');
     location_leads_id = [];
-    console.log('sessionMapSearch -> ', sessionMapSearch);
+    // console.log('sessionMapSearch -> ', sessionMapSearch);
     $.ajax({
         type: 'POST',
         url: "/leads/all-leads-location",

@@ -20,7 +20,6 @@
 		border-radius: 0.28571429rem;
 	}
 </style>
-<script src="/js/keydragzoom.js"></script>
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">

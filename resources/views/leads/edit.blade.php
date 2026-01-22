@@ -810,14 +810,14 @@
 /******************************
         Ricochet webhook for contact
     ******************************/
-let params = new URLSearchParams(location.search);
-var contactId = params.get('contact_id'); //get contact id
-if (contactId) {
-    sessionStorage.removeItem('activeTab') //reset tab to home
-    var contact = $('#contactsAccordion [data-id=' + contactId + ']').collapse('show'); //open contact collapse
-    var id = $(contact).attr('id');
-    $('#contactsAccordion [data-target="#' + id + '"]').addClass('bg-success'); //highlight contact
-}
+// let params = new URLSearchParams(location.search);
+// var contactId = params.get('contact_id'); //get contact id
+// if (contactId) {
+//     sessionStorage.removeItem('activeTab') //reset tab to home
+//     var contact = $('#contactsAccordion [data-id=' + contactId + ']').collapse('show'); //open contact collapse
+//     var id = $(contact).attr('id');
+//     $('#contactsAccordion [data-target="#' + id + '"]').addClass('bg-success'); //highlight contact
+// }
 /******************************/
 </script>
 <script src="{{ asset('js/custom-helper.js') }}" async></script>

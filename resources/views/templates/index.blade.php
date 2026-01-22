@@ -16,7 +16,6 @@
         border-radius: 0.28571429rem;
     }
 </style>
-<script src="/js/keydragzoom.js"></script>
 <!-- Main content -->
 <section class="content">
     <input type="hidden" value="{{ $is_admin }}" id="isAdminUser">

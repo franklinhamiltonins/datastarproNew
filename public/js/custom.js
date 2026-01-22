@@ -108,12 +108,23 @@ var currentUrl = window.location.href;
 // for edit leads page start
 if (currentUrl.includes('leads/edit/')) {
 	document.addEventListener("DOMContentLoaded", function () {
-		var sessionStorageValue = getFromSessionStorage('contact_id');
-		// console.log(sessionStorageValue);
-		if (sessionStorageValue) {
-			var contactEditClassElement = document.getElementById('contacteditclass' + sessionStorageValue);
-			var customContactElement = document.getElementById('custom_contact' + sessionStorageValue);
-			var collapseElement = document.getElementsByClassName('collapse' + sessionStorageValue);
+		const params = new URLSearchParams(location.search);
+		const contactId = params.get('contact_id');
+		const sessionStoragecontact_id = getFromSessionStorage('contact_id');
+
+		let final_contact_id;
+
+		if(contactId){
+			final_contact_id = contactId;
+		}
+		else{
+			final_contact_id = sessionStoragecontact_id;
+		}
+
+		if (final_contact_id) {
+			var contactEditClassElement = document.getElementById('contacteditclass' + final_contact_id);
+			var customContactElement = document.getElementById('custom_contact' + final_contact_id);
+			var collapseElement = document.getElementsByClassName('collapse' + final_contact_id);
 			if(contactEditClassElement){
 				contactEditClassElement.classList.add('call_initiated_contact');
 			}
@@ -275,35 +286,56 @@ function appendDataInChat(dataInDetail) {
 
 // get all data on page refresh also
 document.addEventListener('DOMContentLoaded', function () {
-	fetch('/get-all-unread-msg')
-		.then(response => response.json())
-		.then(data => {
+	// fetch('/get-all-unread-msg')
+	// .then(response => response.json())
+	// .then(data => {
+	// 	// console.log(data.response.length);return ;
+	// 	let countElement = document.getElementById('notificationCall');
+	// 	console.log(countElement);
+	// 	countElement.textContent = data.response.length;
 
-			let countElement = document.getElementById('notificationCall');
-			countElement.textContent = data.response.length;
+	// 	if (data.response.length === 0) {
+	// 		document.getElementById('seeAllmsg').textContent = "There is no notification for you.";
+	// 	}
+	// 	else if (data.response.length > 5) {
+	// 		document.getElementById('seeAllmsg').style.display = 'block';
+	// 	}
+	// 	else if((data.response.length > 0) && (data.response.length < 5)) {
+	// 		document.getElementById('seeAllmsg').style.display = 'none';
+	// 	}
+		
+		
 
-			if ((data.response.length > 0) && (data.response.length < 5)) {
-				document.getElementById('seeAllmsg').style.display = 'none';
-			}
-			if (data.response.length > 5) {
-				document.getElementById('seeAllmsg').style.display = 'block';
-			}
-			if (data.response.length === 0) {
-				document.getElementById('seeAllmsg').textContent = "There is no notification for you.";
-			}
+	// 	data.response.forEach((each) => {
+	// 		let notificationList = document.getElementById('notificationList');
+	// 		let newLi = createLi(each.c_full_name, each.smscontent, each.lead_id, each.contact_id);
 
-			data.response.forEach((each) => {
-				let notificationList = document.getElementById('notificationList');
-				let newLi = createLi(each.c_full_name, each.smscontent, each.lead_id, each.contact_id);
+	// 		let footerLi = notificationList.querySelector('#seeAllmsg');
+	// 		footerLi.insertAdjacentHTML('beforebegin', newLi);
+	// 	});
 
-				let footerLi = notificationList.querySelector('#seeAllmsg');
-				footerLi.insertAdjacentHTML('beforebegin', newLi);
-			});
+	// })
+	// .catch(error => {
+	// 	console.error('Error:', error);
+	// });
 
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
+
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    // console.log("found");
+    if (!toggleBtn || !sidebar || !mainContent) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    toggleBtn.addEventListener('click', function (e) {
+        // console.log('clicked');;
+
+        sidebar.classList.toggle('open');
+        mainContent.classList.toggle('shifted');
+    });
 });
 
 // dynamic li creation function
@@ -459,13 +491,6 @@ $(document).ready(function () {
     //     if (!$(e.target).closest('.dropdown').length) {
     //         $('.dropdown-menu').hide();
     //     }
-    // });
-
-    // $("#toggleSidebar").on('click', function (e) {
-    // 	console.log($('.sidebar').length); // should be > 0
-	// 	console.log($('.main-content').length); // should be > 0
-    //     $('.sidebar').toggleClass('open'); // Toggle sidebar visibility
-    //     $('.main-content').toggleClass('shifted'); // Shift content to the right
     // });
 
     // $('[data-toggle="collapse"]').on('click', function (e) {
