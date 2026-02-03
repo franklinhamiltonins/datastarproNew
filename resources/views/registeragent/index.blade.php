@@ -199,14 +199,14 @@
                     data: 'sunbiz_registered_name',
                     name: 'sunbiz_registered_name',
                     render: function(data, type, row) {
-                        return `<span class="set-session text-primary text-decoration-underline" data-key="sunbiz_registered_name" data-value="${data}">${data}</span>`;
+                        return `<span class="set-session text-primary" data-key="sunbiz_registered_name" data-value="${data}">${data}</span>`;
                     }
                 },
                 {
                     data: 'sunbiz_registered_address',
                     name: 'sunbiz_registered_address',
                     render: function(data, type, row) {
-                        return `<span class="set-session text-primary text-decoration-underline" data-key="sunbiz_registered_address" data-value="${data}">${data}</span>`;
+                        return `<span class="set-session text-primary " data-key="sunbiz_registered_address" data-value="${data}">${data}</span>`;
                     }
                 },
                 { data: 'associated_lead', name: 'associated_lead',searchable: false }

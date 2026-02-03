@@ -71,6 +71,8 @@ class PipedriveLoginController extends ContactController
 
         // Get the authenticated user
         $user = auth()->user();
+        $roles = $user->getRoleNames()->toArray();
+        // return $roles;
         $credentials = $user;
         $agentWisePermission = $this->getAgentWisePermission($user);
 
@@ -78,7 +80,7 @@ class PipedriveLoginController extends ContactController
 
         // Initialize agent-related variables
         $agentId = $isAdminUser ? 0 : $user->id;
-        $agentUsers = $this->getAgentListing($isAdminUser,$agentId);
+        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,true,$roles);
 
         // Return a successful response
         return response()->json([
@@ -704,45 +706,130 @@ class PipedriveLoginController extends ContactController
         $pageSize = $request->input('page_size', 10);
 
         // Base query for leads
+        // $leadQuery = Lead::where('leads.pipeline_status_id', $statusId)
+        //     ->join('users', 'leads.pipeline_agent_id', '=', 'users.id')
+        //     ->leftJoin('lead_asana_details', 'leads.id', '=', 'lead_asana_details.lead_id')
+        //     ->leftJoinSub($latestStatus, 'latest_log', function ($join) {
+        //         $join->on('leads.id', '=', 'latest_log.lead_id');
+        //     })
+            // ->leftJoin('lead_status_wise_log as lswl', function ($join) {
+            //     $join->on('leads.id', '=', 'lswl.lead_id')
+            //         ->where('lswl.status_id', '=', 8);
+            // })
+        //     ->where(function ($query) {
+        //         $query->whereNull('lead_asana_details.lead_id')
+        //             ->orWhere('lead_asana_details.stage_completed', '!=', 1);
+        //     });
+
+        // if (!empty($agentId)) {
+        //     $leadQuery->where(function ($query) use ($agentId) {
+        //         $query->where('leads.pipeline_agent_id', $agentId)
+        //             ->orWhere('leads.assigned_user_id', $agentId);
+        //     });
+        // }
+
+        // if (!empty($request->input('searchName'))) {
+        //     $leadQuery = $leadQuery->where('leads.name', "like", "%" . $request->input('searchName') . "%");
+        // }
+
+        // // Calculate total insured amount
+        // $totalInsuredAmount = $leadQuery->sum('total_premium');
+
+        // // Sorting
+        // if (!empty($request->input('sortBy'))) {
+        //     if ($request->input('sortBy') == 'name') {
+        //         $leadQuery = $leadQuery->orderBy('leads.name', $request->input('orderBy', 'asc'));
+        //     }
+        //     if ($request->input('sortBy') == 'date') {
+        //         $leadQuery = $leadQuery->orderBy('status8_start_timestamp', $request->input('orderBy', 'asc'));
+        //     }
+        //     if ($request->input('sortBy') == 'updated') {
+        //         $leadQuery = $leadQuery->orderBy('leads.updated_at', $request->input('orderBy', 'asc'));
+        //     }
+        //     if ($request->input('sortBy') == 'premium') {
+        //         $leadQuery = $leadQuery->orderBy('leads.total_premium', $request->input('orderBy', 'asc'));
+        //     }
+        // }
+
+        // $selectFields = [
+        //     'leads.id',
+        //     'leads.name',
+        //     'leads.address1',
+        //     'leads.created_at',
+        //     'leads.updated_at',
+        //     'leads.total_premium as insured_amount',
+        //     'leads.policy_renewal_date',
+        //     'users.name as pipeline_agent_name',
+        //     'users.email as pipeline_agent_email',
+        //     'leads.pipeline_agent_id',
+        //     'leads.assigned_user_id',
+        //     'lswl.start_timestamp as status8_start_timestamp',
+        // ];
+
+        // Paginate and select relevant fields
+        // $leadList = $leadQuery->select($selectFields)
+        //     ->paginate($pageSize, ['*'], 'page', $pageNumber);
+
+        // $leadList->getCollection()->load([
+        //     'collaborators:id,name,email',
+        //     'assignedUser:id,name,email'
+        // ]);
+
+        $latestStatus = DB::table('lead_status_wise_log')
+        ->select(DB::raw('MAX(id) as id'), 'lead_id')
+        ->where('status_id', 8)
+        ->groupBy('lead_id');
+
+
         $leadQuery = Lead::where('leads.pipeline_status_id', $statusId)
-            ->join('users', 'leads.pipeline_agent_id', '=', 'users.id')
-            ->leftJoin('lead_asana_details', 'leads.id', '=', 'lead_asana_details.lead_id')
-            ->leftJoin('lead_status_wise_log as lswl', function ($join) {
-                $join->on('leads.id', '=', 'lswl.lead_id')
-                    ->where('lswl.status_id', '=', 8);
-            })
-            ->where(function ($query) {
-                $query->whereNull('lead_asana_details.lead_id')
-                    ->orWhere('lead_asana_details.stage_completed', '!=', 1);
-            });
+        ->join('users', 'leads.pipeline_agent_id', '=', 'users.id')
+
+        ->leftJoin('lead_asana_details', 'leads.id', '=', 'lead_asana_details.lead_id')
+
+        ->leftJoinSub($latestStatus, 'latest_log', function ($join) {
+            $join->on('leads.id', '=', 'latest_log.lead_id');
+        })
+
+        ->leftJoin('lead_status_wise_log as lswl', 'lswl.id', '=', 'latest_log.id')
+        ->where(function ($query) {
+            $query->whereNull('lead_asana_details.lead_id')
+                  ->orWhere('lead_asana_details.stage_completed', '!=', 1);
+        });
+
 
         if (!empty($agentId)) {
             $leadQuery->where(function ($query) use ($agentId) {
                 $query->where('leads.pipeline_agent_id', $agentId)
-                    ->orWhere('leads.assigned_user_id', $agentId);
+                      ->orWhere('leads.assigned_user_id', $agentId);
             });
         }
 
         if (!empty($request->input('searchName'))) {
-            $leadQuery = $leadQuery->where('leads.name', "like", "%" . $request->input('searchName') . "%");
+            $leadQuery->where('leads.name', 'like', '%' . $request->input('searchName') . '%');
         }
 
-        // Calculate total insured amount
-        $totalInsuredAmount = $leadQuery->sum('total_premium');
+        $totalInsuredAmount = $leadQuery->sum('leads.total_premium');
 
-        // Sorting
-        if (!empty($request->input('sortBy'))) {
-            if ($request->input('sortBy') == 'name') {
-                $leadQuery = $leadQuery->orderBy('leads.name', $request->input('orderBy', 'asc'));
-            }
-            if ($request->input('sortBy') == 'date') {
-                $leadQuery = $leadQuery->orderBy('status8_start_timestamp', $request->input('orderBy', 'asc'));
-            }
-            if ($request->input('sortBy') == 'updated') {
-                $leadQuery = $leadQuery->orderBy('leads.updated_at', $request->input('orderBy', 'asc'));
-            }
-            if ($request->input('sortBy') == 'premium') {
-                $leadQuery = $leadQuery->orderBy('leads.total_premium', $request->input('orderBy', 'asc'));
+        if ($request->filled('sortBy')) {
+            $sortBy = $request->input('sortBy');
+            $orderBy = $request->input('orderBy', 'asc');
+
+            switch ($sortBy) {
+                case 'name':
+                    $leadQuery->orderBy('leads.name', $orderBy);
+                    break;
+
+                case 'date':
+                    $leadQuery->orderBy('lswl.start_timestamp', $orderBy);
+                    break;
+
+                case 'updated':
+                    $leadQuery->orderBy('leads.updated_at', $orderBy);
+                    break;
+
+                case 'premium':
+                    $leadQuery->orderBy('leads.total_premium', $orderBy);
+                    break;
             }
         }
 
@@ -758,19 +845,19 @@ class PipedriveLoginController extends ContactController
             'users.email as pipeline_agent_email',
             'leads.pipeline_agent_id',
             'leads.assigned_user_id',
+
             'lswl.start_timestamp as status8_start_timestamp',
         ];
 
-        // Paginate and select relevant fields
+
         $leadList = $leadQuery->select($selectFields)
-            ->paginate($pageSize, ['*'], 'page', $pageNumber);
+        ->paginate($pageSize, ['*'], 'page', $pageNumber);
 
         $leadList->getCollection()->load([
             'collaborators:id,name,email',
-            'assignedUser:id,name,email'
+            'assignedUser:id,name,email',
         ]);
 
-        // Get status information
         $status = ContactStatus::select('special_marker', 'name')->find($statusId);
 
         if ($status && $status->special_marker === 3) {
@@ -2435,7 +2522,7 @@ class PipedriveLoginController extends ContactController
             ], 400);
         }
 
-        $userList = User::role(['Agent','Service & Agent', 'Admin', 'Super Admin','Service Team'])->select('id', 'name', 'email')->get();
+        $userList = User::role(['Agent','Service & Agent', 'Admin', 'Super Admin','Service Team','Manager'])->select('id', 'name', 'email')->get();
 
         $collabList = $lead->collaborators()
             ->select('users.id', 'users.name', 'users.email')

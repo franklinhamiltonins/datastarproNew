@@ -161,6 +161,9 @@ Route::group(['middleware' => ['auth']], function () { //for logged in users
 	// Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', RoleController::class);
 	Route::resource('users', UserController::class);
+	Route::post('/users/update-2fa','UserController@update2FA')->name('users.update2fa');
+	Route::get('/users/{id}/assign-team','UserController@assignTeam')->name('users.assignTeam');
+	Route::post('/users/update-team','UserController@updateTeam')->name('users.updateTeam');
 
 	//SMTP settings
 	Route::get('/smtp-settings', 'SmtpConfigurationController@index')->name('smtp.settings');

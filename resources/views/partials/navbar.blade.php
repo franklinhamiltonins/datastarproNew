@@ -11,7 +11,7 @@
                 <i class="fas fa-home"></i>
             </a>
         </li>
-        @if (Auth::check() && Auth::user()->hasRole('Super Admin'))
+        @if (Auth::check() && (Auth::user()->hasRole('Super Admin') || Auth::user()->hasRole('Manager')))
             <li class="nav-item pr-2">
                 <div class="impersonate position-relative">
                     <input type="text" class="form-control form-control-sm" placeholder="Impersonate an agent" name="impersonate" id="impersonate_user" />
@@ -19,7 +19,7 @@
                 </div>
             </li>
         @endif
-        @if (session()->has('impersonate'))
+        @if (session()->has('impersonate_stack'))
             <li class="nav-item">
                 <a href="/leave-impersonation" class="btn btn-sm btn-outline-primary d-flex align-items-center">
                     <i class="fas fa-arrow-left pr-2"></i>Leave Impersonation

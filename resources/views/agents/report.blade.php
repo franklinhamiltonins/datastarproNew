@@ -6,6 +6,7 @@
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" integrity="sha512-LDB28UFxGU7qq5q67S1iJbTIU33WtOJ61AVuiOnM6aTNlOLvP+sZORIHqbS9G+H40R3Pn2wERaAeJrXg+/nu6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" defer></script>
 <style>
 	table.dataTable span.highlight {
@@ -27,18 +28,53 @@
 				<i class="fas fa-times-circle text-danger"></i>
 			</sup>
 		</div>
+		<!-- <div class="p-3">
+            <div class="row">
+                <div class="col-lg-12 margin-tb table-top-sec">
+                    <div class="d-flex align-items-center justify-content-between mt-3">
+                        <div class="d-flex flexwrap-wrap action-dropdown">
+                            <div class="custom_search_page d-flex align-items-center justify-content-between ml-2">
+                                <div id="custom_length_menu">
+                                    <label class="d-flex align-items-center justify-content-between mb-0">Show
+                                        <select id="customPageLength"
+                                            class="form-control form-control-sm mx-1 px-0 bg-transparent"
+                                            aria-controls="agents_datatable">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                        entries
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flexwrap-wrap" >
+                            <div id="agents_datatable_filter" class="dataTables_filter search-sec mb-0">
+                                <label
+                                    class="d-flex align-items-center justify-content-end mb-0 position-relative"><input
+                                        type="search" id="customSearchBox" placeholder="Search for Entries"
+                                        aria-controls="agents_datatable" class="form-control">
+                                    <i class="fas fa-search position-absolute"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
 		<div class="table-container pt-2 pb-2">
-			<table class="row-border order-column hover searchHighlight" id="agents_datatable">
-				<thead style="font-size: 0.93rem;">
+			<table class="order-column compact hover searchHighlight" id="agents_datatable">
+				<thead class="text-nowrap" style="font-size: 0.93rem;">
 					<tr>
 
 						<th style="min-width: 30px;">No</th>
 						<th></th>
 
-						<th style="min-width: 80px;">Agent</th>
-						<th style="min-width: 80px;">Business</th>
-						<th style="min-width: 80px;">Contact</th>
-						<th style="min-width: 192px;">Message</th>
+						<th style="min-width: 80px;">Agent <span class="arrow"></span></th>
+						<th style="min-width: 80px;">Business <span class="arrow"></span></th>
+						<th style="min-width: 80px;">Contact <span class="arrow"></span></th>
+						<th style="min-width: 192px;">Message<span class="arrow"></span></th>
 						<!-- <th style="min-width: 80px;">Status</th>
 						<th style="min-width: 77px !important;">Action</th> -->
 					</tr>
@@ -54,6 +90,9 @@
 @push('styles')
 @endpush
 @push('scripts')
+<script src="https://bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js">
+</script>
 <script>
 	var rows_selected = [];
 	var selectedCheckboxes = [];
@@ -69,16 +108,11 @@
 
 	});
 
-
-
-
-
 	/**** Draw dataTable ****/
 	function draw_table() {
 		var selectedCheckboxes = [];
 		// stateSave- when there are no filters
 		var table = jQuery('#agents_datatable').DataTable({
-			// dom: 'lBfrtip',
 			processing: true,
 			oLanguage: {
 				sProcessing: `{!! trim(preg_replace('/\s+/', ' ', view('partials.datatable_loader')->render())) !!}`
@@ -87,7 +121,7 @@
 			responsive: true,
 			autoWidth: false,
 			searchHighlight: true,
-			pageLength: 25,
+			pageLength: 10,
 			ajax: {
 				url: "{{ url('agents/getReportsDataApi') }}",
 				type: 'GET',
@@ -154,8 +188,6 @@
 
 	}
 
-
-
 	// Updates "Select all" control in a data table 
 	//
 	function updateDataTableSelectAllCtrl(table) {
@@ -165,7 +197,6 @@
 		var chkbox_select_all = $('#agents_datatable thead input[name="select_all"]', $table).get(0);
 
 		if (chkbox_select_all) {
-
 			// If none of the checkboxes are checked
 			if ($chkbox_checked.length === 0) {
 				chkbox_select_all.checked = false;
@@ -190,8 +221,6 @@
 		}
 	}
 </script>
-<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" integrity="sha512-LDB28UFxGU7qq5q67S1iJbTIU33WtOJ61AVuiOnM6aTNlOLvP+sZORIHqbS9G+H40R3Pn2wERaAeJrXg+/nu6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
 @endpush

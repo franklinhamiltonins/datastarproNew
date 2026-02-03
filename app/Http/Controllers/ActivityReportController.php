@@ -63,22 +63,26 @@ class ActivityReportController extends Controller
     public function activity() {
         $user = auth()->user();
 
-        $isAdminUser = $user->can('agent-create') || $user->can('all-accounts-list-pipedrive');
+        $isAdminUser = $this->checkingIsAdminUser($user);
+
+        $allDisplay = $this->checkingIsAllAccountDisplay($user,$isAdminUser);
 
         $agentId = $user->id;
-        $agentUsers = $this->getAgentListing($isAdminUser, $agentId, false);
+        $agentUsers = $this->getAgentListing($isAdminUser, $agentId, false,['Manager']);
         
-        return view('activityreport/tracker.activity',compact("agentUsers","agentId","isAdminUser"));
+        return view('activityreport/tracker.activity',compact("agentUsers","agentId","isAdminUser","allDisplay"));
     }
 
     public function mailerleadtracker() {
         $user = auth()->user();
 
-        $isAdminUser = $user->can('agent-create') || $user->can('all-accounts-list-pipedrive');
+        $isAdminUser = $this->checkingIsAdminUser($user);
+
+        $allDisplay = $this->checkingIsAllAccountDisplay($user,$isAdminUser);
 
         $agentId = $user->id;
         $agentEmail = $user->email;
-        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false);
+        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false,['Manager']);
         $leadSource = LeadSource::select('id','name')->where('status', 1)->get();
         $contactsTitle = Lead::contactTitle();
         $statusOptions = self::getContactStatusOptions();
@@ -86,7 +90,7 @@ class ActivityReportController extends Controller
         $edit = false;
 
         // echo "<pre>";print_r($statusOptions);exit;
-        return view('activityreport/tracker.mailerleadtracker',compact("leadSource","agentUsers","contactsTitle","agentId","edit",'statusOptions',"isAdminUser"));
+        return view('activityreport/tracker.mailerleadtracker',compact("leadSource","agentUsers","contactsTitle","agentId","edit",'statusOptions',"isAdminUser","allDisplay"));
     }
 
     public function editMailTracker($encoded_id)
@@ -99,11 +103,13 @@ class ActivityReportController extends Controller
         }
         $user = auth()->user();
 
-        $isAdminUser = $user->can('agent-create') || $user->can('all-accounts-list-pipedrive');
+        $isAdminUser = $this->checkingIsAdminUser($user);
+
+        $allDisplay = $this->checkingIsAllAccountDisplay($user,$isAdminUser);
 
         $agentId = $user->id;
         $agentEmail = $user->email;
-        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false);
+        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false,['Manager']);
         $leadSource = LeadSource::select('id','name')->where('status', 1)->get();
         $contactsTitle = Lead::contactTitle();
         $statusOptions = self::getContactStatusOptions();
@@ -111,7 +117,7 @@ class ActivityReportController extends Controller
         $edit = true;
 
         // echo "<pre>";print_r($statusOptions);exit;
-        return view('activityreport/tracker.mailerleadtracker',compact("leadSource","agentUsers","contactsTitle","agentId",'statusOptions',"edit",'mailLead',"isAdminUser"));
+        return view('activityreport/tracker.mailerleadtracker',compact("leadSource","agentUsers","contactsTitle","agentId",'statusOptions',"edit",'mailLead',"isAdminUser","allDisplay"));
     }
 
     public function deleteMailTracker($encoded_id)
@@ -423,24 +429,27 @@ class ActivityReportController extends Controller
     }
 
     public function activityReport() {
-        $isAdminUser = auth()->user()->can('agent-create');
-        if(!$isAdminUser){
-            $isAdminUser = auth()->user()->can('all-accounts-list-pipedrive');
-        }
+        $user = auth()->user();
+        $isAdminUser = $this->checkingIsAdminUser($user);
+
+        $allDisplay = $this->checkingIsAllAccountDisplay($user,$isAdminUser);
+
         $agentId = auth()->user()->id;
         $agentEmail = auth()->user()->email;
-        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false);
+        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false,['Manager']);
 
         // echo "<pre>";print_r($agentUsers);exit;
 
         
-        return view('activityreport/report.activity-report',compact("agentUsers","agentId","isAdminUser"));
+        return view('activityreport/report.activity-report',compact("agentUsers","agentId","isAdminUser","allDisplay"));
     }
 
     public function activityList(Request $request)
     {
         // echo "<pre>";print_r($request->input());exit;
-        $query = $this->activityListQuery($request->input());
+        $user = auth()->user();
+        $manager_id = $this->getManagerId($user);
+        $query = $this->activityListQuery($request->input(),false,$manager_id);
 
         if ($request->view_type == 1) {
             return datatables()->of($query)
@@ -481,6 +490,11 @@ class ActivityReportController extends Controller
             ]);
         }
 
+        $user = auth()->user();
+        $manager_id = $this->getManagerId($user);
+
+        $requestData["manager_id"] = $manager_id;
+
         ActivityReportDownload::dispatch( $requestData,$mail_agent_id);
 
         return response()->json([
@@ -505,24 +519,28 @@ class ActivityReportController extends Controller
     }
 
     public function mailerLeadReport() {
-        $isAdminUser = auth()->user()->can('agent-create');
-        if(!$isAdminUser){
-            $isAdminUser = auth()->user()->can('all-accounts-list-pipedrive');
-        }
+        $user = auth()->user();
+        $isAdminUser = $this->checkingIsAdminUser($user);
+
+        $allDisplay = $this->checkingIsAllAccountDisplay($user,$isAdminUser);
+
         $agentId = auth()->user()->id;
         $agentEmail = auth()->user()->email;
-        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false);
+        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false,['Manager']);
         $leadSource = LeadSource::select('id','name')->where('status', 1)->get();
 
         // echo "<pre>";print_r($agentUsers);exit;
 
         
-        return view('activityreport/report.mail-tracker-report',compact("agentUsers","agentId","leadSource","isAdminUser"));
+        return view('activityreport/report.mail-tracker-report',compact("agentUsers","agentId","leadSource","isAdminUser","allDisplay"));
     }
 
     public function mailLeadTrackerList(Request $request)
     {
-        $query = $this->generateMailLeadTrackerData($request->all());
+        $user = auth()->user();
+        $manager_id = $this->getManagerId($user);
+
+        $query = $this->generateMailLeadTrackerData($request->all(),$manager_id);
 
         if ($request->view_type == 1) {
             return datatables()->of($query)
@@ -590,6 +608,11 @@ class ActivityReportController extends Controller
             ]);
         }
 
+        $user = auth()->user();
+        $manager_id = $this->getManagerId($user);
+
+        $requestData["manager_id"] = $manager_id;
+
         ProcessMailerLeadTrackerReportJob::dispatch( $requestData,$mail_agent_id);
 
         return response()->json([
@@ -623,18 +646,19 @@ class ActivityReportController extends Controller
     }         
 
     public function daillyCallReport() {
-        $isAdminUser = auth()->user()->can('agent-create');
-        if(!$isAdminUser){
-            $isAdminUser = auth()->user()->can('all-accounts-list-pipedrive');
-        }
+        $user = auth()->user();
+        $isAdminUser = $this->checkingIsAdminUser($user);
+
+        $allDisplay = $this->checkingIsAllAccountDisplay($user,$isAdminUser);
+
         $agentId = auth()->user()->id;
         $agentEmail = auth()->user()->email;
-        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false);
+        $agentUsers = $this->getAgentListing($isAdminUser,$agentId,false,['Manager']);
 
         // echo "<pre>";print_r($agentUsers);exit;
 
         
-        return view('activityreport/report.daillyCallReport',compact("agentUsers","agentId","isAdminUser"));
+        return view('activityreport/report.daillyCallReport',compact("agentUsers","agentId","isAdminUser","allDisplay"));
     }
 
     public function dailycallReportList(Request $request)
@@ -643,7 +667,10 @@ class ActivityReportController extends Controller
 
         $agent_id = $request->agent;
 
-        $results =  $this->generateDailyReportData($agent_id,$formatted_date["from"],$formatted_date["to"]);
+        $user = auth()->user();
+        $manager_id = $this->getManagerId($user);
+
+        $results =  $this->generateDailyReportData($agent_id,$formatted_date["from"],$formatted_date["to"],$manager_id);
 
         // return response()->json(['data' => $results]);
         return datatables()->of($results)
@@ -664,6 +691,11 @@ class ActivityReportController extends Controller
                 'message' => 'You do not have SMTP configuration. Please set it up before attempting to download.'
             ]);
         }
+
+        $user = auth()->user();
+        $manager_id = $this->getManagerId($user);
+
+        $requestData["manager_id"] = $manager_id;
 
         ProcessMailDailyCallReportJob::dispatch( $requestData,$mail_agent_id);
 

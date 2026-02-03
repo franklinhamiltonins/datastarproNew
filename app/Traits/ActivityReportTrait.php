@@ -28,7 +28,7 @@ use App\Model\LeadSource;
 
 trait ActivityReportTrait
 {
-    protected function activityListQuery($requestData,$aor=false)
+    protected function activityListQuery($requestData,$aor=false,$manager_id=0)
     {
         $formatted_date = $this->getFormatedDate($requestData);
         if($requestData['view_type'] == 1){
@@ -61,11 +61,18 @@ trait ActivityReportTrait
         if (!empty($requestData['agent'])) {
             $query->where('user_id', $requestData['agent']);
         }
+        elseif($manager_id > 0){
+            $accountIds = $this->getAllAccountIdsForManager($manager_id);
+
+            if (!empty($accountIds)) {
+                $query->whereIn('user_id', $accountIds);
+            }
+        }
 
         return $query;
     }
 
-    protected function generateMailLeadTrackerData($requestData)
+    protected function generateMailLeadTrackerData($requestData,$manager_id=0)
     {
         $formatted_date = $this->getFormatedDate($requestData);
         if($requestData['view_type'] == 1){
@@ -90,6 +97,13 @@ trait ActivityReportTrait
         if (!empty($requestData['agent'])) {
             $query->where('user_id', $requestData['agent']);
         }
+        else{
+            $accountIds = $this->getAllAccountIdsForManager($manager_id);
+
+            if (!empty($accountIds)) {
+                $query->whereIn('user_id', $accountIds);
+            }
+        }
 
         if(!empty($formatted_date["from"]) && !empty($formatted_date["to"])){
             $query->whereBetween('mailer_leads_tracker.date', [date("Y-m-d",strtotime($formatted_date["from"])),date("Y-m-d",strtotime($formatted_date["to"]))]);
@@ -98,13 +112,20 @@ trait ActivityReportTrait
         return $query;
     }
 
-    protected function generateDailyReportData($agent = null, $from = null, $to = null)
+    protected function generateDailyReportData($agent = null, $from = null, $to = null,$manager_id=0)
     {
         $usersQuery = User::select('id', 'name', 'bigoceanuser_id')
             ->whereNotNull('bigoceanuser_id');
 
         if (!empty($agent)) {
             $usersQuery->where("id", $agent);
+        }
+        else{
+            $accountIds = $this->getAllAccountIdsForManager($manager_id);
+
+            if (!empty($accountIds)) {
+                $usersQuery->whereIn('id', $accountIds);
+            }
         }
 
         $users = $usersQuery->get();

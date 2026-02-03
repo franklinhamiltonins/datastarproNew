@@ -44,7 +44,7 @@ class ProcessMailerLeadTrackerReportJob implements ShouldQueue
     public function handle()
     {
         try {
-            $query = $this->generateMailLeadTrackerData($this->requestData);
+            $query = $this->generateMailLeadTrackerData($this->requestData,$this->requestData['manager_id']);
 
             $results = $query->get();
 

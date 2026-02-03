@@ -62,6 +62,7 @@ class LoginController extends Controller
                 'message' => 'Invalid Email',
                 'userId' => 0,
                 'showOtpBox' => false,
+                'redirectTo' => "",
             ], 200);
         }
 
@@ -71,25 +72,41 @@ class LoginController extends Controller
                 'message' => 'Invalid Password',
                 'userId' => 0,
                 'showOtpBox' => false,
+                'redirectTo' => "",
             ], 200);
         }
 
-        if($this->loginNotification($user)){
+        if($user->twofactor_authentication){
+            if($this->loginNotification($user)){
+                return response()->json([
+                    'status' => true,
+                    'message' => '',
+                    'userId' => $user->id,
+                    'showOtpBox' => true,
+                    'redirectTo' => "",
+                ], 200);
+            }
+            else{
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Something Went Wrong',
+                    'userId' => 0,
+                    'showOtpBox' => false,
+                    'redirectTo' => "",
+                ], 200);
+            }
+        }
+        else{
+            Auth::login($user);
             return response()->json([
                 'status' => true,
                 'message' => '',
                 'userId' => $user->id,
-                'showOtpBox' => true,
+                'showOtpBox' => false,
+                'redirectTo' => route('dashboard'),
             ], 200);
         }
-        else{
-            return response()->json([
-                'status' => false,
-                'message' => 'Something Went Wrong',
-                'userId' => 0,
-                'showOtpBox' => false,
-            ], 200);
-        } 
+         
     }
 
     public function verifyOtp(Request $request)

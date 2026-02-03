@@ -23,22 +23,26 @@
         <div class="table-container pb-4">
 
             <table class="table table-bordered m-0" id="cityTable">
-                <tr>
-                    <th style="width:56px;">No</th>
-                    <th>Name</th>
-                    <th>Search Keyword</th>
-                    <th>State</th>
-                    <th>County</th>
-                </tr>
-                @foreach ($cities as $key => $data)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $data->city }}</td>
-                    <td>{{ $data->search_keyword }}</td>
-                    <td>{{ $data->state }}</td>
-                    <td>{{ optional($data->scrapCounty)->name}}</td>
-                </tr>
-                @endforeach
+                <thead>
+                    <tr>
+                        <th style="width:56px;">No</th>
+                        <th>Name</th>
+                        <th>Search Keyword</th>
+                        <th>State</th>
+                        <th>County</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cities as $key => $data)
+                        <tr>
+                            <td>{{ ++$i }}</td>
+                            <td>{{ $data->city }}</td>
+                            <td>{{ $data->search_keyword }}</td>
+                            <td>{{ $data->state }}</td>
+                            <td>{{ optional($data->scrapCounty)->name}}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
 

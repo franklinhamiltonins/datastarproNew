@@ -121,12 +121,17 @@
                 success: function(res) {
                     $('#step1Submit').prop('disabled', false);
                     hideLoader();
-                    if (res.status && res.showOtpBox) {
-                        // show OTP input
-                        $('#login_user_id').val(res.userId);
-                        $('#step1').hide();
-                        $('#step2').show();
-                        $('#server-message').html('<div class="">' + res.message + '</div>');
+                    if (res.status) {
+                        if(res.showOtpBox){
+                            // show OTP input
+                            $('#login_user_id').val(res.userId);
+                            $('#step1').hide();
+                            $('#step2').show();
+                            $('#server-message').html('<div class="">' + res.message + '</div>');
+                        }
+                        else{
+                            window.location.href = res.redirectTo;
+                        }
                     } else {
                         $('#server-message').html('<div class="text-center alert alert-danger">' + res.message + '</div>');
                     }

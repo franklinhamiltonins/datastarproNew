@@ -45,7 +45,7 @@ class ProcessMailDailyCallReportJob implements ShouldQueue
     {
         try {
             $formattedDate = $this->getFormatedDate($this->requestData);
-            $results = $this->generateDailyReportData($this->requestData['agent'], $formattedDate['from'], $formattedDate['to']);
+            $results = $this->generateDailyReportData($this->requestData['agent'], $formattedDate['from'], $formattedDate['to'],$this->requestData['manager_id']);
 
             $fileName = 'daily_call_report_' . date('Y_m_d_H_i_s') . '.csv';
             $path = storage_path('app/public/csv');

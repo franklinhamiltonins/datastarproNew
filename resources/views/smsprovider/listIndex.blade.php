@@ -95,12 +95,12 @@
                         <table class="order-column compact hover searchHighlight smsproviderlist_datatable" id="smsproviderlist_datatable">
                             <thead style="font-size: 0.93rem;">
                                 <tr>
-                                    <th style="width: 14%;">Name</th>
-                                    <th style="width: 14%;">Mobile Number</th>
-                                    <th style="width: 12%;">Outbound Count</th>
-                                    <th style="width: 12%;">Inbound Count</th>
-                                    <th style="width: 14%;">Last Out Time</th>
-                                    <th style="width: 14%;">Last In Time</th>
+                                    <th style="width: 14%;">Name<span class="arrow"></span></th>
+                                    <th style="width: 14%;">Mobile Number<span class="arrow"></span></th>
+                                    <th style="width: 12%;">Outbound Count<span class="arrow"></span></th>
+                                    <th style="width: 12%;">Inbound Count<span class="arrow"></span></th>
+                                    <th style="width: 14%;">Last Out Time<span class="arrow"></span></th>
+                                    <th style="width: 14%;">Last In Time<span class="arrow"></span></th>
                                     <th style="width: 8%;">Action</th>
                                     <th style="width: 7%;">Complete</th>
                                     <th style="width: 5%;">Stop</th>

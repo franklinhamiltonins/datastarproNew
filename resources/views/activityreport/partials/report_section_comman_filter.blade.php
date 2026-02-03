@@ -1,7 +1,7 @@
 <div class="form-group col-md-4">
     <strong>Agent</strong>
     <select class="form-control inputSelectionBox" id="filter_agent">
-        @if($isAdminUser)
+        @if($allDisplay)
             <option value="">All</option>
         @endif
         @foreach($agentUsers as $agent)

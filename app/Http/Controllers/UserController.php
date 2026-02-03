@@ -227,4 +227,58 @@ class UserController extends Controller
 		return response()->json(['agent' => $agent, 'message' => '']);
 	}
 
+	public function update2FA(Request $request)
+	{
+	    $request->validate([
+	        'user_id' => 'required|numeric',
+	        'status'  => 'required|boolean',
+	    ]);
+
+	    $user = User::find($request->user_id);
+	    if($user){
+	    	$user->twofactor_authentication = $request->status;
+		    $user->save();
+
+		    return response()->json([
+		        'status' => true,
+		        'message' => 'Two-Factor Authentication updated successfully for '.$user->name.'.'
+		    ]);
+	    }
+
+	    return response()->json([
+	        'status' => false,
+	        'message' => 'Something went wrong! Please try again.'
+	    ]);
+	    
+	}
+
+	public function assignTeam($id)
+	{
+	    $userId = base64_decode($id);
+
+	    $user = User::find($userId);
+
+	    $teams = $user->managerTeamList->pluck('id')->toArray();
+
+	    $agentlist = parent::getagentList();
+
+	    return view('users.assign-team', compact('user', 'agentlist','teams'));
+	}
+
+	public function updateTeam(Request $request)
+	{
+	    $request->validate([
+	        'user_id' => 'required',
+	        'team_member' => 'array'
+	    ]);
+
+	    $manager = User::findOrFail($request->user_id);
+
+	    // Sync selected agents
+	    $manager->managerTeamList()->sync($request->team_member ?? []);
+
+	    return redirect()->route('users.index')
+	        ->with('success', 'Team members updated successfully.');
+	}
+
 }

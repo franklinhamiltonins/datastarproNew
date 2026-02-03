@@ -155,27 +155,64 @@ class Controller extends BaseController
 		    $query->where('status_type', 1)
 		          ->orWhere('false_status', 1);
 		})->pluck('id', 'id')->toArray();
-	}  
+	}
+
+	public static function getagentList() {
+		$agent_users = [];
+		$agents = User::select('users.id','users.name','users.email')->role(['Agent','Service & Agent'])->get();
+		foreach ($agents as $key => $agent) {
+			$agent_users[$agent->id] = $agent->name . ' (' . $agent->email . ')';
+		}
+
+		return $agent_users;
+	}
+
+	public static function getAllAccountIdsForManager($managerId)
+	{
+		$user = auth()->user();
+		$accounts = [$managerId]; 
+
+		$user = User::where("id",$managerId)->first();
+
+		if($user){
+			$agents = $user->managerTeamList;
+            foreach ($agents as $agent) {
+            	array_push($accounts,$agent->id);
+            }
+		}
+		return $accounts;
+	}
 
 	public static function getagentListBasedonLogin() {
 		$is_admin_user = auth()->user()->can('all-accounts-list-pipedrive');
 		$agent_users = [];
 
-		if($is_admin_user){
-			$agents = User::select('users.id','users.name','users.email')->role(['Agent','Service & Agent'])->get();
-			foreach ($agents as $key => $agent) {
-				$agent_users[$agent->id] = $agent->name . ' (' . $agent->email . ')';
-			}
-		}
-		else{
+		if(auth()->user()->role(['Manager'])){
 			$user = auth()->user();
 			$agent_users[$user->id] = $user->name . ' (' . $user->email . ')';
 
-			$agents = $user->accessibleUsers;
-			foreach ($agents as $key => $agent) {
-				$agent_users[$agent->id] = $agent->name . ' (' . $agent->email . ')';
+			$agents = $user->managerTeamList;
+            foreach ($agents as $agent) {
+                $agent_users[$agent->id] = $agent->name . ' (' . $agent->email . ')';
+            }
+		}
+		else{
+			if($is_admin_user){
+				$agents = User::select('users.id','users.name','users.email')->role(['Agent','Service & Agent','Manager'])->get();
+				foreach ($agents as $key => $agent) {
+					$agent_users[$agent->id] = $agent->name . ' (' . $agent->email . ')';
+				}
 			}
+			else{
+				$user = auth()->user();
+				$agent_users[$user->id] = $user->name . ' (' . $user->email . ')';
 
+				$agents = $user->accessibleUsers;
+				foreach ($agents as $key => $agent) {
+					$agent_users[$agent->id] = $agent->name . ' (' . $agent->email . ')';
+				}
+
+			}
 		}
 		// echo "<pre>";print_r($agent_users);exit;
 

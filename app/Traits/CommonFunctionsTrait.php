@@ -947,33 +947,11 @@ trait CommonFunctionsTrait
         "Flood" => "flood_rating",
     ];
 
-    public function getAgentListing($isAdminUser,$agentId,$everyone=true)
+    public function getAgentListing($isAdminUser,$agentId,$everyone=true,$roles=[])
     {
     	$agentUsers = [];
-    	if ($isAdminUser) {
-            // If the user is an admin, list all agents
-            $agents = User::role(['Agent','Service & Agent'])->get();
-            if($everyone){
-            	$agentUsers[0] = [
-	                "displayname" => "Everyone",
-	                "name" => "Everyone",
-	                "email" => "Everyone",
-	                "id" => 0,
-	            ];
-            }
-
-            foreach ($agents as $agent) {
-                $agentUsers[$agent->id] = [
-                    "displayname" => "{$agent->name} ({$agent->email})",
-                    "name" => $agent->name,
-                    "email" => $agent->email,
-                    "id" => $agent->id,
-                ];
-            }
-            unset($agents);
-        } else {
-            // If the user is not an admin, add the current user only
-            $user = User::where("id",$agentId)->first();
+    	if(in_array("Manager",$roles,true)){
+    		$user = User::where("id",$agentId)->first();
             if($user){
 	            $agentUsers[$agentId] = [
 	                "displayname" => "{$user->name} ({$user->email})",
@@ -981,7 +959,7 @@ trait CommonFunctionsTrait
 	                "email" => $user->email,
 	                "id" => $user->id,
 	            ];
-	            $agents = $user->accessibleUsers;
+	            $agents = $user->managerTeamList;
 	            foreach ($agents as $agent) {
 	                $agentUsers[$agent->id] = [
 	                    "displayname" => "{$agent->name} ({$agent->email})",
@@ -991,8 +969,52 @@ trait CommonFunctionsTrait
 	                ];
 	            }
             }
+    	}
+    	else{
+	    	if ($isAdminUser) {
+	            // If the user is an admin, list all agents
+	            $agents = User::role(['Agent','Service & Agent'])->get();
+	            if($everyone){
+	            	$agentUsers[0] = [
+		                "displayname" => "Everyone",
+		                "name" => "Everyone",
+		                "email" => "Everyone",
+		                "id" => 0,
+		            ];
+	            }
 
-        }
+	            foreach ($agents as $agent) {
+	                $agentUsers[$agent->id] = [
+	                    "displayname" => "{$agent->name} ({$agent->email})",
+	                    "name" => $agent->name,
+	                    "email" => $agent->email,
+	                    "id" => $agent->id,
+	                ];
+	            }
+	            unset($agents);
+	        } else {
+	            // If the user is not an admin, add the current user only
+	            $user = User::where("id",$agentId)->first();
+	            if($user){
+		            $agentUsers[$agentId] = [
+		                "displayname" => "{$user->name} ({$user->email})",
+		                "name" => $user->name,
+		                "email" => $user->email,
+		                "id" => $user->id,
+		            ];
+		            $agents = $user->accessibleUsers;
+		            foreach ($agents as $agent) {
+		                $agentUsers[$agent->id] = [
+		                    "displayname" => "{$agent->name} ({$agent->email})",
+		                    "name" => $agent->name,
+		                    "email" => $agent->email,
+		                    "id" => $agent->id,
+		                ];
+		            }
+	            }
+
+	        }
+	    }
 
         return $agentUsers;
     }
@@ -1205,5 +1227,29 @@ trait CommonFunctionsTrait
 
 	public function createTemplateSlug($data) {
 		return Str::slug($data['template_name'], '-').'-'.auth()->user()->id.'-'.$data['template_type'];
+	}
+
+	public function checkingIsAdminUser($user)
+	{
+		$isAdminUser = $user->can('agent-create') || $user->can('all-accounts-list-pipedrive');
+
+		return $isAdminUser;
+	}
+
+	public function checkingIsAllAccountDisplay($user,$isAdminUser)
+	{
+		$allDisplay = $isAdminUser || $user->hasRole('Manager');
+
+		return $allDisplay;
+	}
+
+	public function getManagerId($user)
+	{
+		$managerId = 0;
+		if($user->hasRole('Manager')){
+			$managerId = $user->id;
+		}
+
+		return $managerId;
 	}
 }

@@ -45,14 +45,14 @@ class ActivityReportDownload implements ShouldQueue
     {
         try {
             if($this->requestData['view_type'] == 1){
-                $query = $this->activityListQuery($this->requestData,true);
+                $query = $this->activityListQuery($this->requestData,true,$this->requestData['manager_id']);
                 $results = $this->formatAorDetails($query->get());
                 $fileName = 'agent_activity_logwise_report_' . date('Y_m_d_H_i_s') . '.csv';
                 $subject = "Agent Activity Report (Log Wise) CSV ";
                 $body = "Please find the attached Agent Activity Report (Log Wise) CSV file.";
             }
             else{
-                $query = $this->activityListQuery($this->requestData);
+                $query = $this->activityListQuery($this->requestData,false,$this->requestData['manager_id']);
                 $results = $query->get();
                 $fileName = 'agent_activity_consolidated_report_' . date('Y_m_d_H_i_s') . '.csv';
                 $subject = "Agent Activity Report (Consolidated) CSV ";

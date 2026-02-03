@@ -34,7 +34,8 @@ class User extends Authenticatable
 		'name',
 		'email',
 		'password',
-		'bigoceanuser_id'
+		'bigoceanuser_id',
+		'twofactor_authentication'
 	];
 
 	/**
@@ -109,6 +110,26 @@ class User extends Authenticatable
             'accessible_user_id'    // related key
         );
     }
+
+    public function managerTeamList()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'manager_team',
+            'manager_id',    // local key
+            'user_id'    // related key
+        );
+    }
+
+    public function managers()
+	{
+	    return $this->belongsToMany(
+	        User::class,
+	        'manager_team',
+	        'user_id',     // agent column
+	        'manager_id'   // manager column
+	    );
+	}
 
     public function assignedLeadAsanaDetails()
     {
