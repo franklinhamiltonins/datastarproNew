@@ -439,37 +439,41 @@
                             @else
                             <div class="table-container ">
                                 <table class="order-column compact hover searchHighlight dataTable no-footer">
-                                    @php
-                                    $a = 0;
-                                    @endphp
-                                    <tr>
-                                        <th style="width:56px;">No</th>
-                                        <!-- <th>User</th> -->
-                                        <th>Action</th>
-                                        <th>Contact Name</th>
-                                        <th>Campaign</th>
-                                        <th style="width: 138px">Date of Contact</th>
-                                        <th style="width: 138px">Created At</th>
-                                    </tr>
-                                    @foreach ($actions as $key => $action)
-                                    <tr>
-                                        <td style="text-align: center;">{{ ++ $a }}</td>
-                                        <td>{{ $action->action}}</td>
-                                        <td> {{ $action->contact_name}}</td>
-                                        <td>
-                                            @can ('campaign-list')
-                                            <a
-                                                href="{{ $action->campaigns? route('campaigns.show',$action->campaigns->id) : ''}}">
+                                    <thead>
+                                        @php
+                                        $a = 0;
+                                        @endphp
+                                        <tr>
+                                            <th style="width:56px;">No</th>
+                                            <!-- <th>User</th> -->
+                                            <th>Action</th>
+                                            <th>Contact Name</th>
+                                            <th>Campaign</th>
+                                            <th style="width: 138px">Date of Contact</th>
+                                            <th style="width: 138px">Created At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($actions as $key => $action)
+                                        <tr>
+                                            <td style="text-align: center;">{{ ++ $a }}</td>
+                                            <td>{{ $action->action}}</td>
+                                            <td> {{ $action->contact_name}}</td>
+                                            <td>
+                                                @can ('campaign-list')
+                                                <a
+                                                    href="{{ $action->campaigns? route('campaigns.show',$action->campaigns->id) : ''}}">
+                                                    @endcan
+                                                    {{ $action->campaigns? $action->campaigns->name : ''}}
+                                                    @cannot ('campaign-list')
+                                                </a>
                                                 @endcan
-                                                {{ $action->campaigns? $action->campaigns->name : ''}}
-                                                @cannot ('campaign-list')
-                                            </a>
-                                            @endcan
-                                        </td>
-                                        <td> {{ $action->contact_date}}</td>
-                                        <td> {{ $action->created_at}}</td>
-                                    </tr>
-                                    @endforeach
+                                            </td>
+                                            <td> {{ $action->contact_date}}</td>
+                                            <td> {{ $action->created_at}}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                             @endif
@@ -502,35 +506,39 @@
                             @else
                             <div class="table-container ">
                                 <table class="order-column compact hover searchHighlight dataTable no-footer">
-                                    @php
-                                    $c = 0;
-                                    @endphp
-                                    <tr>
-                                        <th style="width:56px;">No</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th style="width: 138px">Campaign Date</th>
-                                        <th style="width: 50px; text-align: center;">View</th>
-                                    </tr>
-                                    @foreach ($data as $key => $campaign)
-                                    <tr>
-                                        <td>{{ ++$c }}</td>
-                                        <td>{{ $campaign->name }}</td>
-                                        <td
-                                            class="@if ($campaign->status == 'PENDING') text-info @else text-success @endif">
-                                            {{ $campaign->status }}</td>
-                                        <td> @if($campaign->campaign_date)
-                                            {{date("m/d/Y", strtotime($campaign->campaign_date))}}
-                                            @endif
-                                        </td>
-                                        <td align="center">
-                                            <a class="btn btn-sm btn-info action-btn" target="_blank"
-                                                title="View Campaign"
-                                                href="{{ route('campaigns.show',$campaign->id) }}"><i
-                                                    class="fa fa-eye"></i></a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
+                                    <thead>
+                                        @php
+                                        $c = 0;
+                                        @endphp
+                                        <tr>
+                                            <th style="width:56px;">No</th>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th style="width: 138px">Campaign Date</th>
+                                            <th style="width: 50px; text-align: center;">View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($data as $key => $campaign)
+                                        <tr>
+                                            <td>{{ ++$c }}</td>
+                                            <td>{{ $campaign->name }}</td>
+                                            <td
+                                                class="@if ($campaign->status == 'PENDING') text-info @else text-success @endif">
+                                                {{ $campaign->status }}</td>
+                                            <td> @if($campaign->campaign_date)
+                                                {{date("m/d/Y", strtotime($campaign->campaign_date))}}
+                                                @endif
+                                            </td>
+                                            <td align="center">
+                                                <a class="btn btn-sm btn-info action-btn" target="_blank"
+                                                    title="View Campaign"
+                                                    href="{{ route('campaigns.show',$campaign->id) }}"><i
+                                                        class="fa fa-eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                             @endif

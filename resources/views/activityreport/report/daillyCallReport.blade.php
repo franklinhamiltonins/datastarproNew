@@ -2,7 +2,7 @@
 @section('pagetitle', 'Daily Call Report')
 @push('breadcrumbs')
 <li class="breadcrumb-item active">Daily Call</li>
-<li class="breadcrumb-item">Reports</a></li>
+<li class="breadcrumb-item">Reports</li>
 @endpush
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">

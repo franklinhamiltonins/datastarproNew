@@ -104,44 +104,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div id="filters" class="collapse">
-                        <div class="card card-body mb-0 p-2 rounded-top-0 box-shadow-btm">
-                            <div class="search-filter">
-                                <div class="form-row">
-                                    <div class="col-md-4">
-                                        <strong for="">City</strong>
-                                        <select data-column="c_city" id="c_city"
-                                            class="form-control form-control-sm filterfield select">
-                                            <option value="" selected>All cities</option>
-                                            @foreach($cityCounts as $key=>$city)
-                                                <option value="{{$city->c_city}}">{{$city->c_city}} - ({{$city->total}})</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <strong for="">Business Type</strong>
-                                        <select data-column="leads.type" id="business_type"
-                                            class="form-control form-control-sm filterfield select">
-                                            <option value="" selected>All Types</option>
-                                            <option value="Condo">Condo</option>
-                                            <option value="HOA">HOA</option>
-                                            <option value="Commercial">Commercial</option>
-                                            <option value="Co-Op">Co-Op</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <strong for="">Mergeable</strong>
-                                        <select data-column="c_merge_status" id="c_merge_status"
-                                            class="form-control form-control-sm filterfield select">
-                                            <option value="" selected>All Types</option>
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                     <div id="filters" class="collapse">
                         <div class="card card-body mb-0 p-3 rounded-top-0 shadow-sm">
                             <div class="search-filter">

@@ -13,32 +13,35 @@
 
 
 		<table class="merge-table mb-4 table table-bordered bg-white">
-			<tr class="merge-tr bg-gray">
-				<th class="merge-th p-2">Attribute</th>
+			<thead>
+				<tr class="merge-tr bg-gray">
+					<th class="merge-th p-2">Attribute</th>
 
-				{{-- Generate table headers for each attribute --}}
-				@foreach ($compareArr as $key => $values)
-				<th class="merge-th p-2 dynamic-th">
-					@if (count($compareArr) > 1)
-					<input type="checkbox" name="attributes[]" value="{{ $key }}" class="column-checkbox">
-					@endif
+					{{-- Generate table headers for each attribute --}}
+					@foreach ($compareArr as $key => $values)
+					<th class="merge-th p-2 dynamic-th">
+						@if (count($compareArr) > 1)
+						<input type="checkbox" name="attributes[]" value="{{ $key }}" class="column-checkbox">
+						@endif
 
-					{{ $key }}
-				</th>
+						{{ $key }}
+					</th>
+					@endforeach
+				</tr>
+			</thead>
+            <tbody>
+				{{-- Generate table rows for each index (assuming $compareArr[0] exists) --}}
+				@foreach ($compareArr[0] as $index => $value)
+				<tr class="merge-tr">
+					<td class="merge-td bg-gray-light p-2">{{ $index }}</td>
+
+					{{-- Generate table cells for each attribute value at the current index --}}
+					@foreach ($compareArr as $key => $values)
+					<td class="merge-td p-2  dynamic-td" {!! ($index=='id' ) ? 'id="' . $values[$index] . '"' : '' !!}>{!! $values[$index] !!}</td>
+					@endforeach
+				</tr>
 				@endforeach
-			</tr>
-
-			{{-- Generate table rows for each index (assuming $compareArr[0] exists) --}}
-			@foreach ($compareArr[0] as $index => $value)
-			<tr class="merge-tr">
-				<td class="merge-td bg-gray-light p-2">{{ $index }}</td>
-
-				{{-- Generate table cells for each attribute value at the current index --}}
-				@foreach ($compareArr as $key => $values)
-				<td class="merge-td p-2  dynamic-td" {!! ($index=='id' ) ? 'id="' . $values[$index] . '"' : '' !!}>{!! $values[$index] !!}</td>
-				@endforeach
-			</tr>
-			@endforeach
+			</tbody>
 		</table>
 		@if (count($compareArr) > 1)
 

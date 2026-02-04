@@ -19,58 +19,62 @@
         </div>
         <div class="table-container pt-0 pb-4">
             <table class="table table-bordered m-0" id="usersTable">
-                <tr>
-                    <th style="width:56px;">No</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Roles</th>
-                    <th style="width: 100px;">2FA</th>
-                    <th style="width: 138px">Action</th>
-                </tr>
-                @foreach ($data as $key => $user)
+                <thead>
                     <tr>
-                        <td>{{ ++$i }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            @if(!empty($user->getRoleNames()))
-                                @foreach($user->getRoleNames() as $v)
-                                    <label class="btn btn-sm  btn-secondary">{{ $v }}</label>
-                                @endforeach
-                            @endif
-                        </td>
-                        <td>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input toggle-2fa" 
-                                       type="checkbox" 
-                                       role="switch"
-                                       data-user_id="{{ $user->id }}"
-                                       {{ $user->twofactor_authentication ? 'checked' : '' }}>
-                            </div>
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-info action-btn" title="Show User" href="{{ route('users.show',base64_encode($user->id)) }}"><i class="fa fa-eye"></i></a>
-                            @can('user-edit')
-                                <a class="btn btn-sm  btn-success action-btn" title="Edit User" href="{{ route('users.edit',base64_encode($user->id)) }}"><i class="fa fa-edit"></i></a>
-                            @endcan
-                            @if($user->hasRole('Manager'))
-                                <a class="btn btn-sm btn-warning action-btn" 
-                                   title="Assign Team Member" 
-                                   href="{{ route('users.assignTeam', base64_encode($user->id)) }}">
-                                    <i class="fas fa-users"></i>
-                                </a>
-                            @endif
-                            @can('user-delete')
-                                {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline','class' => ['userForm-'.$user->id]]) !!}
-                                    {{-- trigger confirmation modal --}}
-                                    <a href="#" title="Delete User" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$user->id}}')" class="btn  btn-sm btn-danger deletebtn action-btn">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                {!! Form::close() !!}
-                            @endcan
-                        </td>
+                        <th style="width:56px;">No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th style="width: 100px;">2FA</th>
+                        <th style="width: 138px">Action</th>
                     </tr>
-                @endforeach
+                </thead>
+                <tbody>
+                    @foreach ($data as $key => $user)
+                        <tr>
+                            <td>{{ ++$i }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                @if(!empty($user->getRoleNames()))
+                                    @foreach($user->getRoleNames() as $v)
+                                        <label class="btn btn-sm  btn-secondary">{{ $v }}</label>
+                                    @endforeach
+                                @endif
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input toggle-2fa" 
+                                           type="checkbox" 
+                                           role="switch"
+                                           data-user_id="{{ $user->id }}"
+                                           {{ $user->twofactor_authentication ? 'checked' : '' }}>
+                                </div>
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-info action-btn" title="Show User" href="{{ route('users.show',base64_encode($user->id)) }}"><i class="fa fa-eye"></i></a>
+                                @can('user-edit')
+                                    <a class="btn btn-sm  btn-success action-btn" title="Edit User" href="{{ route('users.edit',base64_encode($user->id)) }}"><i class="fa fa-edit"></i></a>
+                                @endcan
+                                @if($user->hasRole('Manager'))
+                                    <a class="btn btn-sm btn-warning action-btn" 
+                                       title="Assign Team Member" 
+                                       href="{{ route('users.assignTeam', base64_encode($user->id)) }}">
+                                        <i class="fas fa-users"></i>
+                                    </a>
+                                @endif
+                                @can('user-delete')
+                                    {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline','class' => ['userForm-'.$user->id]]) !!}
+                                        {{-- trigger confirmation modal --}}
+                                        <a href="#" title="Delete User" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$user->id}}')" class="btn  btn-sm btn-danger deletebtn action-btn">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    {!! Form::close() !!}
+                                @endcan
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
         {!! $data->render() !!}

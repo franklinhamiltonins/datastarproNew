@@ -2,7 +2,6 @@
 @section('pagetitle', 'City Management')
 @push('breadcrumbs')
 
-<li class="breadcrumb-item active"><a href="{{route('bot.settings')}}">All Bots</a></li>
 <li class="breadcrumb-item active">Bot Management</li>
 @endpush
 @section('content')

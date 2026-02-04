@@ -133,8 +133,6 @@ class DialCreateJob implements ShouldQueue
             }
             // DB::commit();
         } catch (\Exception $e) {
-            // DB::rollBack();
-            // throw $e; // Re-throw the exception so Laravel handles retries if needed.
         }
     }
 }

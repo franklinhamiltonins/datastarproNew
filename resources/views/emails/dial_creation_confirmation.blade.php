@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialing List Confirmation</title>
 </head>
 <body style="margin: 0;">
     <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px;">
