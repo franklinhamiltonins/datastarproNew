@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::middleware(['web_no_csrf'])
+->prefix('pipedrive')
+->group(function () {
+    Route::post('/request_login', 'pipedrive\PipedriveLoginController@request_login');
+    Route::post('/request_verify', 'pipedrive\PipedriveLoginController@request_verify');
+    Route::post('/resendOtp', 'pipedrive\PipedriveLoginController@resendOtp');
+});
 Route::middleware(['web_no_csrf', 'auth:web'])->prefix('pipedrive')->group(function () {
     Route::get('/chat/{contactId}', 'pipedrive\PipedriveTemplateController@contactChat');
     Route::post('/sendChat', 'pipedrive\PipedriveTemplateController@sendChat');
@@ -23,9 +30,6 @@ Route::middleware(['web_no_csrf', 'auth:web'])->prefix('pipedrive')->group(funct
 
     Route::get('/checkAlreadyLogin', 'pipedrive\PipedriveLoginController@checkAlreadyLogin');
     Route::get('/logout', 'pipedrive\PipedriveLoginController@logout');
-    Route::post('/request_login', 'pipedrive\PipedriveLoginController@request_login');
-    Route::post('/request_verify', 'pipedrive\PipedriveLoginController@request_verify');
-    Route::post('/resendOtp', 'pipedrive\PipedriveLoginController@resendOtp');
 
     Route::get('/differentDealStatus', 'pipedrive\PipedriveInitialLoadController@differentDealStatus');
     Route::post('/statusWiseLeadList', 'pipedrive\PipedriveInitialLoadController@statusWiseLeadList');
