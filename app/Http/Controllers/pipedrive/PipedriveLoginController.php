@@ -7,13 +7,14 @@ use App\Model\User;
 use App\Traits\CommonFunctionsTrait;
 use App\Traits\LoginFunctionTrait;
 use App\Traits\PipeDriveTrait;
+use App\Traits\SMTPRelatedTrait;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PipedriveLoginController extends ContactController
 {
-    use CommonFunctionsTrait,LoginFunctionTrait,PipeDriveTrait;
+    use CommonFunctionsTrait,LoginFunctionTrait,PipeDriveTrait,SMTPRelatedTrait;
 
     public function logout()
     {
@@ -69,41 +70,58 @@ class PipedriveLoginController extends ContactController
         // Attempt to find the user by email
         $user = User::where('email', $request->email)->first();
 
+        $status = false;
+        $message = "";
+        $showOtpBox = false;
+
+        $credentials = Null;
+        $agentId = Null;
+        $agentUsers = Null;
+        $agentWisePermission = Null;
+
         // Return an error if the user does not exist
         if (! $user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid Email',
-                'isLoggedIn' => false,
-                'credentials' => null,
-            ], 200);
+            $message = "Invalid Email";
         }
+        else{
+            // Check if the provided password matches the user's stored password
+            if (! Hash::check($request->password, $user->password)) {
+                $message = "Invalid Password";
+            }
+            elseif($user->twofactor_authentication) {
+                if ($this->loginNotification($user)) {
+                    $status = true;
+                    $showOtpBox = true;
+                }
+                else{
+                    $message = "Something Went Wrong";
+                }
+            }
+            else{
+                Auth::login($user);
+                $status = true;
+                $credentials = auth()->user();
+                $agentWisePermission = $this->getAgentWisePermission($user);
 
-        // Check if the provided password matches the user's stored password
-        if (! Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid Password',
-                'isLoggedIn' => false,
-                'credentials' => null,
-            ], 200);
-        }
+                $isAdminUser = $agentWisePermission['isAdminUser'];
 
-        if ($this->loginNotification($user)) {
-            return response()->json([
-                'status' => true,
-                'message' => '',
-                'userId' => $user->id,
-                'showOtpBox' => true,
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Something Went Wrong',
-                'userId' => 0,
-                'showOtpBox' => false,
-            ], 200);
+                // Initialize agent-related variables
+                $agentId = $isAdminUser ? 0 : $user->id;
+
+                $agentUsers = $this->getAgentListing($isAdminUser, $agentId);
+
+            }
         }
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'userId' => $user->id ?? 0,
+            'showOtpBox' => $showOtpBox,
+            'credentials' => $credentials,
+            'agentId' => $agentId,
+            'agentUsers' => $agentUsers,
+            'agentWisePermission' => $agentWisePermission,
+        ], 200);
     }
 
     public function request_verify(Request $request)
@@ -132,7 +150,7 @@ class PipedriveLoginController extends ContactController
                 'triedAttempt' => 0,
                 'isLoggedIn' => true,
                 'credentials' => $credentials,
-                'agent_id' => $agentId,
+                'agentId' => $agentId,
                 'agentUsers' => $agentUsers,
                 'agentWisePermission' => $agentWisePermission,
             ], 200);

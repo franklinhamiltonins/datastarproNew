@@ -68,7 +68,7 @@ class LoginController extends Controller
         return response()->json([
             'status' => $status,
             'message' => $message,
-            'userId' => $user->id,
+            'userId' => $user->id ?? 0,
             'showOtpBox' => $showOtpBox,
             'redirectTo' => $redirectTo,
         ], 200);
