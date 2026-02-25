@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 
     // 'allowed_origins' => ['*'],
-    'allowed_origins' => ['http://localhost:5173', 'https://datastarpro-pipedrive.vercel.app', 'http://18.189.66.130', 'https://pipelinedrive.datastarpro.com', 'http://pipelinedrive.datastarpro.com', 'https://18.189.66.130'],
+    'allowed_origins' => ['http://localhost:5173', 'https://datastarpro-pipedrive.vercel.app', 'http://18.189.66.130', 'https://pipelinedrive.datastarpro.com', 'http://pipelinedrive.datastarpro.com', 'https://18.189.66.130', 'https://34.193.246.208'],
 
     'allowed_origins_patterns' => [],
 
