@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row mt-2 mt-md-4">
             <div class="col-xl-6">
                 <div class="card card-secondary">
@@ -27,7 +27,6 @@
                                 <strong>Name:</strong>
                                 {{ $role->name }}
                             </div>
-                        
                             <div class="form-group">
                                 <strong>Permissions:</strong>
                                 @if(!empty($rolePermissions))
@@ -45,8 +44,6 @@
                 </div>
             </div>
         </div>
-        
-         
     </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->

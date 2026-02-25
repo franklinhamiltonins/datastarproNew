@@ -5,60 +5,11 @@
 <li class="breadcrumb-item active">Edit Business</li>
 @endpush
 @section('content')
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.sumoselect/3.1.0/sumoselect.min.css" integrity="sha512-DwvcXBSYqgsNMre0DRTf/WWSBiKhG+Z+cGYwgOSpkvlf9jZoLVL6OvWGTDa0a/5qm3T1F+obp11aJJNksWURNA==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
-<!-- <link href="/css/jquery.dataTables.min.css" rel="stylesheet"> -->
-<!-- <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script> -->
-
-<!-- <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" defer></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.sumoselect/3.1.0/jquery.sumoselect.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.sumoselect/3.1.0/jquery.sumoselect.js" ></script> -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
 <!-- Main content -->
 <section class="lead-edit-form content">
     <div class="container-fluid pb-3">
-        <div class="row m-0">
-            <div class="col-lg-12 margin-tb mb-3">
-                <div class="d-flex justify-content-between">
-                    <div class="left-content row d-flex align-items-center">
-                        <a class="btn btn-info btn-sm px-2 mb-3 mb-md-0"
-                            href="{{ route('leads.index', ['id' => $lead->id]) }}"
-                            onclick="changeBackButtonLink(event)"><i class="fas fa-arrow-circle-left"></i> Back</a>
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-sm btn-secondary mb-0" type="button" data-bs-toggle="modal"
-                            data-bs-target="#logModal">
-                            <i class="fa fa-comment-dots"></i>
-                            <span class="d-none d-lg-inline">Lead Log</span>
-                        </button>
-                        @can('lead-action')
-                        <button class="btn btn-sm btn-warning action-btn m-0" data-bs-toggle="modal"
-                            data-bs-target="#userLeadActions">
-                            <i class="fas fa-mouse-pointer"></i>
-                            <span class="d-none d-lg-inline">Add Lead Actions</span>
-                        </button>
-                        @endcan
-                        @can('lead-list')
-                        <a class="btn btn-sm btn-info action-btn m-0" href="{{ route('leads.show',base64_encode($lead->id)) }}"><i
-                                class="fa fa-eye"></i>
-                            <span class="d-none d-lg-inline">View Lead</span>
-                        </a>
-                        @endcan
-                        @can('lead-delete')
-                        {!! Form::open(['method' => 'DELETE','route' => ['leads.destroy',
-                        $lead->id],'style'=>'display:inline','class' => ['leadForm-'.$lead->id]]) !!}
-                        {{-- trigger confirmation modal --}}
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                            onclick="setModal(this,'{{$lead->id}}')"
-                            class="btn btn-sm btn-danger deletebtn action-btn m-0">
-                            <i class="fa fa-trash"></i>
-                            <span class="d-none d-lg-inline">Delete Lead</span>
-                        </a>
-                        {!! Form::close() !!}
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        @include('leads.partials.leads-header-button-section',['editMode' => true])
         <h5 class="text-dark mb-3 pb-1 border-0">
             {{ $lead->name }}
 
@@ -72,34 +23,7 @@
                 </span>
             @endif
         </h5>
-
-
-        <!-- <h6 class=" pb-3 card-header text-secondary" style="background: rgba(40,167,69 , 0.05);">{{ $lead->name }}</h6> -->
-        <ul class="nav nav-tabs nav-justified " id="pills-tab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active upperpaneltab_leads" id="pills-Lead-tab" data-bs-toggle="pill" href="#pills-Lead" role="tab"
-                    aria-controls="pills-Lead" aria-selected="true">Lead</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-client-insurance-info-tab" data-bs-toggle="pill"
-                    href="#pills-client-insurance-info" role="tab" aria-controls="pills-client-insurance-info"
-                    aria-selected="true">Client Insurance Info</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-lead-actions-tab" data-bs-toggle="pill" href="#pills-lead-actions" role="tab"
-                    aria-controls="pills-lead-actions" aria-selected="true"> Lead Actions</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-lead-campaigns-tab" data-bs-toggle="pill" href="#pills-lead-campaigns"
-                    role="tab" aria-controls="pills-lead-campaigns" aria-selected="true"> Lead Campaigns</a>
-            </li>
-            @can('lead-file-list')
-            <li class="nav-item">
-                <a class="nav-link t upperpaneltab_leads" id="pills-File-tab" data-bs-toggle="pill" href="#pills-File" role="tab"
-                    aria-controls="pills-File" aria-selected="false">Uploaded Files</a>
-            </li>
-            @endcan
-        </ul>
+        @include('leads.partials.leads-header-maintab')
         <div class="tab-content pt-3 bg-white p-3 border-top-0 rounded rounded-top-0 edit-section"
             id="pills-tabContent">
             <div class="tab-pane show active" id="pills-Lead" role="tabpanel" aria-labelledby="pills-Lead-tab">
@@ -113,25 +37,10 @@
                                 'id' => 'lead_update_form',
                                 'onsubmit' => 'return leadSubmissionValidation()' 
                             ]) !!}
-                                <ul class="nav nav-tabs nav-justified" id="pills-tab-2" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active small px-1 lowerpaneltab_leads" id="pills-Lead-tab-2" data-bs-toggle="pill" href="#pills-Lead-2" role="tab"
-                                            aria-controls="pills-Lead-2" aria-selected="true">Appraisal</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-actions-tab-2" data-bs-toggle="pill" href="#pills-lead-actions-2" role="tab"
-                                            aria-controls="pills-lead-actions-2" aria-selected="false">Wind Mitigation</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-campaigns-tab-2" data-bs-toggle="pill" href="#pills-lead-campaigns-2"
-                                            role="tab" aria-controls="pills-lead-campaigns-2" aria-selected="false">Prospect’s Insurance</a>
-                                    </li>
-                                </ul>
+                                @include('leads.partials.leads-header-secondtab')
                                 <div class="tab-content bg-white border-top-0 rounded rounded-top-0 edit-section" id="pills-tabContent-2" bis_skin_checked="1">
                                     <div class="tab-pane show active" id="pills-Lead-2" role="tabpanel" aria-labelledby="pills-Lead-tab-2" bis_skin_checked="1">
                                         <div class="card card-secondary pt-4 rounded-top-0 mb-0 shadow-none">
-                                            <!-- <h3 class="card-title fs-2 mb-3 pb-2 border-bottom">Business</h3> -->
-                                            
                                             <div class="lead-edit-form">
                                                 <!-- lead-edit-form-scroll-->
                                                 @include('leads.partials.lead-form-business-info')
@@ -548,7 +457,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Insurence info</h3>
                         </div>          
-                        @if($renewed_lead == 1)
+                        @if($renewedLead == 1)
                             @include('leads.partials.leads-previous-filled-data-modal')
                         @else
                             <div class="card-body p-2 p-lg-3 text-center">
@@ -806,19 +715,6 @@
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" defer></script>
 
 <!-- <script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js"></script> -->
-<script>
-/******************************
-        Ricochet webhook for contact
-    ******************************/
-// let params = new URLSearchParams(location.search);
-// var contactId = params.get('contact_id'); //get contact id
-// if (contactId) {
-//     sessionStorage.removeItem('activeTab') //reset tab to home
-//     var contact = $('#contactsAccordion [data-id=' + contactId + ']').collapse('show'); //open contact collapse
-//     var id = $(contact).attr('id');
-//     $('#contactsAccordion [data-target="#' + id + '"]').addClass('bg-success'); //highlight contact
-// }
-/******************************/
 </script>
 <script src="{{ asset('js/custom-helper.js') }}" async></script>
 <script src="{{ asset('js/ckeditor-reuired-function.js') }}" defer></script>
@@ -1030,7 +926,7 @@ $(document).on("click",'.pre_filled_data',function () {
 });
 
 function nextbuttonClicked(type) {
-    var tabId;
+    let tabId;
 
     // Determine the tab ID based on the type
     if (type === 1) {
@@ -1043,7 +939,7 @@ function nextbuttonClicked(type) {
 
     // If a valid tab ID is determined, activate the tab
     if (tabId) {
-        var tabElement = document.querySelector(tabId);
+        const tabElement = document.querySelector(tabId);
         
         if (tabElement) {
             // Trigger the click event using pure JavaScript
@@ -1066,14 +962,6 @@ function removeExcessChatPersons() {
         prevChatContactIds.shift();
 
         $("#chat-wrapper .chat-person:last-child").remove();
-
-        // const indexToRemove = prevChatContactIds.indexOf(removableContactId);
-        // console.log(removableContactId,prevChatContactIds,indexToRemove);
-
-        // if (indexToRemove !== -1) {
-        //     prevChatContactIds.splice(indexToRemove, 1);
-        // }
-        // console.log(removableContactId,prevChatContactIds,indexToRemove);
     }
 }
 
@@ -1136,9 +1024,6 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus) 
             }
         });
 
-        // button for attamenet, removed this <button class="position-absolute chat-attachment">
-                            //     <svg xmlns="http://www.w3.org/2000/svg" height="20" width="28" viewBox="0 -960 960 960" width="48"><path d="M728-326q0 103-72.18 174.5-72.17 71.5-175 71.5Q378-80 305.5-151.5T233-326v-380q0-72.5 51.5-123.25T408-880q72 0 123.5 50.75T583-706v360q0 42-30 72t-72.5 30q-42.5 0-72.5-29.67-30-29.68-30-72.33v-370h60v370q0 17 12.5 29.5t30.64 12.5q18.14 0 30-12.5T523-346v-360q0-48-33.5-81t-81.71-33q-48.21 0-81.5 33.06T293-706v380q0 78 54.97 132T481-140q77.92 0 132.46-54Q668-248 668-326v-390h60v390Z"/></svg>
-                            // </button>
         $("#chat-wrapper").prepend(`
 				<div class="position-relative chat-person ml-3 ${borderClass} border rounded" id="chat_person_${chatContactId}">
                     
@@ -1269,28 +1154,6 @@ $("#chat-wrapper").on("click", ".chat-send", function(e) {
 
         // function to save data in mesage and append data in msg
         saveMessageInChat(chatContent, chatContactId, viewContent, timeString);
-        // $.ajax({
-        //     url: '/chat',
-        //     method: "POST",
-        //     data: {
-        //         content: chatContent,
-        //         chatContactId: chatContactId
-
-        //     },
-        //     success: function(response) {
-        //         $(`#chat_message_${chatContactId}`).append(
-        //             `<p class="my-txt mb-2">${viewContent}</p>
-        // 			<p class="snd-msg">${timeString}</p>`);
-        //         $(`#chat_contact_${chatContactId} .text-input`).val("");
-        //     },
-        //     error: function(xhr, status, error) {
-        //         let jsonResponse = JSON.parse(xhr.responseText);
-        //         toastr.error(jsonResponse.response);
-        //     }
-        //     // error: function(error) {
-        //     //     console.error(error);
-        //     // }
-        // });
 
         // Clear the textarea after posting the chat
         $(this).siblings(".text-input").val("");
@@ -1320,9 +1183,6 @@ function saveMessageInChat(chatContent, chatContactId, viewContent, timeString) 
 
             $(`#chat_message_${chatContactId}`).append(appendhtml);
 
-            // $(`#chat_message_${chatContactId}`).append(
-            //     `<p class="my-txt mb-2">${viewContent}</p>
-			// 		<p class="snd-msg">${timeString}</p>`);
             $(`#chat_contact_${chatContactId} .text-input`).val("");
         },
         error: function(xhr, status, error) {
@@ -1424,7 +1284,7 @@ function singleTemplateDetail(singleTemplateId) {
 
 function checkMaxExecTime(contactId) {
     $.ajax({
-        url: `/check_max_execution_time/${contactId}`,
+        url: `/check-max-execution-time/${contactId}`,
         method: 'GET',
         success: function(response) {
             if (response.status == '200' && response.success == true && response.response > 0) {
@@ -1825,7 +1685,7 @@ function setNoteModal(elem, $id) {
     modal.show();
     $('#editNoteModal').attr('data-source', '#ordr_' + $id);
     //set url
-    var url = window.location.origin + '/leads/show/note-update/' + $id;
+    const url = window.location.origin + '/leads/show/note-update/' + $id;
 
 
     $('#editNoteModal #saveNote').on('click',function() {

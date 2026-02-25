@@ -29,34 +29,6 @@
             display: flex;
             line-height: 1.2;
         }
-        /* .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            background-color: #4a90e2;
-            color: white;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .card-header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        h2 {
-            font-size: 1.4rem;
-            font-weight: 500;
-            margin-top: 1.5rem;
-            color: #4a90e2;
-        }
-        p, li {
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        ul {
-            padding-left: 1.2rem;
-        } */
         p{
             margin-bottom: 0.8rem;
         }
@@ -74,8 +46,8 @@
         <div class="container">
             <a href="/" class="text-decoration-none">
                 <div class="d-flex align-items-center text-light">
-                    <img src="{{ asset('/images/logo.png') }}" alt="DatastarPro Logo" 
-                        class="brand-image img-circle me-2" 
+                    <img src="{{ asset('/images/logo.png') }}" alt="DatastarPro Logo"
+                        class="brand-image img-circle me-2"
                         style="width: 40px; height: 40px; opacity: .8;">
                     <h5 class="h4 m-0">Datastarpro</h5>
                 </div>
@@ -84,12 +56,12 @@
     </div>
     <div class="container my-3 my-md-4">
                 <h2 class="mb-3 pb-1">Privacy Policy</h2>
-            
+
                 <p>Data Star LLC (“us”, “we”, or “our”) operates the <a href="https://datastarpro.com" target="_blank">datastarpro.com</a> website (the “Service”).</p>
                 <p>This page informs you of our policies regarding the collection, use, and disclosure of Personal Information when you use our Service.</p>
                 <p>We will not use or share your information with anyone except as described in this Privacy Policy.</p>
                 <p>We use your Personal Information for providing and improving the Service. By using the Service, you agree to the collection and use of information in accordance with this policy. Unless otherwise defined in this Privacy Policy, terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, accessible at <a href="https://datastarpro.com" target="_blank">https://datastarpro.com</a>.</p>
-               
+
                     <h4 class="mt-4 text-primary">Information Collection And Use</h4>
                     <p>While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information (“Personal Information”) may include, but is not limited to:</p>
                     <ul class="list-group list-group-flush">
@@ -133,7 +105,7 @@
 
                     <h4 class="mt-4 text-primary">Contact Us</h4>
                     <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:support@datastarpro.com">support@datastarpro.com</a>.</p>
-                
+
     </div>
     <footer class="main-footer mt-4 py-3 bg-white border-top">
         <div class="container">

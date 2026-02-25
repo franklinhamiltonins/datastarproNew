@@ -44,8 +44,8 @@
                             </td>
                             <td>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input toggle-2fa" 
-                                           type="checkbox" 
+                                    <input class="form-check-input toggle-2fa"
+                                           type="checkbox"
                                            role="switch"
                                            data-user_id="{{ $user->id }}"
                                            {{ $user->twofactor_authentication ? 'checked' : '' }}>
@@ -57,8 +57,8 @@
                                     <a class="btn btn-sm  btn-success action-btn" title="Edit User" href="{{ route('users.edit',base64_encode($user->id)) }}"><i class="fa fa-edit"></i></a>
                                 @endcan
                                 @if($user->hasRole('Manager'))
-                                    <a class="btn btn-sm btn-warning action-btn" 
-                                       title="Assign Team Member" 
+                                    <a class="btn btn-sm btn-warning action-btn"
+                                       title="Assign Team Member"
                                        href="{{ route('users.assignTeam', base64_encode($user->id)) }}">
                                         <i class="fas fa-users"></i>
                                     </a>
@@ -106,7 +106,7 @@ $(document).on('change', '.toggle-2fa', function () {
             else{
                 toastr.error(response.message || 'Something went wrong! Please try again.');
             }
-            
+
         },
         error: function () {
             toastr.error('Something went wrong! Please try again.');

@@ -11,36 +11,7 @@
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid pb-3">
-        <div class="row">
-            <div class="col-lg-12 margin-tb mb-3">
-                <div class="pull-right d-flex flex-wrap flex-nowrap-md align-items-center justify-content-between">
-                    <a class="btn btn-info btn-sm px-2 mb-3 mb-md-0"
-                        href="{{ route('leads.index', ['id' => $lead->id]) }}"
-                        onclick="redirectToLastLeadsManagementUrl(event)"><i class="fas fa-arrow-circle-left"></i>
-                        Back</a>
-                    <div>
-                        <button class="btn btn-sm btn-secondary m-0" type="button" data-bs-toggle="modal"
-                            data-bs-target="#logModal">
-                            <i class="fa fa-comment-dots"></i>
-                            <span class="d-none d-lg-inline"> Lead Log</span>
-                        </button>
-                        @can('lead-action')
-                        <button class="btn btn-sm btn-warning action-btn m-0" data-bs-toggle="modal"
-                            data-bs-target="#userLeadActions">
-                            <i class="fas fa-mouse-pointer"></i>
-                            <span class="d-none d-lg-inline"> Add Lead Actions</span>
-                        </button>
-                        @endcan
-                        @can('lead-edit')
-                        <a class="btn btn-success btn-sm action-btn m-0" href="{{ route('leads.edit',base64_encode($lead->id)) }}"><i
-                                class="fa fa-edit"></i>
-                            <span class="d-none d-lg-inline"> Edit Business</span>
-                        </a>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        @include('leads.partials.leads-header-button-section',['editMode' => false])
         <h5 class="text-dark mb-3 pb-1 border-0">
             {{ $lead->name }}
 
@@ -54,31 +25,7 @@
                 </span>
             @endif
         </h5>
-        <ul class="nav nav-tabs nav-justified " id="pills-tab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active upperpaneltab_leads" id="pills-Lead-tab" data-toggle="pill" href="#pills-Lead" role="tab"
-                    aria-controls="pills-Lead" aria-selected="true">Lead</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-client-insurance-info-tab" data-toggle="pill"
-                    href="#pills-client-insurance-info" role="tab" aria-controls="pills-client-insurance-info"
-                    aria-selected="true">Client Insurance Info</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-lead-actions-tab" data-toggle="pill" href="#pills-lead-actions" role="tab"
-                    aria-controls="pills-lead-actions" aria-selected="true"> Lead Actions</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link upperpaneltab_leads" id="pills-lead-campaigns-tab" data-toggle="pill" href="#pills-lead-campaigns"
-                    role="tab" aria-controls="pills-lead-campaigns" aria-selected="true"> Lead Campaigns</a>
-            </li>
-            @can('lead-file-list')
-            <li class="nav-item">
-                <a class="nav-link t upperpaneltab_leads" id="pills-File-tab" data-toggle="pill" href="#pills-File" role="tab"
-                    aria-controls="pills-File" aria-selected="false">Uploaded Files</a>
-            </li>
-            @endcan
-        </ul>
+        @include('leads.partials.leads-header-maintab')
         <div class="tab-content pt-3 bg-white p-2 view-section border border-top-0 rounded rounded-top-0"
             id="pills-tabContent">
             <div class="tab-pane show active" id="pills-Lead" role="tabpanel" aria-labelledby="pills-Lead-tab">
@@ -87,15 +34,15 @@
                         <div class="col-xl-7">
                             <ul class="nav nav-tabs nav-justified" id="pills-tab-2" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active small px-1 lowerpaneltab_leads " id="pills-Lead-tab-2" data-toggle="pill" href="#pills-Lead-2" role="tab"
+                                    <a class="nav-link active small px-1 lowerpaneltab_leads " id="pills-Lead-tab-2" data-bs-toggle="pill" href="#pills-Lead-2" role="tab"
                                         aria-controls="pills-Lead-2" aria-selected="true">Appraisal</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-actions-tab-2" data-toggle="pill" href="#pills-lead-actions-2" role="tab"
+                                    <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-actions-tab-2" data-bs-toggle="pill" href="#pills-lead-actions-2" role="tab"
                                         aria-controls="pills-lead-actions-2" aria-selected="true">Wind Mitigation</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-campaigns-tab-2" data-toggle="pill" href="#pills-lead-campaigns-2"
+                                    <a class="nav-link small px-1 lowerpaneltab_leads" id="pills-lead-campaigns-tab-2" data-bs-toggle="pill" href="#pills-lead-campaigns-2"
                                         role="tab" aria-controls="pills-lead-campaigns-2" aria-selected="true">Prospect’s Insurance</a>
                                 </li>
                             </ul>
@@ -103,7 +50,7 @@
                                 <div class="tab-pane show active" id="pills-Lead-2" role="tabpanel" aria-labelledby="pills-Lead-tab-2" bis_skin_checked="1">
                                     <div class="card card-secondary p-0 rounded-top-0 mb-0 shadow-none">
                                         <!-- <h3 class="card-title fs-2 mb-0 pb-2 border-bottom px-2 pt-2">Business</h3> -->
-                                        
+
                                         <div class="lead-edit-form">
                                             <!-- lead-edit-form-scroll-->
                                             <div class="showViewLeadsArea">
@@ -142,7 +89,7 @@
                                     @php
                                     $i++
                                     @endphp
-                                    <div class=""> 
+                                    <div class="">
                                         <div class="card-header pt-1 pb-1 px-0" id="heading{{$i}}">
                                             <h3 class="position-relative mt-2 accordian-header-light @if($contact->fake_address == 1 || $contact->fake_address == 2) {{'fakeClass'}} @endif">
                                                 <div class="custom_contact_class p-0 rounded">
@@ -406,7 +353,7 @@
                             <h3 class="card-title">Insurence info</h3>
                         </div>
                         <div class="card-body p-2 p-lg-3">
-                            @if($renewed_lead == 1)
+                            @if($renewedLead == 1)
                                 @include('leads.partials.leads-previous-filled-data-modal')
                             @else
                                 <div class="card-body p-2 p-lg-3 text-center">
@@ -569,6 +516,8 @@
 @push('styles')
 @endpush
 @push('scripts')
+
+<script src="{{ asset('js/ckeditor-reuired-function.js') }}" defer></script>
 <script async>
 jQuery(document).ready(function() {
     // scroll to table if pagination
@@ -722,17 +671,22 @@ function redirectToLastLeadsManagementUrl(event) {
 
 
 // keep the open tab on window refresh
-$('a[data-toggle="pill"]').on('shown.bs.tab', function(e) {
-
-    sessionStorage.setItem('activeTab', $(e.target).attr('href'));
+document.addEventListener('shown.bs.tab', function (e) {
+    sessionStorage.setItem('activeTab', e.target.getAttribute('href'));
 });
 
-var activeTab = sessionStorage.getItem('activeTab');
-if (activeTab && $('.nav-tabs a[href="' + activeTab + '"]').length > 0) {
-    $(".upperpaneltab_leads").removeClass('active');
-    $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
-    $('.nav-tabs a[href="' + activeTab + '"]').addClass('active');
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const activeTab = sessionStorage.getItem('activeTab');
+    if (!activeTab) return;
+
+    const tabTrigger = document.querySelector(
+        `a[data-bs-toggle="pill"][href="${activeTab}"]`
+    );
+
+    if (tabTrigger) {
+        new bootstrap.Tab(tabTrigger).show();
+    }
+});
 
 function scroll_to_el(el) {
     $("body,html").animate({
@@ -808,20 +762,14 @@ function simpleTables_pagination() {
 // I'm not sure if we still ned this . Removed onclick="leadActionModal(this,'{{$lead->id}}')" from lead actions button
 function leadActionModal(elem, $id) {
     $('#leadActionModal').attr('data-source', '#ordr_' + $id);
-    console.log(elem);
     $tar = $(elem).parents('form');
     $('#confirm').click(function() {
-
-
-        //submit form
         $($tar).submit();
     });
 
 }
 // get the value of the input and set it for "other" option in the dropdown
-function get_set_other_val(elem) {
-    console.log(elem);
-    console.log('here');
+function getSetOtherVal(elem) {
 
     var inputContainer = $(elem).siblings('.otherInput') //get the container element
     var input = $(elem).siblings('.otherInput').find('input'); //get the input element
@@ -839,7 +787,6 @@ function get_set_other_val(elem) {
 
     //when input value changes
     $(input).on('keyup', function() {
-        console.log($(input).val());
         //add the value to the "other option in the dropdown"
         $(elem).find('.other').attr('value', $(input).val());
     });

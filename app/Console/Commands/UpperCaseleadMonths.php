@@ -2,87 +2,51 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Model\LeadsModel\Lead;
+use Illuminate\Console\Command;
 
 class UpperCaseleadMonths extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'command:UpperCaseleadMonths';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command to update renewal_month names from lowercase to uppercase';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function handle():void
     {
-        parent::__construct();
+        $leads = Lead::limit(10)->get();
+
+        foreach ($leads as $lead) {
+            if (! $lead || empty($lead->renewal_month)) {
+                continue;
+            }
+
+            $month = strtolower(trim($lead->renewal_month));
+
+            $updatedMonth = $this->getProperCaseMonth($month);
+
+            if ($updatedMonth !== $lead->renewal_month) {
+                $lead->update(['renewal_month' => $updatedMonth]);
+            }
+        }
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    // Convert lowercase month name to proper case (January, February, etc.)
+    private function getProperCaseMonth($month)
     {
-        $leads = Lead::all();
-        foreach($leads as $lead){
-            if($lead && !empty($lead->renewal_month)){
-         
-                switch($lead->renewal_month){
-                 
-                   case 'january' :
-                     $lead->update(array('renewal_month'=> 'January'));
-                   break;
-                   case 'february' :
-                     $lead->update(array('renewal_month'=> 'February'));
-                   break;
-                   case 'march' :
-                     $lead->update(array('renewal_month'=> 'March'));
-                   break;
-                   case 'april' :
-                     $lead->update(array('renewal_month'=> 'April'));
-                   break;
-                   case 'may' :
-                     $lead->update(array('renewal_month'=> 'May'));
-                   break;
-                   case 'june' :
-                     $lead->update(array('renewal_month'=> 'June'));
-                   break;
-                   case 'july' :
-                     $lead->update(array('renewal_month'=> 'July'));
-                   break;
-                   case 'august' :
-                     $lead->update(array('renewal_month'=> 'August'));
-                   break;
-                   case 'september' :
-                     $lead->update(array('renewal_month'=> 'September'));
-                   break;
-                   case 'october' :
-                     $lead->update(array('renewal_month'=> 'October'));
-                   break;
-                   case 'november' :
-                     $lead->update(array('renewal_month'=> 'November'));
-                   break;
-                   case 'december' :
-                     $lead->update(array('renewal_month'=> 'December'));
-                     break;
-                }
-            }
-           
-        }
+        $map = [
+            'january'   => 'January',
+            'february'  => 'February',
+            'march'     => 'March',
+            'april'     => 'April',
+            'may'       => 'May',
+            'june'      => 'June',
+            'july'      => 'July',
+            'august'    => 'August',
+            'september' => 'September',
+            'october'   => 'October',
+            'november'  => 'November',
+            'december'  => 'December',
+        ];
+
+        return $map[$month] ?? $month; // Fallback keeps logic same
     }
 }

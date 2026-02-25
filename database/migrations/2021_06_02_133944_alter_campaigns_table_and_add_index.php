@@ -16,7 +16,7 @@ class AlterCampaignsTableAndAddIndex extends Migration
         Schema::table('campaigns', function (Blueprint $table) {
             $table->bigIncrements('id')->change();
 
-            //add index
+            // add index
             $table->index(['name']);
             $table->index(['campaign_date']);
         });

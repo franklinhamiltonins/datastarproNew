@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\ProcessAgentWiseLeadWiseReport;
 use App\Traits\CommonFunctionsTrait;
+use Illuminate\Console\Command;
 
 class ShootDailyAgentWiseLeadStatus extends Command
 {
     use CommonFunctionsTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -32,7 +33,7 @@ class ShootDailyAgentWiseLeadStatus extends Command
      */
     public function __construct(ProcessAgentWiseLeadWiseReport $processAgentWise)
     {
-        parent::__construct();
+        parent::__construct(); 
         $this->processAgentWise = $processAgentWise;
     }
 
@@ -43,14 +44,14 @@ class ShootDailyAgentWiseLeadStatus extends Command
      */
     public function handle()
     {
-        $agentUsers = $this->getAgentListing(true,0,true);
+        $agentUsers = $this->getAgentListing(true, 0, true);
 
         foreach ($agentUsers as $agent) {
             try {
                 $this->processAgentWise->processDataAgentWise($agent);
-                $this->info($agent["displayname"].' Mail processing completed.');
-            } catch (Exception $e) {
-                $this->error('Error: '.$agent["displayname"] .'- '.$e->getMessage());
+                $this->info($agent['displayname'].' Mail processing completed.');
+            } catch (\Exception $e) {
+                $this->error('Error: '.$agent['displayname'].'- '.$e->getMessage());
             }
         }
 

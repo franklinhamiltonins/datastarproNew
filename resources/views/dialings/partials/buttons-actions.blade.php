@@ -9,9 +9,6 @@
     <a class="btn btn-sm btn-info action-btn m-0 d-flex justify-content-center align-items-center"
         title="Show Dialing List" href="/dialings/show/{{base64_encode($row->id) }}"><i class="fa fa-eye"></i></a>
 
-
-
-
     @can($deleteLead)
     {!! Form::open(['method' => 'DELETE','route' => ['dialings.destroy', $row->id],'style'=>'display:inline','class' =>
     ['leadForm-'.$row->id]]) !!}

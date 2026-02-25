@@ -49,7 +49,7 @@
                                     {!! Form::text('day_delay', null, array('placeholder' => 'Day delay','class' =>
                                     'form-control' ,'id' => 'day_delay')) !!}
                                 </div>
-                            </div> 
+                            </div>
                             <div class="col-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Text<sup class="mandatoryClass">*</sup>:</strong>
@@ -58,7 +58,7 @@
 
                                     {!! Form::textarea('text', null, array('placeholder' => 'Text','class' =>
                                     'form-control' ,'id' => 'smsprovider_content')) !!}
-                                    
+
                                 </div>
                             </div>
                             <div class="col-12">

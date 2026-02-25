@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-xl-12">
                 <div class="card card-secondary">
@@ -59,7 +59,7 @@
                                         <span></span>
                                     </div>
                                 @endif
-                                
+
                             </div>
 
                             <div class="form-group col-lg-6">
@@ -84,7 +84,7 @@
                         <div class="form-row">
                             <div class="form-group col-lg-6">
                                 <strong>Email Signature:</strong>
-                                <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">   
+                                <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">
                                 @if($smtpConfiguration['signature_image'] || $smtpConfiguration['signature_text'])
                                     <tr>
                                         <td>
@@ -116,7 +116,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->

@@ -22,7 +22,7 @@ class CreateLeadsTable extends Migration
             $table->string('address2')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
-            $table->string('zip')->nullable();  
+            $table->string('zip')->nullable();
             $table->string('county')->nullable();
             $table->bigInteger('unit_count')->nullable();
             $table->date('renewal_date')->nullable();

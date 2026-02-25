@@ -13,8 +13,6 @@
                         @endforeach
                     </ol>
                 </nav>
-
-
                 <div class="card p-2 p-lg-3 overflow-auto">
                     <div class="d-flex justify-content-between mb-4">
                         <div class="moduleSearchContainer">
@@ -76,23 +74,17 @@
                             </thead>
                             <tbody id="{{$moduleName}}_tbody" class="modultTbody">
                             </tbody>
-
-
                         </table>
                         <div id="paginationLinksContainer" class="pagination-links justify-content-center d-flex mt-4">
 
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 @include('modules.delete-modal')
-
 <!-- JavaScript code here -->
 
 <script>

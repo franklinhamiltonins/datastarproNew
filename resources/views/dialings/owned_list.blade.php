@@ -151,7 +151,7 @@ function updateLeadStatus(contact_id, current_status) {
         url: "{{ url('/dialings/updatecontactleads') }}",
         dataType: 'json',
         data: {
-            contact_id: contact_id, // send the search options  
+            contact_id: contact_id, // send the search options
             current_status: current_status, // send agent list name
         },
         success: function(data, status, xhr) {
@@ -353,7 +353,7 @@ $(document).on('click', '.edit-owner-icon', function () {
     modal.show();
     // $("#newreassignModal").modal("show");
     let reassignBodyContent = $(".reassignBodyContent");
-    // reassignBodyContent.empty(); 
+    // reassignBodyContent.empty();
 });
 
 $(document).on('change', '.owner-select-box', function () {

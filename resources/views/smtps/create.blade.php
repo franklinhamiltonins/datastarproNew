@@ -17,8 +17,6 @@
                 </div>
             </div>
         </div>
-
-
         <div class="row">
             <div class="col-12">
                 <div class="card card-secondary">
@@ -40,7 +38,7 @@
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <strong>User Name<sup class="mandatoryClass">*</sup>:</strong>
-                                    {!! Form::select('user_id', $agent_users,[], array('class' => 'form-control', 'id' => 'selectAgent')) !!}
+                                    {!! Form::select('user_id', $agentUsers,[], array('class' => 'form-control', 'id' => 'selectAgent')) !!}
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
@@ -73,7 +71,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
-                                    <strong>Email<sup class="mandatoryClass requiredForLoggedUser" 
+                                    <strong>Email<sup class="mandatoryClass requiredForLoggedUser"
                                         style="display:{{old('user_id') && old('user_id') == auth()->user()->id ? 'inherit' : 'none'}}">*</sup>:</strong>
                                         {!! Form::text('username', null, array('placeholder' => 'Email','class' =>
                                         'form-control', 'autocomplete'=>'false')) !!}
@@ -81,7 +79,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
-                                    <strong>Password<sup class="mandatoryClass requiredForLoggedUser" 
+                                    <strong>Password<sup class="mandatoryClass requiredForLoggedUser"
                                         style="display:{{old('user_id') && old('user_id') == auth()->user()->id ? 'inherit' : 'none'}}">*</sup>:</strong>
                                     <span style="font-size: 0.80rem;">(For Gmail, use App password)</span>
                                     <div class="position-relative password-input">
@@ -98,7 +96,7 @@
                                         'form-control')) !!}
                                 </div>
                             </div>
-                            
+
                             <div class="col-12 col-md-12">
                                 <div class="row">
                                     <div class="col-12 col-md-6">
@@ -147,7 +145,7 @@
                                 </div>
                             </div>
                             <!-- <div class="col-12 col-md-6">
-                                
+
                                 <div class="form-group">
                                     <img id="signature-image-preview" src="" alt="Signature image preview" style="display:none" class="form-control-file h-25 p-3 w-25">
                                 </div>
@@ -199,13 +197,13 @@ jQuery(document).ready(function() {
     $('#showPassword').on('click', function() {
         $("#showPassword").css('display','none');
         $("#hidePassword").css('display','inline-block');
-        $('#password').attr('type',"text"); 
+        $('#password').attr('type',"text");
     });
 
     $('#hidePassword').on('click', function() {
         $("#hidePassword").css('display','none');
         $("#showPassword").css('display','inline-block');
-        $('#password').attr('type',"password"); 
+        $('#password').attr('type',"password");
     });
 
     $('#changeEmailProvider').on('change', function() {
@@ -238,7 +236,7 @@ jQuery(document).ready(function() {
             $("select[name='encryption']").val('None');
             $("select[name='auth']").val('None');
         }
-        
+
     });
 
     $('#selectAgent').on('change', function() {
@@ -271,7 +269,7 @@ jQuery(document).ready(function() {
                 }
             });
         }
-        
+
     });
 
     $('.custom-file-input').on('change', function() {

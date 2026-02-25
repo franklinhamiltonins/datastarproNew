@@ -188,8 +188,8 @@
                 { data: "referal_611", name: "referal_611" },
                 { data: "appointments", name: "appointments" },
                 { data: "policies", name: "policies" },
-                { 
-                    data: "expiry_premium", 
+                {
+                    data: "expiry_premium",
                     name: "expiry_premium",
                     render: function (data) {
                         return assign_value_numberformat(data);
@@ -197,8 +197,8 @@
                 },
                 { data: "aor", name: "aor" },
                 { data: "aor_effective_month", name: "aor_effective_month" },
-                { 
-                    data: "aor_premium", 
+                {
+                    data: "aor_premium",
                     name: "aor_premium",
                     render: function (data) {
                         return assign_value_numberformat(data);
@@ -282,7 +282,7 @@
 
             const downLoadUrl =  "{{ route('agentreport.dailycallReportListDownload') }}";
 
-            
+
             dataDownLoad(downLoadUrl,dataRequest);
         });
     });

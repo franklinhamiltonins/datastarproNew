@@ -16,7 +16,7 @@
                 </ul>
             </div>
         @endif
-    
+
         <div class="form-group">
             <label for="exampleInputFile">File(s) input</label>
             <div class="input-group">

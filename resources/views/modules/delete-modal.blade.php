@@ -2,12 +2,6 @@
 <div class="modal " id="moduledeleteModal" data-source="" style="display: none;">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
-			<!--div class="modal-header">
-				<h4 class="modal-title">Are you Sure?</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">×</span>
-				</button>
-			</div-->
 			<div class="modal-body text-center p-2 p-lg-3">
 				<div class="caution mb-2">
 					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#f00" height="30px" width="30px" version="1.1" id="Capa_1" viewBox="0 0 212.715 212.715" xml:space="preserve">
@@ -66,7 +60,7 @@
 					$('#moduledeleteModal').modal('hide');
 					var element = document.getElementById('moduleRefresh');
 					if (element) {
-						element.click(); // Trigger click event 
+						element.click(); // Trigger click event
 					}
 
 				}

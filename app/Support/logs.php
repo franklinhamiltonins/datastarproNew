@@ -1,32 +1,27 @@
 <?php
+
 use App\Model\User;
 
-if (!function_exists('create_log')) {
+if (! function_exists('create_log')) {
+
     /**
      * Create Lead log
      *
-     * @param  string $lead, $action- action text
-     * @return string
+     * @param  mixed   $element
+     * @param  string  $action
+     * @param  string|null $created_at
+     * @return void
      */
-    function create_log($element, $action,$created_at){
-       $log =  $element->logs()->create([
-            'action'=> $action,
+    function create_log($element, $action, $created_at = null)
+    {
+        $log = $element->logs()->create(['action' => $action]);
 
-        ]);
+        if (auth()->user()) {
+            $log->users()->associate(auth()->user())->save();
+        }
 
-        $userUnAuth = User::where('email','oana.ghinescu@gosocialdev.eu')->first() ;
-        if(auth()->user())
-            $log->users()->associate(auth()->user())->save();//associate user
-        else{
-            if( $userUnAuth)
-                $log->users()->associate($userUnAuth)->save();
-            }
-
-        if(!empty($created_at)){
-            $log->update([
-                'created_at'=> $created_at
-            ]);
+        if (! empty($created_at)) {
+            $log->update(['created_at' => $created_at]);
         }
     }
 }
-

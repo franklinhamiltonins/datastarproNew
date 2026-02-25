@@ -1,5 +1,4 @@
 @foreach($lead->contacts as $contact)
-
     @if($filter_contact_by == ""  || ($filter_contact_by >= 0 && $contact->added_by_scrap_apis == $filter_contact_by))
         @if (!empty($contact->c_phone))
 
@@ -14,7 +13,4 @@
                 <br/>
         @endif
     @endif
-
 @endforeach
-
-

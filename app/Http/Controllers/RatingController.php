@@ -2,52 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Model\LeadsModel\Log;
-use Yajra\Datatables\Datatables;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use App\Model\Rating;
 use App\Model\InsuranceType;
 use App\Model\LeadsModel\Lead;
-use Illuminate\Support\Facades\Validator;
+use App\Model\Rating;
 use App\Traits\CommonFunctionsTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RatingController extends Controller
 {
     use CommonFunctionsTrait;
-    public function index($pending=1)
+
+    public function index($pending = 1)
     {
         $rating = [];
-        if(auth()->user()->can('agent-create')){
+        if (auth()->user()->can('agent-create')) {
             $is_admin = 1;
-        }
-        else{
+        } else {
             $is_admin = 0;
         }
 
-        return view('rating.index', compact('rating','pending','is_admin'));
+        return view('rating.index', compact('rating', 'pending', 'is_admin'));
     }
 
-    public function convertToSnakeCase($key,$id) {
+    public function convertToSnakeCase($key, $id)
+    {
 
-        $name =  !empty($this->mainInsuranceRating[$key])?$this->mainInsuranceRating[$key]:'';
-        if(empty($name)){
+        $name = ! empty($this->mainInsuranceRating[$key]) ? $this->mainInsuranceRating[$key] : '';
+        if (empty($name)) {
             $res = [
                 'exist' => 0,
                 'count' => 0,
                 'name' => '',
             ];
-        }
-        else{
-            $count = Lead::where($name,$id)
-                        ->count();
+        } else {
+            $count = Lead::where($name, $id)
+                ->count();
             $res = [
                 'exist' => 1,
                 'count' => $count,
-                'name' => $name
+                'name' => $name,
             ];
         }
 
@@ -70,7 +64,7 @@ class RatingController extends Controller
 
         if ($rating) {
             $status = true;
-            
+
             // Get active insurance types linked to a rating
             $insuranceTypes = InsuranceType::where('status', 1)
                 ->where('rating', 1)
@@ -78,7 +72,7 @@ class RatingController extends Controller
                 ->toArray();
 
             foreach ($insuranceTypes as $key => $insuranceTypeName) {
-                $value = $this->convertToSnakeCase($insuranceTypeName,$rating->id);
+                $value = $this->convertToSnakeCase($insuranceTypeName, $rating->id);
                 // echo "<pre>";print_r($value);echo $insuranceTypeName; exit;
                 $snakeCaseName = $value['name'];
                 $count = $value['count'];
@@ -88,7 +82,7 @@ class RatingController extends Controller
 
                 if ($insurance) {
                     $list[$snakeCaseName] = [
-                        'rating' => $insurance->ratings()->where('ratings.status', 1)->where('ratings.id', '!=',$rating->id)->select('ratings.id','ratings.name')->get(),
+                        'rating' => $insurance->ratings()->where('ratings.status', 1)->where('ratings.id', '!=', $rating->id)->select('ratings.id', 'ratings.name')->get(),
                         'name' => $insuranceTypeName,
                         'found' => 1,
                         'count' => $count,
@@ -114,7 +108,7 @@ class RatingController extends Controller
 
     public function ratingFormSubmission(Request $request)
     {
-        $updates = $request->except('previous_id'); 
+        $updates = $request->except('previous_id');
         $previousId = $request->input('previous_id');
 
         foreach ($updates as $column => $newValue) {
@@ -125,27 +119,27 @@ class RatingController extends Controller
         }
 
         $rating = Rating::find($previousId);
-        if($rating){
+        if ($rating) {
             $rating->insuranceTypes()->detach();
 
             // Delete the rating
             $rating->delete();
         }
 
-        if(empty($updates)){
-            $message = "Rating deleted successfully!";
+        if (empty($updates)) {
+            $message = 'Rating deleted successfully!';
+        } else {
+            $message = 'Rating reassigned and deleted successfully!';
         }
-        else{
-            $message = "Rating reassigned and deleted successfully!";
-        }
-        return response()->json(['status' => true, 'message' => $message ]);
+
+        return response()->json(['status' => true, 'message' => $message]);
     }
 
     public function forceDelete(Request $request)
     {
         $rating = Rating::find($request->data_id);
 
-        if (!$rating) {
+        if (! $rating) {
             // toastr()->error("This Rating doesn't exist");
             return response()->json(['status' => true, 'message' => "Rating doesn't exist"]);
         }
@@ -167,18 +161,17 @@ class RatingController extends Controller
 
         $filter_on_column_number = $request->input('order')[0]['column'];
         $filter_on_column_name = $request->input('columns')[$filter_on_column_number]['data'] ?? 'id';
-        
-        if($filter_on_column_name == "id"){
+
+        if ($filter_on_column_name == 'id') {
             $order_by = 'desc';
-        }
-        else{
+        } else {
             $order_by = $request->input('order')[0]['dir'] ?? 'desc';
         }
 
         // Get ratings with related insurance types
         $rating = Rating::with('insuranceTypes');
 
-        if (!empty($request->pending)) {
+        if (! empty($request->pending)) {
             $rating = $rating->where('status', $request->pending);
         }
 
@@ -186,8 +179,8 @@ class RatingController extends Controller
 
         // Apply ordering and pagination
         $rating = $rating->orderBy($filter_on_column_name, $order_by)
-                           ->offset($start)
-                           ->limit($length);
+            ->offset($start)
+            ->limit($length);
 
         return datatables()->of($rating)
             ->addIndexColumn()
@@ -200,69 +193,74 @@ class RatingController extends Controller
             ->make(true);
     }
 
-
-    public function create($pending=1)
-    {   
-        $page_type = 1;  
-        $insurance_type = InsuranceType::where('status',1)->where('rating',1)->pluck('name', 'id')->toArray();
+    public function create($pending = 1)
+    {
+        $page_type = 1;
+        $insurance_type = InsuranceType::where('status', 1)->where('rating', 1)->pluck('name', 'id')->toArray();
 
         // echo "<pre>";
         // print_r($insurance_type);exit;
         $selected_insurance_types = [];
-        return view('rating.create',compact('insurance_type','page_type','selected_insurance_types','pending'));
+
+        return view('rating.create', compact('insurance_type', 'page_type', 'selected_insurance_types', 'pending'));
     }
 
-    public function edit($id,$pending=1)
-    {   
+    public function edit($id, $pending = 1)
+    {
         // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $rating = Rating::find($id);
-        if (!$rating) {
+        if (! $rating) {
 
             toastr()->error('This Rating doesn\'t exist');
+
             return redirect('/rating');
         }
         $page_type = 2;
-        $insurance_type = InsuranceType::where('status',1)->where('rating',1)->pluck('name', 'id')->toArray();
+        $insurance_type = InsuranceType::where('status', 1)->where('rating', 1)->pluck('name', 'id')->toArray();
         $selected_insurance_types = $rating->insuranceTypes->pluck('id')->toArray();
-        return view('rating.create', compact('rating','page_type','insurance_type','selected_insurance_types','pending'));
+
+        return view('rating.create', compact('rating', 'page_type', 'insurance_type', 'selected_insurance_types', 'pending'));
     }
 
-    public function show($id,$pending=1)
-    {   
+    public function show($id, $pending = 1)
+    {
         // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $rating = Rating::find($id);
-        if (!$rating) {
+        if (! $rating) {
 
             toastr()->error('This Rating doesn\'t exist');
+
             return redirect('/rating');
         }
         $page_type = 3;
-        $insurance_type = InsuranceType::where('status',1)->where('rating',1)->pluck('name', 'id')->toArray();
+        $insurance_type = InsuranceType::where('status', 1)->where('rating', 1)->pluck('name', 'id')->toArray();
         $selected_insurance_types = $rating->insuranceTypes->pluck('id')->toArray();
-        return view('rating.create', compact('rating','page_type','insurance_type','selected_insurance_types','pending'));
+
+        return view('rating.create', compact('rating', 'page_type', 'insurance_type', 'selected_insurance_types', 'pending'));
     }
 
     public function store(Request $request)
     {
-        $rules =[
+        $rules = [
             'rating_name' => 'required|string|max:255',
             'insurance_type' => 'required|array',
         ];
 
-        //validate fields using nice name in error messages
+        // validate fields using nice name in error messages
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             // $errorMessages = $validator->errors()->all();
             toastr()->error($validator->errors()->first());
+
             return back()->withErrors($validator)->withInput();
         }
 
-        $alreadyEntry = Rating::where('name',$request->rating_name)->first();
+        $alreadyEntry = Rating::where('name', $request->rating_name)->first();
 
-        if(!$alreadyEntry){
+        if (! $alreadyEntry) {
             // Check if the rating already exists by name
             $rating = Rating::Create(
                 ['name' => $request->rating_name]
@@ -271,11 +269,12 @@ class RatingController extends Controller
             // Attach the rating to the provided insurance types
             $rating->insuranceTypes()->sync($request->insurance_type);
             toastr()->success('Rating created and attached to insurance types successfully.');
+
             return redirect()->route('rating.index');
- 
-        }
-        else{
-            toastr()->error( "Rating Already Exists");
+
+        } else {
+            toastr()->error('Rating Already Exists');
+
             return back()->withInput();
         }
 
@@ -284,53 +283,54 @@ class RatingController extends Controller
     public function update(Request $request)
     {
 
-        if(!empty($request->pending) && $request->pending == 2 && !empty($request->acceptance) && $request->acceptance == 3){
+        if (! empty($request->pending) && $request->pending == 2 && ! empty($request->acceptance) && $request->acceptance == 3) {
             $rules = [
                 'id' => 'required',
                 'rating_name' => 'required|string|max:255',
             ];
-        }
-        else{
+        } else {
             $rules = [
                 'id' => 'required',
                 'rating_name' => 'required|string|max:255',
                 'insurance_type' => 'required|array',
             ];
         }
-        
 
         // Validate fields using nice names in error messages
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             toastr()->error($validator->errors()->first());
+
             return back()->withErrors($validator)->withInput();
         }
 
         // Find the rating by ID or return error if it doesn't exist
         $id = $request->id;
         $rating = Rating::find($id);
-        if (!$rating) {
+        if (! $rating) {
             toastr()->error("This Rating doesn't exist");
+
             return redirect()->route('rating.index');
         }
 
-        if(!empty($request->pending) && $request->pending == 1){
+        if (! empty($request->pending) && $request->pending == 1) {
             // Check if another Rating with the same name exists
             $alreadyEntry = Rating::where('name', $request->rating_name)
-                                ->where('id', '!=', $id)
-                                ->first();
+                ->where('id', '!=', $id)
+                ->first();
             if ($alreadyEntry) {
-                toastr()->error("Rating with this name already exists");
+                toastr()->error('Rating with this name already exists');
+
                 return back()->withInput();
             }
         }
         $res_msg = 'Rating updated and attached to insurance types successfully.';
         $res_success = 1;
         $rating->name = $request->rating_name;
-        if(!empty($request->pending) && $request->pending == 2){
+        if (! empty($request->pending) && $request->pending == 2) {
             $rating->status = $request->acceptance;
-            if($rating->status == 3){
+            if ($rating->status == 3) {
                 $res_msg = 'Rating Request Rejected';
                 $res_success = 2;
             }
@@ -340,16 +340,15 @@ class RatingController extends Controller
         // echo "<pre>";
         // print_r($rating);
         // exit;
-        
 
-        if($res_success == 1){
+        if ($res_success == 1) {
             // Sync the rating with the provided insurance types
             $rating->insuranceTypes()->sync($request->insurance_type);
             toastr()->success($res_msg);
-        }
-        else{
+        } else {
             toastr()->success($res_msg);
         }
+
         return redirect()->route('rating.index');
     }
 
@@ -358,8 +357,9 @@ class RatingController extends Controller
         // Find the Rating by ID
         $rating = Rating::find($id);
 
-        if (!$rating) {
+        if (! $rating) {
             toastr()->error("This Rating doesn't exist");
+
             return redirect()->route('rating.index');
         }
 
@@ -370,6 +370,7 @@ class RatingController extends Controller
         $rating->delete();
 
         toastr()->success('Rating deleted successfully.');
+
         return redirect()->route('rating.index');
     }
 
@@ -378,8 +379,9 @@ class RatingController extends Controller
         $ids = $request->input('selectedValues', []);
 
         // Validate that we have an array of IDs
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             toastr()->error('No Ratings selected for deletion.');
+
             return redirect()->route('rating.index');
         }
 
@@ -388,6 +390,7 @@ class RatingController extends Controller
 
         if ($ratings->isEmpty()) {
             toastr()->error('No valid Ratings found for deletion.');
+
             return redirect()->route('rating.index');
         }
 
@@ -400,7 +403,7 @@ class RatingController extends Controller
         Rating::whereIn('id', $ids)->delete();
 
         toastr()->success('Selected ratings deleted successfully.');
+
         return redirect()->route('rating.index');
     }
-
 }

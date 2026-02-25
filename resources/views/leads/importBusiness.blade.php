@@ -26,10 +26,6 @@
                     </div>
 
                     <div class="card-body p-2 p-lg-3">
-
-
-
-
                         {{-- {{The custom made errors when an important column is missing in file --}}
                         @if(session('customErrors'))
                         @foreach (session('customErrors') as $error)
@@ -41,7 +37,7 @@
 
                         <form action="{{ route('leads.processBusiness') }}" method="POST" enctype="multipart/form-data" id="importForm">
                             @csrf
-                            
+
                                 <div class="form-group mb-0">
                                     <label class="mb-1" for="customFile">Choose File</label>
                                     <div class="d-flex justify-content-between">

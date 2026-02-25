@@ -2,127 +2,123 @@
 
 namespace App\Jobs;
 
+use App\Traits\ActivityReportTrait;
+use App\Traits\SMTPRelatedTrait;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-
-use App\Model\Setting;
-use Carbon\Carbon;
-use App\Traits\SMTPRelatedTrait;
-use App\Traits\ActivityReportTrait;
 
 class ProcessMailDailyCallReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,SMTPRelatedTrait,ActivityReportTrait;
+    use ActivityReportTrait, SMTPRelatedTrait, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public $timeout = 1800; 
-    protected $requestData,$mail_agent_id;
+    public $timeout = 1800;
 
-    public function __construct($requestData,$mail_agent_id)
+    protected $requestData;
+    protected $mailAgentId;
+
+    public function __construct(array $requestData, int $mailAgentId)
     {
         $this->requestData = $requestData;
-        $this->mail_agent_id = $mail_agent_id;
+        $this->mailAgentId = $mailAgentId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         try {
             $formattedDate = $this->getFormatedDate($this->requestData);
-            $results = $this->generateDailyReportData($this->requestData['agent'], $formattedDate['from'], $formattedDate['to'],$this->requestData['manager_id']);
 
-            $fileName = 'daily_call_report_' . date('Y_m_d_H_i_s') . '.csv';
-            $path = storage_path('app/public/csv');
-            Storage::makeDirectory('public/csv');
-            $filePath = $path . '/' . $fileName;
+            $results = $this->generateDailyReportData(
+                $this->requestData['agent'],
+                $formattedDate['from'],
+                $formattedDate['to'],
+                $this->requestData['manager_id']
+            );
 
-            $csv = fopen('php://memory', 'w');
-
-            // CSV HEADERS
-            fputcsv($csv, [
-                'Producer Name', 'Outbound Calls', 'Facebook', 'Mailer', 'Sms', 'Email',
-                '611 Transfer', '611 Referal Email', 'Appointment', 'Policies',
-                'Expiry Premium', 'Aor', 'Aor Effective Month', 'Aor Premium'
-            ]);
-
-            foreach ($results as $item) {
-                fputcsv($csv, [
-                    $item['producer_name'] ?? '',
-                    $item['outbound_calls'] ?? '0',
-                    $item['facebook'] ?? '0',
-                    $item['mailer'] ?? '0',
-                    $item['sms'] ?? '0',
-                    $item['email'] ?? '0',
-                    $item['transfer_611'] ?? '0',
-                    $item['referal_611'] ?? '0',
-                    $item['appointments'] ?? '',
-                    $item['policies'] ?? '',
-                    number_format($item['expiry_premium'] ?? 0, 2),
-                    $item['aor'] ?? '',
-                    $item['aor_effective_month'] ?? '',
-                    number_format($item['aor_premium'] ?? 0, 2),
-                ]);
-            }
-
-            rewind($csv);
-            $csvData = stream_get_contents($csv);
-            fclose($csv);
-
-            Storage::put('public/csv/' . $fileName, $csvData);
-
-            $setting_time_data = Setting::select('notify_email')->first();
-            if($setting_time_data && !empty($setting_time_data->notify_email)){
-                $recipientEmail_arr = explode(',', $setting_time_data->notify_email);
-
-                $recipientEmail = $recipientEmail_arr[0];
-
-                $ccEmails = array_slice($recipientEmail_arr, 1);
-
-                $this->setDynamicSMTPUserWise($this->mail_agent_id);
-                
-                Mail::send([], [], function ($message) use ($fileName, $filePath,$recipientEmail,$ccEmails) {
-                    $message->to($recipientEmail);
-
-                    if (count($ccEmails) > 0) {
-                        $message->cc($ccEmails);
-                    }
-                    $message->subject('Daily Call Report CSV')
-                    ->html('Please find the attached Daily Call Report CSV file.')
-                    ->attach($filePath, [
-                        'as' => $fileName,
-                        'mime' => 'text/csv',
-                    ]);
-                });
-            }
-            unset($setting_time_data);
-
-            // Delete file after sending
-            if (Storage::exists('public/csv/' . $fileName)) {
-                Storage::delete('public/csv/' . $fileName);
-            }
+            $filePath = $this->generateCsv($results);
+            $this->sendDailyReportEmail($filePath);
+            $this->deleteCsv($filePath);
 
         } catch (\Throwable $th) {
-            Log::error('ProcessMailDailyCallReportJob failed: (Daily Call Report)' . $th->getMessage(), [
+            $this->logError($th);
+        }
+    }
+
+    private function generateCsv(array $results): string
+    {
+        $fileName = 'daily_call_report_'.date('Y_m_d_H_i_s').'.csv';
+        $path = storage_path('app/public/csv');
+        Storage::makeDirectory('public/csv');
+        $filePath = $path.'/'.$fileName;
+
+        $csv = fopen('php://memory', 'w');
+        $this->writeCsvHeader($csv);
+        $this->writeCsvRows($csv, $results);
+
+        rewind($csv);
+        $csvData = stream_get_contents($csv);
+        fclose($csv);
+
+        Storage::put('public/csv/'.$fileName, $csvData);
+
+        return $filePath;
+    }
+
+    private function writeCsvHeader($csv): void
+    {
+        fputcsv($csv, [
+            'Producer Name', 'Outbound Calls', 'Facebook', 'Mailer', 'Sms', 'Email',
+            '611 Transfer', '611 Referal Email', 'Appointment', 'Policies',
+            'Expiry Premium', 'Aor', 'Aor Effective Month', 'Aor Premium',
+        ]);
+    }
+
+    private function writeCsvRows($csv, array $results): void
+    {
+        foreach ($results as $item) {
+            fputcsv($csv, [
+                $item['producer_name'] ?? '',
+                $item['outbound_calls'] ?? '0',
+                $item['facebook'] ?? '0',
+                $item['mailer'] ?? '0',
+                $item['sms'] ?? '0',
+                $item['email'] ?? '0',
+                $item['transfer_611'] ?? '0',
+                $item['referal_611'] ?? '0',
+                $item['appointments'] ?? '',
+                $item['policies'] ?? '',
+                formatUSNumber($item['expiry_premium'] ?? 0),
+                $item['aor'] ?? '',
+                $item['aor_effective_month'] ?? '',
+                formatUSNumber($item['aor_premium'] ?? 0),
+            ]);
+        }
+    }
+
+    private function sendDailyReportEmail(string $filePath): void
+    {
+        $fileName = basename($filePath);
+        $subject = "Daily Call Report CSV";
+        $mailBody = "Please find the attached Daily Call Report CSV file.";
+
+        $this->setDynamicSMTPUserWise($mailAgentId);
+
+        $this->sendReportEmail($subject, $mailBody, $filePath, $fileName);
+    }
+
+    private function logError(\Throwable $th): void
+    {
+        Log::error(
+            'ProcessMailDailyCallReportJob failed (Daily Call Report): '.$th->getMessage(),
+            [
                 'line' => $th->getLine(),
                 'file' => $th->getFile(),
                 'trace' => $th->getTraceAsString(),
-            ]);
-        }
+            ]
+        );
     }
 }

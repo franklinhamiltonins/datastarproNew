@@ -17,36 +17,19 @@
 				</div> --}}
 				<div class="form-group mb-2">
 					<label class="form-label small mb-1 font-weight-normal">Contacts:</label>
-					<select class="commonClass form-control leadscontactstatus contact-info-list-select px-2" class="form-control leadselectstatus" name="contact_id">
+					<select class="commonClass form-control leadscontactstatus contact-info-list-select px-2 leadselectstatus" name="contact_id">
 						<option value="">Select contact</option>
 						@foreach($contacts as $contact)
 						<option value="{{$contact->id}}">
 							{{$contact->c_full_name}}
 						</option>
 						@endforeach
-					</select> 
+					</select>
 				</div>
 				<div class="form-group mb-2">
 					<label class="form-label small mb-1 font-weight-normal">Description<sup class="mandatoryClass">*</sup>:</label>
 					{!! Form::textarea('description', null, array('placeholder' => 'Note description','class' => 'form-control px-2','id'=> 'note_desc','rows'=>'15')) !!}
 				</div>
-
-				<!-- <div class="form-group">
-					<strong>Status:</strong>
-					<select class="commonClass form-control leadscontactstatus contact-info-list-select" class="form-control leadselectstatus" name="contact_status">
-						<option value="">Select Status</option>
-						@foreach($statusOptions as $statusOption)
-						<option value="{{ $statusOption }}">
-							{{ $statusOption }}
-						</option>
-						@endforeach
-					</select> 
-				</div> -->
-
-				<!-- {!! Form::hidden('selected_contact_id', null, ['id' => 'selected_contact_id']) !!}
-				{!! Form::hidden('watchlist_id', null, ['id' => 'watchlist_id']) !!} -->
-
-
 
 			</div>
 			<div class="modal-footer p-2 p-lg-3">
@@ -57,39 +40,6 @@
 		</div>
 	</div>
 </div>
-<!-- <script>
-let theNoteEditor;
-
-document.addEventListener('DOMContentLoaded', function () {
-    ClassicEditor
-        .create(document.getElementById('note_desc'))
-        .then(editor => {
-            theNoteEditor = editor;
-        })
-        .catch(error => {
-            console.error(error);
-        });
-});
-
-function handleSubmit() {
-    if (theNoteEditor) {
-        const editorData = theNoteEditor.getData().trim();
-
-        // console.log(editorData);
-
-        if (!editorData || editorData === '<p></p>') {
-            toastr.error('Description is required');
-            return false;
-        }
-
-        // manually set value back to textarea (very important!)
-        document.getElementById('note_desc').value = editorData;
-    }
-
-    return true; // form is valid
-}
-
-</script> -->
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

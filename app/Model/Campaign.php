@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Model;
 
+use App\Model\LeadsModel\Lead;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use  App\Model\LeadsModel\Lead;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Campaign extends Model
@@ -20,7 +19,7 @@ class Campaign extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'name','status','campaign_date','type','size','status','lead_number','lead_ids', 'lead_actions'
+        'name', 'status', 'campaign_date', 'type', 'size', 'status', 'lead_number', 'lead_ids', 'lead_actions',
     ];
 
     public function leads()
@@ -41,7 +40,4 @@ class Campaign extends Model
     {
         return $this->hasMany('App\Model\LeadsModel\Action', 'id');
     }
-
 }
-
-

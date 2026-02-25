@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -17,6 +16,7 @@ class Login2FAMailSending extends Mailable
      * @return void
      */
     public $data;
+
     public function __construct($data)
     {
         $this->data = $data;
@@ -30,6 +30,6 @@ class Login2FAMailSending extends Mailable
     public function build()
     {
         return $this->view('emails.login_2fa_code_body')
-                ->subject('DatastarPro Login Alert – Your 2FA Code');
+            ->subject('DatastarPro Login Alert – Your 2FA Code');
     }
 }

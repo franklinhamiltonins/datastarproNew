@@ -28,7 +28,7 @@ class AddSoftDeleteToContacts extends Migration
     {
         Schema::table('contacts', function (Blueprint $table) {
             //
-            $table->dropSoftDeletes(); 
+            $table->dropSoftDeletes();
         });
     }
 }

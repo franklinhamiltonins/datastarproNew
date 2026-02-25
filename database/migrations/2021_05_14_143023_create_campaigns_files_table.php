@@ -17,12 +17,12 @@ class CreateCampaignsFilesTable extends Migration
             $table->unsignedBigInteger('campaign_id');
             $table->unsignedBigInteger('file_id');
 
-         //FOREIGN KEY CONSTRAINTS
-           $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade');
-           $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+            // FOREIGN KEY CONSTRAINTS
+            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
 
-         //SETTING THE PRIMARY KEYS
-           $table->primary(['campaign_id','file_id']);
+            // SETTING THE PRIMARY KEYS
+            $table->primary(['campaign_id', 'file_id']);
         });
     }
 

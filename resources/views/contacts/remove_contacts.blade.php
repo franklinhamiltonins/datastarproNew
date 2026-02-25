@@ -26,19 +26,10 @@
                     </div>
 
                     <div class="card-body">
-
-
-
-
-                        {{-- {{The custom made errors when an important column is missing in file --}}
-                        @if(session('customErrors'))
                         @foreach (session('customErrors') as $error)
                         <span class="text-danger"><small>{!! $error !!}</small></span>
                         @endforeach
                         @endif
-
-
-
                         <form action="{{ route('contacts.delete_contacts') }}" method="POST"
                             enctype="multipart/form-data" class="mt-2" id="importForm">
                             @csrf

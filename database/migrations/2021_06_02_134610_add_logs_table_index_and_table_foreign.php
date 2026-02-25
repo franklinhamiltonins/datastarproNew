@@ -14,16 +14,15 @@ class AddLogsTableIndexAndTableForeign extends Migration
     public function up()
     {
         Schema::table('logs', function (Blueprint $table) {
-             //drop foreign pivot table 
-             Schema::dropIfExists('leads_logs');
-             
+            // drop foreign pivot table
+            Schema::dropIfExists('leads_logs');
+
             //
             $table->unsignedBigInteger('lead_id')->nullable()->change();
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
             $table->unsignedBigInteger('user_id')->nullable()->change();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-           
         });
     }
 

@@ -15,7 +15,6 @@
                 </div>
             </div>
         </div>
-        
         <div class="row">
             <div class="col-xl-12">
                 <div class="card card-secondary">
@@ -56,7 +55,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->

@@ -7,7 +7,7 @@
 			<div class="modal-body p-2 p-lg-3">
 				<div class="form-group m-0">
 					<strong class="mb-2 d-inline-block">Agent:</strong>
-					{!! Form::select("agent_list[]", $agent_users, [], array('id' => 'agent_list','class' => 'form-control ml-0', 'required','multiple'=>'multiple')) !!}
+					{!! Form::select("agent_list[]", $agentUsers, [], array('id' => 'agent_list','class' => 'form-control ml-0', 'required','multiple'=>'multiple')) !!}
 				</div>
 				<div class="form-group m-0" id="agentleads_dynamic">
 					<div class="form-group m-2" id="ExistingAgentListSection" style="display: none;">
@@ -26,8 +26,6 @@
 
 					</div>
 				</div>
-
-
 			</div>
 			<div class="modal-footer justify-content-start p-2 p-lg-3">
 				<button class="btn btn-primary btn-sm m-0" id="save_agentleads_list_button">Assign<span class="spinner-border spinner-border-sm navicon d-none" role="status" aria-hidden="true"></span></button>

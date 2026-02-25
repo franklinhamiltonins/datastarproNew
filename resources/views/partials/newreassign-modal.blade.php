@@ -14,7 +14,7 @@
 				<input type="hidden" name="old_agent_id" id="old_agent_id">
 				<div class="modal-body p-2 p-lg-3 reassignBodyContent" >
 					<select class="form-control mb-2" name="reassign_agent_id" id="reassign_agent_id" >
-						@foreach($agent_users as $key => $agent)
+						@foreach($agentUsers as $key => $agent)
 							<option value="{{$key}}">{{$agent}}</option>
 						@endforeach
 					</select>

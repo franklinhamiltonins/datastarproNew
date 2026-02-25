@@ -14,7 +14,7 @@ class AlterUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            //drop foreign pivot table 
+            // drop foreign pivot table
             Schema::dropIfExists('users_logs');
             $table->bigIncrements('id')->change();
         });

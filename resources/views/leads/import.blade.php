@@ -26,19 +26,12 @@
                     </div>
 
                     <div class="card-body p-2 p-lg-3">
-
-
-
-
                         {{-- {{The custom made errors when an important column is missing in file --}}
                         @if(session('customErrors'))
                         @foreach (session('customErrors') as $error)
                         <span class="text-danger"><small>{!! $error !!}</small></span>
                         @endforeach
                         @endif
-
-
-
                         <form action="{{ route('leads.import') }}" method="POST" enctype="multipart/form-data"
                             id="importForm">
 

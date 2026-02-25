@@ -14,13 +14,13 @@
 				</div>
 				<div class="form-group">
 					<strong>Agent:</strong>
-					<!-- {!! Form::select("agent_list", $agent_users, [], array('class' => 'form-control ml-0', 'required','multiple' => 'multiple')) !!} -->
-
-					{!! Form::select('agent_list[]',  $agent_users, [], ['id'=>'agent_list_dialing','class' => 'form-control  px-1', 'multiple' => true, 'size' => 1, 'style' => 'height: 2rem']) !!}
+					{!! Form::select('agent_list[]',  $agentUsers, [], ['id'=>'agent_list_dialing','class' => 'form-control  px-1', 'multiple' => true, 'size' => 1, 'style' => 'height: 2rem']) !!}
 				</div>
 			</div>
 			<div class="modal-footer flex-column">
-				<button class="btn btn-primary" id="save_agent_list_button" disabled>Save Dialing List<span class="spinner-border spinner-border-sm navicon d-none" role="status" aria-hidden="true"></span></button>
+				<button class="btn btn-primary" id="save_agent_list_button" disabled>Save Dialing List
+					<span class="spinner-border spinner-border-sm navicon d-none" role="status" aria-hidden="true"></span>
+				</button>
 			</div>
 		</div>
 	</div>

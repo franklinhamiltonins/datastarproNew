@@ -26,7 +26,7 @@ class AddSoftDeleteToLeads extends Migration
     public function down()
     {
         Schema::table('leads', function (Blueprint $table) {
-            $table->dropSoftDeletes(); 
+            $table->dropSoftDeletes();
         });
     }
 }

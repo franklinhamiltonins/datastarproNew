@@ -33,10 +33,6 @@
     function displaySection() {
         document.getElementById("logWiseView").classList.toggle("displayNoneClass", currentViewType != 1);
         document.getElementById("consolidatedView").classList.toggle("displayNoneClass", currentViewType == 1);
-
-        // if(currentViewType != 1){
-        //     document.getElementById("pagination-wrapper").innerHTML = "";
-        // }
     }
 
     async function loadAreaWiseSection(response) {

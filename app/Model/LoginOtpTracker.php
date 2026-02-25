@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use App\Model\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +11,7 @@ class LoginOtpTracker extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = "login_otp_tracker";
+    protected $table = 'login_otp_tracker';
 
     protected $fillable = [
         'user_id',

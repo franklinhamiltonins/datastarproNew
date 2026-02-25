@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -17,6 +16,7 @@ class DialcreationConfirmation extends Mailable
      * @return void
      */
     public $data;
+
     public function __construct($data)
     {
         $this->data = $data;
@@ -30,6 +30,6 @@ class DialcreationConfirmation extends Mailable
     public function build()
     {
         return $this->view('emails.dial_creation_confirmation')
-                    ->subject('Dial Creation Confirmation');
+            ->subject('Dial Creation Confirmation');
     }
 }

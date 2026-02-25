@@ -291,7 +291,7 @@ function draw_table() {
     var $thead = jQuery('#smsprovider_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#smsprovider_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);

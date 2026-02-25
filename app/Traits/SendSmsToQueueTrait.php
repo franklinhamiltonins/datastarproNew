@@ -2,170 +2,219 @@
 
 namespace App\Traits;
 
-use Illuminate\Support\Str;
-use App\Model\LeadsModel\Contact;
-use App\Model\SmsProviderQueue;
-use App\Model\SmsProvider;
-use Carbon\Carbon;
 use App\Jobs\AddEmailToKlaviyo;
 use App\Jobs\SendSmsVontageThroughQueue;
+use App\Model\LeadsModel\Contact;
+use App\Model\SmsProvider;
+use App\Model\SmsProviderQueue;
+use Carbon\Carbon;
 
-
-//before using this trait , VontageunctionsTrait trait also need to use
+// before using this trait , VontageunctionsTrait trait also need to use
 trait SendSmsToQueueTrait
 {
-    public function nextsmsprovider($contact,$isFirstTime)
+    /**
+     * Get next SMS provider based on skip count
+     */
+    protected function getNextSmsProvider($contact, int $skip)
     {
-        if($isFirstTime){
+        return SmsProvider::select('*')
+            ->orderBy('day_delay', 'asc')
+            ->orderBy('minute_delay', 'asc')
+            ->offset($skip)
+            ->limit(1)
+            ->first();
+    }
+
+    public function nextSmsProvider($contact, $isFirstTime)
+    {
+        if ($isFirstTime) {
             $skip = 1;
-        }
-        else{
+        } else {
             $skip = ($contact->skip_response_step + 1);
         }
 
-        $next_sms_provider = SmsProvider::select('*')
-                    ->orderBy('day_delay', 'asc')
-                    ->orderBy('minute_delay', 'asc')
-                    ->offset($skip)
-                    ->limit(1)
-                    ->first();
-
-        return $next_sms_provider;
+        return $this->getNextSmsProvider($contact, $skip);
     }
 
     /**
-    * Get the appropriate SMS Provider based on the contact state.
-    */
-    public function getSmsProvider($contact, $isFirstTime) {
-        $smsProvider = [];
+     * Get the appropriate SMS Provider based on the contact state.
+     */
+    public function getSmsProvider($contact, $isFirstTime)
+    {
+        $skip = $isFirstTime ? 0 : $contact->skip_response_step;
 
-        if ($isFirstTime) {
-            // echo " //isFirstTime ---> ".$isFirstTime; 
-            $smsProvider= SmsProvider::select('*')
-                        ->orderBy('day_delay', 'asc')
-                        ->orderBy('minute_delay', 'asc')
-                        ->limit(1)
-                        ->first();
-            // echo "if smsProvider ---> ".$smsProvider->id;
-        } else {
-            // echo 'contact skip ' . $contact->skip_response_step;
-            $smsProvider = SmsProvider::select('*')
-                ->orderBy('day_delay', 'asc')
-                ->orderBy('minute_delay', 'asc')
-                ->skip($contact->skip_response_step)
-                ->limit(1)
-                ->first();
-            
-           // echo "if ELSE smsProvider ---> ".$smsProvider->id;
-        }
-        return $smsProvider;
+        return $this->getNextSmsProvider($contact, $skip);
     }
 
     /**
      * Calculate the delay date time based on SMS Provider settings.
      */
-    public function calculateDelayDateTime($startDate, $smsProvider) {
-        return $smsProvider->minute_delay == 0 
-            ? $startDate->addDays($smsProvider->day_delay) 
+    public function calculateDelayDateTime($startDate, $smsProvider)
+    {
+        return $smsProvider->minute_delay == 0
+            ? $startDate->addDays($smsProvider->day_delay)
             : $startDate->addDays($smsProvider->day_delay)->addMinutes($smsProvider->minute_delay);
     }
 
-    public function sendcontactwisesmsproviderandklaviyo($contact,$isFirstTime=true)
+    /**
+     * Get minimum SMS provider ID
+     */
+    protected function getMinSmsProviderId(): int
     {
-    	if(!empty($contact->c_email) || !empty($contact->c_phone)){
-			$min_smsprovider_id = SmsProvider::orderBy('day_delay', 'ASC')->orderBy('minute_delay', 'ASC')->value('id');
-
-			$this->updatecontacttable_fornextsmsprovider($min_smsprovider_id,$contact,$isFirstTime,0,0);
-
-			// addition to klaviyo
-			if(!empty($contact->c_email)){
-				$this->sendemailtoklaviyoinside($contact);
-			}
-			// send first vontage message
-			if(!empty($contact->c_phone)){
-				$this->sendvontagemessageinsidefirst($min_smsprovider_id,$contact);
-			}
-		}
+        return SmsProvider::orderBy('day_delay', 'ASC')
+            ->orderBy('minute_delay', 'ASC')
+            ->value('id') ?? 0;
     }
 
-    public function updatecontacttable_fornextsmsprovider($current_sent_smsprovider_id,$contact,$isFirstTime,$makeloginqueue,$day_delay)
+    /**
+     * Send Klaviyo email for contact
+     */
+    protected function sendKlaviyoEmail($contact): void
     {
-    	$startDate = $isFirstTime ? Carbon::now() : Carbon::parse($contact->first_sms_date_time);
-		$next_sms_provider = $this->nextsmsprovider($contact,$isFirstTime);
-        if($next_sms_provider){
-            $delayDateTime = $this->calculateDelayDateTime($startDate, $next_sms_provider);
-            $respond_to_cron_flag = 0;
+        if (! empty($contact->c_email)) {
+            $this->sendemailtoklaviyoinside($contact);
         }
-        else{
-            $delayDateTime = $contact->next_sms_date_time;
-            $respond_to_cron_flag = 1;
-        }
-        Contact::where('id',$contact->id)
-        ->update([
-            // 'current_sent_smsprovider_id' => $isFirstTime ? 2 : $smsProvider->id + 1,
-            'current_sent_smsprovider_id' => $current_sent_smsprovider_id,
-            'first_sms_date_time' => $isFirstTime ? Carbon::now() : $contact->first_sms_date_time,
-            // 'last_sms_date_time' => Carbon::now() ,
-            'next_sms_date_time' => $delayDateTime,
-            'respond_to_cron_flag' => $respond_to_cron_flag,
-            'skip_response_step' => $isFirstTime ? 1 : $contact->skip_response_step + 1
-        ]);
+    }
 
-        if($makeloginqueue == 1){
-        	SmsProviderQueue::create([
-	            'contact_id' => $contact->id,
-	            'sms_sent_flag' => 0,
-	            'sms_provider_id' => $current_sent_smsprovider_id,
-	            'day_delay' => $day_delay
-	        ]);
+    /**
+     * Send Vontage message for contact
+     */
+    protected function sendVontageMessage($minSmsproviderId, $contact): void
+    {
+        if (! empty($contact->c_phone)) {
+            $this->sendvontagemessageinsidefirst($minSmsproviderId, $contact);
+        }
+    }
+
+    public function sendContactWiseSmsProviderandKlaviyo($contact, $isFirstTime = true)
+    {
+        if (! empty($contact->c_email) || ! empty($contact->c_phone)) {
+            $minSmsproviderId = $this->getMinSmsProviderId();
+
+            $this->updateContactTableForNextSmsProvider($minSmsproviderId, $contact, $isFirstTime, 0, 0);
+
+            // addition to klaviyo
+            $this->sendKlaviyoEmail($contact);
+            // send first vontage message
+            $this->sendVontageMessage($minSmsproviderId, $contact);
+        }
+    }
+
+    /**
+     * Calculate delay datetime for next SMS
+     */
+    protected function calculateNextDelayDateTime($contact, $isFirstTime, $nextSmsProvider): array
+    {
+        $startDate = $isFirstTime ? Carbon::now() : Carbon::parse($contact->first_sms_date_time);
+
+        if ($nextSmsProvider) {
+            $delayDateTime = $this->calculateDelayDateTime($startDate, $nextSmsProvider);
+            $respondToCronFlag = 0;
+        } else {
+            $delayDateTime = $contact->next_sms_date_time;
+            $respondToCronFlag = 1;
+        }
+
+        return [$delayDateTime, $respondToCronFlag];
+    }
+
+    public function updateContactTableForNextSmsProvider($currentSentSmsProviderId, $contact, $isFirstTime, $makeloginqueue, $dayDelay)
+    {
+        $nextSmsProvider = $this->nextSmsProvider($contact, $isFirstTime);
+        [$delayDateTime, $respondToCronFlag] = $this->calculateNextDelayDateTime(
+            $contact,
+            $isFirstTime,
+            $nextSmsProvider
+        );
+
+        Contact::where('id', $contact->id)
+            ->update([
+                'current_sent_smsprovider_id' => $currentSentSmsProviderId,
+                'first_sms_date_time' => $isFirstTime ? Carbon::now() : $contact->first_sms_date_time,
+                'next_sms_date_time' => $delayDateTime,
+                'respond_to_cron_flag' => $respondToCronFlag,
+                'skip_response_step' => $isFirstTime ? 1 : $contact->skip_response_step + 1,
+            ]);
+
+        if ($makeloginqueue == 1) {
+            SmsProviderQueue::create([
+                'contact_id' => $contact->id,
+                'sms_sent_flag' => 0,
+                'sms_provider_id' => $currentSentSmsProviderId,
+                'day_delay' => $dayDelay,
+            ]);
         }
     }
 
     public function sendemailtoklaviyoinside($contact)
     {
         AddEmailToKlaviyo::dispatch($contact);
-        $this->updateklaviyostatus_incontactable($contact->id,1);
+        $this->updateKlaviyoStatusIncontactable($contact->id, 1);
     }
 
-    public function sendvontagemessageinsidefirst($min_smsprovider_id,$contact)
+    public function sendvontagemessageinsidefirst($minSmsproviderId, $contact)
     {
-        $request_data = $this->Vontage_queue_request_data($min_smsprovider_id,$contact->c_phone,$contact->id);
+        $requestData = $this->Vontage_queue_request_data($minSmsproviderId, $contact->c_phone, $contact->id);
 
-        SendSmsVontageThroughQueue::dispatch($request_data);
+        SendSmsVontageThroughQueue::dispatch($requestData);
     }
 
-    public function updatecontactinfomation_basedklaviyovontage($oldcontact,$contact,$isFirstTime=true)
+    /**
+     * Check if new contact info needs SMS provider update
+     */
+    protected function needsSmsProviderUpdate($oldcontact, $contact): bool
     {
-        $min_smsprovider_id = SmsProvider::orderBy('day_delay', 'ASC')->orderBy('minute_delay', 'ASC')->value('id');
+        return empty($oldcontact->c_email) && empty($oldcontact->c_phone) &&
+            (! empty($contact->c_email) || ! empty($contact->c_phone));
+    }
 
-        if(empty($oldcontact->c_email) && empty($oldcontact->c_phone)){
-            if(!empty($contact->c_email) || !empty($contact->c_phone)){
-                $this->updatecontacttable_fornextsmsprovider($min_smsprovider_id,$contact,$isFirstTime,0,0);
-            }
+    /**
+     * Handle Klaviyo email for updated contact
+     */
+    protected function handleUpdatedContactKlaviyo($oldcontact, $contact): void
+    {
+        if (empty($oldcontact->c_email) && ! empty($contact->c_email)) {
+            $this->sendemailtoklaviyoinside($contact);
+        }
+    }
+
+    /**
+     * Handle Vontage message for updated contact
+     */
+    protected function handleUpdatedContactVontage($oldcontact, $contact, int $minSmsproviderId): void
+    {
+        if (empty($oldcontact->c_phone) && ! empty($contact->c_phone)) {
+            $this->sendvontagemessageinsidefirst($minSmsproviderId, $contact);
+        }
+    }
+
+    public function updateContactInfomationBasedKlaviyoVontage($oldcontact, $contact, $isFirstTime = true)
+    {
+        $minSmsproviderId = $this->getMinSmsProviderId();
+
+        if ($this->needsSmsProviderUpdate($oldcontact, $contact)) {
+            $this->updateContactTableForNextSmsProvider($minSmsproviderId, $contact, $isFirstTime, 0, 0);
         }
 
         // addition to klaviyo
-        if(empty($oldcontact->c_email) && !empty($contact->c_email)){
-            $this->sendemailtoklaviyoinside($contact);
-        }
+        $this->handleUpdatedContactKlaviyo($oldcontact, $contact);
         // send first vontage message
-        if(empty($oldcontact->c_phone) && !empty($contact->c_phone)){
-            $this->sendvontagemessageinsidefirst($min_smsprovider_id,$contact);
-        }
+        $this->handleUpdatedContactVontage($oldcontact, $contact, $minSmsproviderId);
     }
 
-    public function promotional_msg_sending_check()
+    public function promotionalMsgSendingCheck()
     {
         $estTime = new \DateTime('now', new \DateTimeZone('America/New_York'));
 
         // Output the formatted time
         $hourest = $estTime->format('H');
 
-        if($hourest >= 9 && $hourest < 19){
-            return true;
+        $returnFormat = false;
+
+        if ($hourest >= 9 && $hourest < 19) {
+            $returnFormat = true;
         }
-        else{
-            return false;
-        }
+
+        return $returnFormat;
     }
 }

@@ -57,7 +57,7 @@
 
                                     {!! Form::textarea('text', null, array('placeholder' => 'Text','class' =>
                                     'form-control' ,'id' => 'smsprovider_content')) !!}
-                                    
+
                                 </div>
                             </div>
                             <div class="col-12">

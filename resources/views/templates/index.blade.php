@@ -204,12 +204,12 @@ function draw_table() {
                 render: function(data, type, row, meta) {
                     var is_admin = $("#isAdminUser").val();
                     var auth_id = $("#auth_id").val();
-                    
+
                     if(row.created_by == auth_id)
                         return '<input type="checkbox" class="select-row" value="' + row.id + '">';
-                    else 
-                        return '<input type="checkbox" class="select-row" value="" disabled>';;
-                    
+                    else
+                        return '<input type="checkbox" class="select-row" value="" disabled>';
+
                 }
             },
             {
@@ -278,7 +278,7 @@ function draw_table() {
                     let columnIndex = table.column(columnValue + ':name').index();
                     table.column(columnIndex).visible(false);
                 }
-                    
+
             });
         }
 
@@ -318,7 +318,7 @@ function draw_table() {
         if (!event.target.value) {
             console.log('contact search cross clicked');
             $(event.target).blur(); // to remove cursiour from search field.
-            
+
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
             $(event.target).after('<i class="fas fa-search position-absolute"></i>');
             table.search(event.target.value).draw(); // drow the table
@@ -328,8 +328,8 @@ function draw_table() {
     // Add select all checkbox to table header
     var $thead = jQuery('#templates_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all" title="Select / De-select All">');
-    
-    // Select all checkboxes 
+
+    // Select all checkboxes
     jQuery('#templates_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);

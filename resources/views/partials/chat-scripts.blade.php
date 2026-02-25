@@ -88,19 +88,19 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, 
 
         $("#chat-wrapper").prepend(`
 				<div class="position-relative chat-person ml-3 ${borderClass} border rounded" id="chat_person_${chatContactId}">
-                    
+
 					<h4 class="bg-${borderClass.replace('border-', '')} mb-0 px-2 py-3 d-flex align-items-center justify-content-between">${chatContactName}
                     <div class="d-flex align-items-center">
                     <i class="fas mr-2 fa-chevron-down minimise_chatbox" id="${chatContactId}"></i>
                     <div data-id="${chatContactId}" class="close_chatbox bg-${borderClass.replace('border-', '')} d-flex align-items-center justify-content-center cross-chat">
                         <i class="fas fa-times"></i>
                     </div>
-                    
+
                     </div>
                     </h4>
 					<div class="off-div" id="off-div-${chatContactId}">
 						<div class="chat-box p-2" id="chat_message_${chatContactId}">
-							
+
 					${html}
 
 						</div>
@@ -111,7 +111,7 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, 
                                 <option>-- Templates --</option>
                                 <option>Saved Templates</option>
                             </select>
-							<button class="chat-send" id="chat_send_${chatContactId}" data-is_newsletter_contact="${is_newsletter_contact}"> 
+							<button class="chat-send" id="chat_send_${chatContactId}" data-is_newsletter_contact="${is_newsletter_contact}">
 								<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Uploaded to svgrepo.com" width="20px" height="20px" viewBox="0 0 32 32" xml:space="preserve">
 									<path class="stone_een" d="M10.774,23.619l-1.625,5.691C9.06,29.164,9,28.992,9,28.794v-5.57l13.09-12.793L10.774,23.619z   M10.017,29.786c0.243-0.002,0.489-0.084,0.69-0.285l3.638-3.639l-2.772-1.386L10.017,29.786z M28.835,2.009L3.802,14.326  c-2.226,1.095-2.236,4.266-0.017,5.375l4.89,2.445L27.464,3.79c0.204-0.199,0.516-0.234,0.759-0.086  c0.326,0.2,0.396,0.644,0.147,0.935l-16.3,18.976l8.84,4.4c1.746,0.873,3.848-0.128,4.27-2.034l5.071-22.858  C30.435,2.304,29.588,1.639,28.835,2.009z"/>
 								</svg>
@@ -147,17 +147,11 @@ function handleChatInit(e) {
     const chatContactId = parseInt(contact_id ? contact_id : newsletter_id);
     const is_newsletter_contact = contact_id ? "no" : "yes";
     const chatContactName = $(this).data("name");
-    var chat_contact_status = $(this).data("chat_contact_status");
-    const chatContactStatus = chat_contact_status == null ? 0 : chat_contact_status;
-    
+    const chatContactStatus = $(this).data("chat_contact_status") == null ? 0 : $(this).data("chat_contact_status");
+
     // Check if the clicked chatContactId is not in the array of previous ones
 
-    // console.log("prevChatContactIds= "+prevChatContactIds);
-    // console.log("chatContactId= "+chatContactId);
-
     if (!prevChatContactIds.includes(chatContactId)) {
-
-        // console.log("in if="+chatContactId);
         removeExcessChatPersons();
         appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, is_newsletter_contact);
     }
@@ -183,14 +177,12 @@ function fetchChatContent(chatContactId,is_newsletter_contact, successCallback) 
 
 function checkMaxExecTime(contactId) {
     $.ajax({
-        url: `/check_max_execution_time/${contactId}`,
+        url: `/check-max-execution-time/${contactId}`,
         method: 'GET',
         success: function(response) {
             if (response.status == '200' && response.success == true && response.response > 0) {
-                // console.log($(`#chat_send_${contactId}`));
                 $(`#chat_send_${contactId}`).attr('disabled', true);
             } else {
-                console.log($(`#chat_send_ELSEEEEEEEEEEEE`));
                 $(`#chat_send_${contactId}`).attr('disabled', false);
             }
         },
@@ -230,7 +222,7 @@ $(document).on('click', '#chat-wrapper .close_chatbox', function(e) {
 
     // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
     // closeDiv.remove();
-    
+
     // if (indexToRemove !== -1) {
     //     prevChatContactIds.splice(indexToRemove, 1);
     //     console.log(prevChatContactIds);
@@ -262,7 +254,7 @@ $("#chat-wrapper").on("click", ".chat-send", function(e) {
         // function to save data in mesage and append data in msg
         // console.log(isNewsletterContact); return false;
         saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact);
-       
+
         // Clear the textarea after posting the chat
         $(this).siblings(".text-input").val("");
     }
@@ -280,7 +272,7 @@ function saveMessageInChat(chatContent, chatContactId, viewContent, timeString, 
 
         },
         success: function(response) {
-            let appendhtml = 
+            let appendhtml =
                 `<p class="my-txt mb-2 p-2">`;
             if(response.is_admin){
                 let agent_name = response.logged_in_user_name ? response.logged_in_user_name : 'System';
@@ -291,7 +283,7 @@ function saveMessageInChat(chatContent, chatContactId, viewContent, timeString, 
             appendhtml += `<span class="d-block">${viewContent}</span></p> <p class="snd-msg">${timeString}</p>`;
 
             $(`#chat_message_${chatContactId}`).append(appendhtml);
-            
+
             // $(`#chat_message_${chatContactId}`).append(
             //     `<p class="my-txt mb-2">${viewContent}</p>
 			// 		<p class="snd-msg">${timeString}</p>`);

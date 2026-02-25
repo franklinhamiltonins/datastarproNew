@@ -2,14 +2,11 @@
 
 namespace App\Model;
 
-
-use App\Model\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class EventLogs extends  BaseModel
+class EventLogs extends BaseModel
 {
     use HasFactory, SoftDeletes;
 
@@ -22,8 +19,9 @@ class EventLogs extends  BaseModel
         'event_desc',
         'event_date',
         'status',
-        'created_at'
+        'created_at',
     ];
+
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     public function setCreatedAtAttribute($value)

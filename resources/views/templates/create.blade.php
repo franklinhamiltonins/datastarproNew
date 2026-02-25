@@ -84,7 +84,7 @@
                             <div class="col-12 col-md-6 mt-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" 
+                                        <input type="checkbox" class="custom-control-input"
                                         @if( old('set_for_all') == '1' || !old('template_content')) checked='checked' @endif
                                             name="set_for_all" value="{{ old('set_for_all') == '1' ? 1 : (!old('template_content') ? 1 : 0) }}" id="templateForAll">
                                         <label class="custom-control-label" for="templateForAll">Set for all Agents</label>
@@ -94,7 +94,7 @@
                             <div class="col-12 col-md-5" id="show_user_option" style="display:{{ old('set_for_all') == '1' ? 'none' : (!old('template_content') ? 'none' : 'block') }}">
                                 <div class="form-group">
                                     <strong>User Name:</strong>
-                                    {!! Form::select('user_id[]', $agent_users, isset($template)? $template->user_id : [],
+                                    {!! Form::select('user_id[]', $agentUsers, isset($template)? $template->user_id : [],
                                     array('class' => 'form-control select2', 'multiple', 'id' => 'selectUser','data-placeholder'=>'Select User')) !!}
                                 </div>
                             </div>
@@ -193,9 +193,9 @@ jQuery(document).ready(function() {
             $("#show_user_option").css("display","none");
         } else {
             $(this).val(0);
-            $("#show_user_option").css("display","block"); 
+            $("#show_user_option").css("display","block");
         }
-            
+
     });
 
     $(document).on('change','#template_type',function() {

@@ -5,11 +5,6 @@ namespace App\Model\LeadsModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Schema;
-use DB;
-use Validator;
-use Carbon\Carbon;
-
 
 class ScrapContactSocialProfile extends Model
 {
@@ -33,18 +28,6 @@ class ScrapContactSocialProfile extends Model
         'twitter_url',
         'twitter_username',
         'github_url',
-        'github_username'
+        'github_username',
     ];
-
-
-    /**
-     * App\Lead relationship
-     *
-     * @return Illuminate\Database\Eloquent\Relations\hasOne
-     */
-    // make connection with users table , due to foreign key
-    // public function leads()
-    // {
-    // 	return $this->belongsTo(Lead::class, 'lead_id');
-    // }
 }

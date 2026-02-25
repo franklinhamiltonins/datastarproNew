@@ -18,12 +18,13 @@ class Filter extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'id', 'is_business_name', 'name', 'type', 'address', 'business_name', 'business_id', 'operator', 'distance', 'latitude', 'longitude', 'conditions'
+        'id', 'is_business_name', 'name', 'type', 'address', 'business_name', 'business_id', 'operator', 'distance', 'latitude', 'longitude', 'conditions',
     ];
 
     public function scopeGetFilters()
     {
         $filter = Filter::whereNull('deleted_at')->get();
+
         return $filter ? $filter : null;
     }
 }

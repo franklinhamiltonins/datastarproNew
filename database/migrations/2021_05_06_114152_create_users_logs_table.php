@@ -17,12 +17,12 @@ class CreateUsersLogsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedBigInteger('log_id');
 
-         //FOREIGN KEY CONSTRAINTS
-           $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-           $table->foreign('log_id')->references('id')->on('logs')->onDelete('cascade');
+            // FOREIGN KEY CONSTRAINTS
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('log_id')->references('id')->on('logs')->onDelete('cascade');
 
-         //SETTING THE PRIMARY KEYS
-           $table->primary(['user_id','log_id']);
+            // SETTING THE PRIMARY KEYS
+            $table->primary(['user_id', 'log_id']);
         });
     }
 

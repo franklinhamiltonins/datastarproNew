@@ -183,7 +183,7 @@
                         </div>
                         <p class="small text-secondary mb-1">While writing you email content, click these buttons to insert
                             placeholders.</p>
-                        
+
                         <div class="text-left modal-btns mt-3 pt-3">
                             <input type="button" value="Close" class="btn btn-secondary btn-sm template_modal_close_class">
                             <input type="button" id="saveSmsTemplate" value="Save Template" class="btn btn-primary btn-sm show-create-form-button">
@@ -196,7 +196,7 @@
 
     @include('partials.delete-modal')
     @include('partials.email-modal')
-    
+
 </section>
 <!-- /.content -->
 @endsection
@@ -252,7 +252,7 @@ function draw_table() {
             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
         }
     });
-    
+
     var table = jQuery('#fhinsure_datatable').DataTable({
         // dom: 'lBfrtip',
         processing: true,
@@ -383,18 +383,18 @@ function draw_table() {
         if (!event.target.value) {
             console.log('contact search cross clicked');
             $(event.target).blur(); // to remove cursiour from search field.
-            
+
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
             $(event.target).after('<i class="fas fa-search position-absolute"></i>');
             table.search(event.target.value).draw(); // drow the table
         }
-    }, 500));    
+    }, 500));
 
     // Add select all checkbox to table header
     var $thead = jQuery('#fhinsure_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#fhinsure_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);
@@ -469,7 +469,7 @@ function draw_table() {
             success: function(response) {
 
                 toastr.success(response.message);
-                
+
                 jQuery('#fhinsure_datatable').DataTable().draw(true);
                 jQuery('.select-all, .select-row').prop('checked', false);
             },
@@ -515,7 +515,7 @@ function applySavedTemplate(templateId, singleContactId) {
                 let template_content = jsonTemplate.response[0].template_content;
                 let email_content = jsonTemplate.response[0].template_content;
                 let template_subject = jsonTemplate.response[0].template_subject;
-                
+
                 let c_first_name  = responseData.response.first_name || '';
                 let c_last_name   = responseData.response.last_name || '';
 
@@ -526,7 +526,7 @@ function applySavedTemplate(templateId, singleContactId) {
                 template_content = template_content.replace(/{CANDIDATE_LAST_NAME}/g, c_last_name);
                 template_content = template_content.replace(/{BUSINESS_NAME}/g, "");
                 // console.log(template_content);
-                
+
                 // Create a temporary div element
                 let tempDiv = document.createElement('div');
                 tempDiv.innerHTML = template_content;
@@ -602,7 +602,7 @@ function closeSavedTemplateNav() {
         $('#emailModal').addClass('is-visible');
         $('body').addClass('overflow-hidden');
     });
-    
+
 </script>
 
 @include('partials.email-modal-script')

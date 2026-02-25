@@ -4,8 +4,8 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeSavedFiltersNav()"><i class="fas fa-times"></i></a>
     </div>
     <div class="lead-saved-filters d-flex row m-0 mt-2 justify-content-center">
-        @if(!empty($lead_filters))
-        @foreach($lead_filters as $filter)
+        @if(!empty($leadFilters))
+        @foreach($leadFilters as $filter)
         <div class="filter d-flex align-items-center py-1 filter_id_{{$filter->id}} w-100">
             <div class="title d-flex">
                 <label>{{$filter->name}}</label>
@@ -20,6 +20,6 @@
         </div>
         @endforeach
         @endif
-        <div class="no-filter-found m-2 p-2 {{is_null($lead_filters) ? '': 'd-none'}}">No Filter found</div>
+        <div class="no-filter-found m-2 p-2 {{is_null($leadFilters) ? '': 'd-none'}}">No Filter found</div>
     </div>
 </div>

@@ -2,283 +2,290 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Model\User;
 use App\Model\Role;
+use App\Model\User;
 use DB;
 use Hash;
-use Validator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Validator;
 
 class UserController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	function __construct()
-	{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function __construct()
+    {
 
-		$this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
-		$this->middleware('permission:user-create', ['only' => ['create', 'store']]);
-		$this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
-		$this->middleware('permission:user-delete', ['only' => ['destroy']]);
-	}
+        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index(Request $request)
-	{
-		//paginate the users table and sort it asc
-		$data = User::orderBy('id', 'ASC')->paginate(10);
-		return view('users.index', compact('data'))
-			->with('i', ($request->input('page', 1) - 1) * 10);
-	}
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        // paginate the users table and sort it asc
+        $data = User::orderBy('id', 'ASC')->paginate(10);
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create()
-	{
-		//get all role names found in roles table
-		$roles = Role::pluck('name', 'name')->all();
-		return view('users.create', compact('roles'));
-	}
+        return view('users.index', compact('data'))
+            ->with('i', ($request->input('page', 1) - 1) * 10);
+    }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request)
-	{
-		//validate form
-		// $this->validate($request, [
-			$rules = [
-			'name' => 'required|string|max:191',
-			'email' => 'required|email|unique:users,email',
-			'password' => 'required|same:confirm-password',
-			'roles' => 'required'
-		];
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        // get all role names found in roles table
+        $roles = Role::pluck('name', 'name')->all();
 
-		$validator = Validator::make($request->all(), $rules, []);
+        return view('users.create', compact('roles'));
+    }
 
-		if ($validator->fails()) {
-			$errorMessages = $validator->errors()->all();
-			toastr()->error(implode('<br>', $errorMessages));
-			return back()->withErrors($validator)->withInput();
-		}
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // validate form
+        // $this->validate($request, [
+        $rules = [
+            'name' => 'required|string|max:191',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|same:confirm-password',
+            'roles' => 'required',
+        ];
 
-		$input = $request->all();
-		$input['password'] = Hash::make($input['password']);
-		//crete user
-		$user = User::create($input);
-		$user->assignRole($request->input('roles'));
+        $validator = Validator::make($request->all(), $rules, []);
 
+        if ($validator->fails()) {
+            $errorMessages = $validator->errors()->all();
+            toastr()->error(implode('<br>', $errorMessages));
 
-		toastr()->success('User <b>' . $user->name . '</b> created successfully');
-		return redirect()->route('users.index');
-	}
+            return back()->withErrors($validator)->withInput();
+        }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show($id)
-	{
-		//get user
-		$id = base64_decode($id);
-		$user = User::find($id);
-		if (!$user) {
+        $input = $request->all();
+        $input['password'] = Hash::make($input['password']);
+        // crete user
+        $user = User::create($input);
+        $user->assignRole($request->input('roles'));
 
-			toastr()->error('This User doesn\'t exist');
-			return back();
-		}
-		return view('users.show', compact('user'));
-	}
+        toastr()->success('User <b>'.$user->name.'</b> created successfully');
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function edit($id)
-	{
-		//get the user
-		$id = base64_decode($id);
-		$user = User::find($id);
-		if (!$user) {
+        return redirect()->route('users.index');
+    }
 
-			toastr()->error('This User doesn\'t exist');
-			return back();
-		}
-		//get the role names found in role table
-		$roles = Role::pluck('name', 'name')->all();
-		//get all roles
-		$userRole = $user->roles->pluck('name', 'name')->all();
-		$agents = User::role('agent')->where("id","!=",$id)->pluck('name', 'id')->toArray();
-		$assignedUser = $user->accessibleUsers->pluck('id')->toArray();
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        // get user
+        $id = base64_decode($id);
+        $user = User::find($id);
+        if (! $user) {
 
-		// echo "<pre>";
-		// echo $id."<br>";
-		// print_r($agents);exit;
+            toastr()->error('This User doesn\'t exist');
 
-		return view('users.edit', compact('user', 'roles', 'userRole',"agents","assignedUser"));
-	}
+            return back();
+        }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, $id)
-	{
-		//validate form
-		// $this->validate($request, [
-		$rules= [
-			'name' => 'required|string|max:191',
-			'email' => 'required|email|unique:users,email,' . $id,
-			'password' => 'same:confirm-password',
-			'roles' => 'required'
-		];
+        return view('users.show', compact('user'));
+    }
 
-		$validator = Validator::make($request->all(), $rules, []);
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        // get the user
+        $id = base64_decode($id);
+        $user = User::find($id);
+        if (! $user) {
 
-		if ($validator->fails()) {
-			$errorMessages = $validator->errors()->all();
-			toastr()->error(implode('<br>', $errorMessages));
-			return back()->withErrors($validator)->withInput();
-		}
+            toastr()->error('This User doesn\'t exist');
 
-		$input = $request->all();
-		//if pass is not empty, update it
-		if (!empty($input['password'])) {
-			$input['password'] = Hash::make($input['password']);
-		} else {
-			$input = Arr::except($input, array('password'));  //leave it as it is   
-		}
-		// get the user and update it
-		$user = User::find($id);
-		if (!$user) {
+            return back();
+        }
+        // get the role names found in role table
+        $roles = Role::pluck('name', 'name')->all();
+        // get all roles
+        $userRole = $user->roles->pluck('name', 'name')->all();
+        $agents = User::role('agent')->where('id', '!=', $id)->pluck('name', 'id')->toArray();
+        $assignedUser = $user->accessibleUsers->pluck('id')->toArray();
 
-			toastr()->error('Something went wrong');
-			return back();
-		}
-		$user->update($input);
+        // echo "<pre>";
+        // echo $id."<br>";
+        // print_r($agents);exit;
 
-		$user->accessibleUsers()->sync($request->master_access);
+        return view('users.edit', compact('user', 'roles', 'userRole', 'agents', 'assignedUser'));
+    }
 
-		DB::table('model_has_roles')->where('model_id', $id)->delete();
-		// assign role to user
-		$user->assignRole($request->input('roles'));
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        // validate form
+        // $this->validate($request, [
+        $rules = [
+            'name' => 'required|string|max:191',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'password' => 'same:confirm-password',
+            'roles' => 'required',
+        ];
 
+        $validator = Validator::make($request->all(), $rules, []);
 
-		toastr()->success('User <b>' . $user->name . '</b> updated successfully');
-		return redirect()->route('users.index');
-	}
+        if ($validator->fails()) {
+            $errorMessages = $validator->errors()->all();
+            toastr()->error(implode('<br>', $errorMessages));
 
+            return back()->withErrors($validator)->withInput();
+        }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy($id)
-	{
-		//get the user
-		$user = User::findOrFail($id);
-		if (!$user) {
+        $input = $request->all();
+        // if pass is not empty, update it
+        if (! empty($input['password'])) {
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input = Arr::except($input, ['password']);  // leave it as it is
+        }
+        // get the user and update it
+        $user = User::find($id);
+        if (! $user) {
 
-			toastr()->error('The User was removed previously');
-			return back();
-		}
-		//if the user is not the loggedin user
-		if ($user->id != auth()->user()->id) {
-			// rename lead if deleted - to fix the Unique issue
-			$user->update([
-				'email' => time() . '::' . $user->email
-			]);
-			$user->delete();
+            toastr()->error('Something went wrong');
 
-			toastr()->success('User <b>' . $user->name . '</b> Deleted!');
-			return redirect()->back();
-		}
-		toastr()->error('You cannot delete yourself!');
+            return back();
+        }
+        $user->update($input);
 
-		return redirect()->back();
-	}
+        $user->accessibleUsers()->sync($request->master_access);
 
-	public function getAgentDetails(Request $request) {
-		$agent = User::find($request->id);
-		return response()->json(['agent' => $agent, 'message' => '']);
-	}
+        DB::table('model_has_roles')->where('model_id', $id)->delete();
+        // assign role to user
+        $user->assignRole($request->input('roles'));
 
-	public function update2FA(Request $request)
-	{
-	    $request->validate([
-	        'user_id' => 'required|numeric',
-	        'status'  => 'required|boolean',
-	    ]);
+        toastr()->success('User <b>'.$user->name.'</b> updated successfully');
 
-	    $user = User::find($request->user_id);
-	    if($user){
-	    	$user->twofactor_authentication = $request->status;
-		    $user->save();
+        return redirect()->route('users.index');
+    }
 
-		    return response()->json([
-		        'status' => true,
-		        'message' => 'Two-Factor Authentication updated successfully for '.$user->name.'.'
-		    ]);
-	    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        // get the user
+        $user = User::findOrFail($id);
+        if (! $user) {
 
-	    return response()->json([
-	        'status' => false,
-	        'message' => 'Something went wrong! Please try again.'
-	    ]);
-	    
-	}
+            toastr()->error('The User was removed previously');
 
-	public function assignTeam($id)
-	{
-	    $userId = base64_decode($id);
+            return back();
+        }
+        // if the user is not the loggedin user
+        if ($user->id != auth()->user()->id) {
+            // rename lead if deleted - to fix the Unique issue
+            $user->update([
+                'email' => time().'::'.$user->email,
+            ]);
+            $user->delete();
 
-	    $user = User::find($userId);
+            toastr()->success('User <b>'.$user->name.'</b> Deleted!');
 
-	    $teams = $user->managerTeamList->pluck('id')->toArray();
+            return redirect()->back();
+        }
+        toastr()->error('You cannot delete yourself!');
 
-	    $agentlist = parent::getagentList();
+        return redirect()->back();
+    }
 
-	    return view('users.assign-team', compact('user', 'agentlist','teams'));
-	}
+    public function getAgentDetails(Request $request)
+    {
+        $agent = User::find($request->id);
 
-	public function updateTeam(Request $request)
-	{
-	    $request->validate([
-	        'user_id' => 'required',
-	        'team_member' => 'array'
-	    ]);
+        return response()->json(['agent' => $agent, 'message' => '']);
+    }
 
-	    $manager = User::findOrFail($request->user_id);
+    public function update2FA(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|numeric',
+            'status' => 'required|boolean',
+        ]);
 
-	    // Sync selected agents
-	    $manager->managerTeamList()->sync($request->team_member ?? []);
+        $user = User::find($request->user_id);
+        if ($user) {
+            $user->twofactor_authentication = $request->status;
+            $user->save();
 
-	    return redirect()->route('users.index')
-	        ->with('success', 'Team members updated successfully.');
-	}
+            return response()->json([
+                'status' => true,
+                'message' => 'Two-Factor Authentication updated successfully for '.$user->name.'.',
+            ]);
+        }
 
+        return response()->json([
+            'status' => false,
+            'message' => 'Something went wrong! Please try again.',
+        ]);
+
+    }
+
+    public function assignTeam($id)
+    {
+        $userId = base64_decode($id);
+
+        $user = User::find($userId);
+
+        $teams = $user->managerTeamList->pluck('id')->toArray();
+
+        $agentList = parent::getagentList();
+
+        return view('users.assign-team', compact('user', 'agentlist', 'teams'));
+    }
+
+    public function updateTeam(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'team_member' => 'array',
+        ]);
+
+        $manager = User::findOrFail($request->user_id);
+
+        // Sync selected agents
+        $manager->managerTeamList()->sync($request->team_member ?? []);
+
+        return redirect()->route('users.index')
+            ->with('success', 'Team members updated successfully.');
+    }
 }

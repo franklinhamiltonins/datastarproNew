@@ -28,7 +28,7 @@ class AddSoftDeleteToRoles extends Migration
     {
         Schema::table('roles', function (Blueprint $table) {
             //
-            $table->dropSoftDeletes(); 
+            $table->dropSoftDeletes();
         });
     }
 }

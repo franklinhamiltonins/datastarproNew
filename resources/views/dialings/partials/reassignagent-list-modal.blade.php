@@ -10,7 +10,7 @@
 			<div class="modal-body">
 				<div class="form-group">
 					<strong>Agent:</strong>
-					{!! Form::select("agent_list", $agent_users, [], array('class' => 'form-control ml-0', 'required','multiple' => 'multiple')) !!}
+					{!! Form::select("agent_list", $agentUsers, [], array('class' => 'form-control ml-0', 'required','multiple' => 'multiple')) !!}
 				</div>
 			</div>
 			<div class="modal-footer flex-column">

@@ -285,7 +285,7 @@
         //         editor.setData(`{!! addslashes($mailLead->status_note) !!}`);
         //     @endif
 
-            
+
         // })
         // .catch(error => {
         //     console.error(error);

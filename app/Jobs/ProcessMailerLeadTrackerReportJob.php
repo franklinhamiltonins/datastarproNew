@@ -2,144 +2,133 @@
 
 namespace App\Jobs;
 
+use App\Traits\ActivityReportTrait;
+use App\Traits\SMTPRelatedTrait;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-
-use App\Model\Setting;
-use Carbon\Carbon;
-use App\Traits\SMTPRelatedTrait;
-use App\Traits\ActivityReportTrait;
 
 class ProcessMailerLeadTrackerReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,SMTPRelatedTrait,ActivityReportTrait;
+    use ActivityReportTrait, SMTPRelatedTrait, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public $timeout = 1800; 
-    protected $requestData,$mail_agent_id;
+    public $timeout = 1800;
 
-    public function __construct($requestData,$mail_agent_id)
+    protected $requestData;
+    protected $mailAgentId;
+
+    public function __construct(array $requestData, int $mailAgentId)
     {
         $this->requestData = $requestData;
-        $this->mail_agent_id = $mail_agent_id;
+        $this->mailAgentId = $mailAgentId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         try {
-            $query = $this->generateMailLeadTrackerData($this->requestData,$this->requestData['manager_id']);
+            $results = $this->generateMailLeadTrackerData(
+                $this->requestData,
+                $this->requestData['manager_id']
+            )->get();
 
-            $results = $query->get();
+            [$fileName, $subject, $body] = $this->getFileDetails($this->requestData['view_type']);
+            $filePath = $this->generateCsv($results, $this->requestData['view_type'], $fileName);
 
-            if($this->requestData['view_type'] == 1){
-                $fileName = 'mail_lead_tracker_logwise_report_' . date('Y_m_d_H_i_s') . '.csv';
-                $subject = "Mailer Lead Tracker Report (Log Wise) CSV ";
-                $body = "Please find the attached Mailer Lead Tracker Report (Log Wise) CSV file.";
-            }
-            else{
-                $fileName = 'mail_lead_tracker_consolidated_report_' . date('Y_m_d_H_i_s') . '.csv';
-                $subject = "Mailer Lead Tracker Report (Consolidated) CSV ";
-                $body = "Please find the attached Mailer Lead Tracker Report (Consolidated) CSV file.";
-            }
-            $path = storage_path('app/public/csv');
-            Storage::makeDirectory('public/csv');
-            $filePath = $path . '/' . $fileName;
-
-            $csv = fopen('php://memory', 'w');
-
-            if($this->requestData['view_type'] == 1){
-                // CSV HEADERS
-                fputcsv($csv, [
-                    'Business Name', 'Lead Source', 'Agent', 'Contact FirstName', 'Contact LastName', 'Phone','Email', 'Status Notes', 'Date'
-                ]);
-
-                foreach ($results as $item) {
-                    fputcsv($csv, [
-                        $item->business ?? '',
-                        optional($item->leadSource)->name ?? '',
-                        optional($item->agent)->name ?? '',
-                        $item->contact_firstname ?? '',
-                        $item->contact_lastname ?? '',
-                        $item->phone ?? '',
-                        $item->email_address ?? '',
-                        strip_tags($item->status_note ?? ''),
-                        $item->date ?? '',
-                    ]);
-                }
-            }
-            else{
-                fputcsv($csv, [
-                     'Agent', 'Total Mailer Lead Submissions'
-                ]);
-
-                foreach ($results as $item) {
-                    fputcsv($csv, [
-                        $item->agent_name ?? '',
-                        $item->total_lead ?? '',
-                    ]);
-                }
-            }
-
-            rewind($csv);
-            $csvData = stream_get_contents($csv);
-            fclose($csv);
-
-            Storage::put('public/csv/' . $fileName, $csvData);
-
-            $setting_time_data = Setting::select('notify_email')->first();
-            if($setting_time_data && !empty($setting_time_data->notify_email)){
-                $recipientEmail_arr = explode(',', $setting_time_data->notify_email);
-
-                $recipientEmail = $recipientEmail_arr[0];
-
-                $ccEmails = array_slice($recipientEmail_arr, 1);
-
-                $this->setDynamicSMTPUserWise($this->mail_agent_id);
-                
-                Mail::send([], [], function ($message) use ($fileName, $filePath,$recipientEmail,$ccEmails,$subject,$body) {
-                    $message->to($recipientEmail);
-
-                    if (count($ccEmails) > 0) {
-                        $message->cc($ccEmails);
-                    }
-                    $message->subject($subject)
-                    ->html($body)
-                    ->attach($filePath, [
-                        'as' => $fileName,
-                        'mime' => 'text/csv',
-                    ]);
-                });
-            }
-            unset($setting_time_data);
-
-            // Delete file after sending
-            if (Storage::exists('public/csv/' . $fileName)) {
-                Storage::delete('public/csv/' . $fileName);
-            }
+            $this->setDynamicSMTPUserWise($this->mailAgentId);
+            $this->sendReportEmail($subject, $body, $filePath, $fileName);
+            $this->deleteCsv($filePath);
 
         } catch (\Throwable $th) {
-            Log::error('ProcessMailerLeadTrackerReportJob failed: (Mailer Lead Tracker Report) ' . $th->getMessage(), [
+            $this->logError($th);
+        }
+    }
+
+    private function getFileDetails(int $viewType): array
+    {
+        $timestamp = date('Y_m_d_H_i_s');
+        if ($viewType === 1) {
+            return [
+                "mail_lead_tracker_logwise_report_{$timestamp}.csv",
+                'Mailer Lead Tracker Report (Log Wise) CSV',
+                'Please find the attached Mailer Lead Tracker Report (Log Wise) CSV file.'
+            ];
+        }
+
+        return [
+            "mail_lead_tracker_consolidated_report_{$timestamp}.csv",
+            'Mailer Lead Tracker Report (Consolidated) CSV',
+            'Please find the attached Mailer Lead Tracker Report (Consolidated) CSV file.'
+        ];
+    }
+
+    private function generateCsv($results, int $viewType, string $fileName): string
+    {
+        $path = storage_path('app/public/csv');
+        Storage::makeDirectory('public/csv');
+        $filePath = $path.'/'.$fileName;
+
+        $csv = fopen('php://memory', 'w');
+
+        if ($viewType === 1) {
+            $this->writeLogwiseCsv($csv, $results);
+        } else {
+            $this->writeConsolidatedCsv($csv, $results);
+        }
+
+        rewind($csv);
+        Storage::put('public/csv/'.$fileName, stream_get_contents($csv));
+        fclose($csv);
+
+        return $filePath;
+    }
+
+    private function writeLogwiseCsv($csv, $results): void
+    {
+        fputcsv($csv, [
+            'Business Name', 'Lead Source', 'Agent', 'Contact FirstName', 'Contact LastName', 'Phone',
+            'Email', 'Status Notes', 'Date'
+        ]);
+
+        foreach ($results as $item) {
+            fputcsv($csv, [
+                $item->business ?? '',
+                optional($item->leadSource)->name ?? '',
+                optional($item->agent)->name ?? '',
+                $item->contact_firstname ?? '',
+                $item->contact_lastname ?? '',
+                $item->phone ?? '',
+                $item->email_address ?? '',
+                strip_tags($item->status_note ?? ''),
+                $item->date ?? ''
+            ]);
+        }
+    }
+
+    private function writeConsolidatedCsv($csv, $results): void
+    {
+        fputcsv($csv, ['Agent', 'Total Mailer Lead Submissions']);
+
+        foreach ($results as $item) {
+            fputcsv($csv, [
+                $item->agent_name ?? '',
+                $item->total_lead ?? ''
+            ]);
+        }
+    }
+
+    private function logError(\Throwable $th): void
+    {
+        Log::error(
+            'ProcessMailerLeadTrackerReportJob failed (Mailer Lead Tracker Report): '.$th->getMessage(),
+            [
                 'line' => $th->getLine(),
                 'file' => $th->getFile(),
                 'trace' => $th->getTraceAsString(),
-            ]);
-        }
+            ]
+        );
     }
 }

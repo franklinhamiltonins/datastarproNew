@@ -741,7 +741,7 @@
 						    </div>
 						</div>
 			        </div>
-			        
+
 				    <div class="form-row text-md mt-2">
 				        <div class="form-group col-12 mb-1 px-2">
 				           	<strong  class="text-success m-0">Total Premium: </strong> <span class="text-base" id="total_premium_sum_preview"></span>

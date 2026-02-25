@@ -28,7 +28,7 @@ class AddSoftDeleteToCampaigns extends Migration
     {
         Schema::table('campaigns', function (Blueprint $table) {
             //
-            $table->dropSoftDeletes(); 
+            $table->dropSoftDeletes();
         });
     }
 }

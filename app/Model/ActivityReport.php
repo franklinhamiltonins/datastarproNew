@@ -2,19 +2,16 @@
 
 namespace App\Model;
 
+use App\Model\LeadsModel\Lead;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Model\ActivityReportFile;
-use App\Model\ActivityReportAor;
-use App\Model\User;
-use App\Model\LeadsModel\Lead;
 
 class ActivityReport extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = "activity_reports";
+    protected $table = 'activity_reports';
 
     protected $fillable = [
         'created_by',
@@ -32,21 +29,21 @@ class ActivityReport extends Model
 
     public function files()
     {
-        return $this->hasMany(ActivityReportFile::class,'activity_report_id','id');
+        return $this->hasMany(ActivityReportFile::class, 'activity_report_id', 'id');
     }
 
     public function aor()
     {
-        return $this->hasMany(ActivityReportAor::class,'activity_report_id','id');
+        return $this->hasMany(ActivityReportAor::class, 'activity_report_id', 'id');
     }
 
     public function agent()
     {
-        return $this->hasOne(User::class,'id', 'user_id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     public function leads()
     {
-        return $this->hasOne(Lead::class,'id', 'community_id');
+        return $this->hasOne(Lead::class, 'id', 'community_id');
     }
 }

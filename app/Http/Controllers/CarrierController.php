@@ -2,54 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Model\LeadsModel\Log;
-use Yajra\Datatables\Datatables;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use App\Model\Carrier;
 use App\Model\InsuranceType;
-use App\Model\LeadsModel\Lead;
-use Illuminate\Support\Facades\Validator;
 use App\Model\LeadAdditionalPolicy;
+use App\Model\LeadsModel\Lead;
 use App\Traits\CommonFunctionsTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CarrierController extends Controller
 {
     use CommonFunctionsTrait;
 
-    public function index($pending=1)
+    public function index($pending = 1)
     {
         $carrier = [];
-        if(auth()->user()->can('agent-create')){
+        if (auth()->user()->can('agent-create')) {
             $is_admin = 1;
-        }
-        else{
+        } else {
             $is_admin = 0;
         }
 
-        return view('carrier.index', compact('carrier','pending','is_admin'));
+        return view('carrier.index', compact('carrier', 'pending', 'is_admin'));
     }
 
-    public function convertToSnakeCase($key,$id) {
+    public function convertToSnakeCase($key, $id)
+    {
 
-        $name =  !empty($this->mainInsuranceCarrier[$key])?$this->mainInsuranceCarrier[$key]:'';
-        if(empty($name)){
-            $count = LeadAdditionalPolicy::where('policy_type',$key)->where('carrier',$id)->count();
+        $name = ! empty($this->mainInsuranceCarrier[$key]) ? $this->mainInsuranceCarrier[$key] : '';
+        if (empty($name)) {
+            $count = LeadAdditionalPolicy::where('policy_type', $key)->where('carrier', $id)->count();
             $res = [
                 'exist' => 1,
                 'count' => $count,
-                'name' => $this->additionalPoliciesCarrier[$key]
+                'name' => $this->additionalPoliciesCarrier[$key],
             ];
-        }
-        else{
-            $count = Lead::where($name,$id)
-                        ->count();
+        } else {
+            $count = Lead::where($name, $id)
+                ->count();
             $res = [
                 'exist' => 1,
                 'count' => $count,
-                'name' => $name
+                'name' => $name,
             ];
         }
 
@@ -69,16 +63,15 @@ class CarrierController extends Controller
 
         if ($carrier) {
             $status = true;
-            
+
             // Get active insurance types linked to a carrier
             $insuranceTypes = InsuranceType::where('status', 1)
                 ->where('carrier', 1)
                 ->pluck('name', 'id')
                 ->toArray();
 
-            foreach ($insuranceTypes as $key => $insuranceTypeName) {
-                $value = $this->convertToSnakeCase($insuranceTypeName,$carrier->id);
-                // echo "<pre>";print_r($value);echo $insuranceTypeName; exit;
+            foreach ($insuranceTypes as $insuranceTypeName) {
+                $value = $this->convertToSnakeCase($insuranceTypeName, $carrier->id);
                 $snakeCaseName = $value['name'];
                 $count = $value['count'];
 
@@ -87,7 +80,7 @@ class CarrierController extends Controller
 
                 if ($insurance) {
                     $list[$snakeCaseName] = [
-                        'carrier' => $insurance->carriers()->where('carriers.status', 1)->where('carriers.id', '!=',$carrier->id)->select('carriers.id','carriers.name')->get(),
+                        'carrier' => $insurance->carriers()->where('carriers.status', 1)->where('carriers.id', '!=', $carrier->id)->select('carriers.id', 'carriers.name')->get(),
                         'name' => $insuranceTypeName,
                         'found' => 1,
                         'count' => $count,
@@ -113,37 +106,35 @@ class CarrierController extends Controller
 
     public function carrierFormSubmission(Request $request)
     {
-        $updates = $request->except('previous_id'); 
+        $updates = $request->except('previous_id');
         $previousId = $request->input('previous_id');
 
         foreach ($updates as $column => $newValue) {
             if (in_array($column, $this->mainInsuranceCarrier)) {
                 Lead::where($column, $previousId) // Check where column has previous_id
                     ->update([$column => $newValue]); // Assign new value
-            }
-            else{
+            } else {
                 $key = array_search($column, $this->additionalPoliciesCarrier);
 
-                if(!empty($key)){
-                    LeadAdditionalPolicy::where('policy_type',$key)->where('carrier',$previousId)
-                    ->update(['carrier' => $newValue]);
+                if (! empty($key)) {
+                    LeadAdditionalPolicy::where('policy_type', $key)->where('carrier', $previousId)
+                        ->update(['carrier' => $newValue]);
                 }
             }
         }
 
         $carrier = Carrier::find($previousId);
-        if($carrier){
+        if ($carrier) {
             $carrier->insuranceTypes()->detach();
 
             // Delete the carrier
             $carrier->delete();
         }
 
-        if(empty($updates)){
-            $message = "Carrier deleted successfully!";
-        }
-        else{
-            $message = "Carrier reassigned and deleted successfully!";
+        if (empty($updates)) {
+            $message = 'Carrier deleted successfully!';
+        } else {
+            $message = 'Carrier reassigned and deleted successfully!';
         }
 
         return response()->json(['status' => true, 'message' => $message]);
@@ -153,8 +144,7 @@ class CarrierController extends Controller
     {
         $carrier = Carrier::find($request->data_id);
 
-        if (!$carrier) {
-            // toastr()->error("This Carrier doesn't exist");
+        if (! $carrier) {
             return response()->json(['status' => true, 'message' => "Carrier doesn't exist"]);
         }
 
@@ -171,22 +161,20 @@ class CarrierController extends Controller
     {
         $start = $request->input('start', 0); // Pagination start
         $length = $request->input('length', 10); // Pagination length
-        $draw = $request->input('draw', 1); // For DataTable's draw counter
 
         $filter_on_column_number = $request->input('order')[0]['column'];
         $filter_on_column_name = $request->input('columns')[$filter_on_column_number]['data'] ?? 'id';
 
-        if($filter_on_column_name == "id"){
+        if ($filter_on_column_name == 'id') {
             $order_by = 'desc';
-        }
-        else{
+        } else {
             $order_by = $request->input('order')[0]['dir'] ?? 'desc';
         }
 
         // Get carriers with related insurance types
         $carrier = Carrier::with('insuranceTypes');
 
-        if (!empty($request->pending)) {
+        if (! empty($request->pending)) {
             $carrier = $carrier->where('status', $request->pending);
         }
 
@@ -194,8 +182,8 @@ class CarrierController extends Controller
 
         // Apply ordering and pagination
         $carrier = $carrier->orderBy($filter_on_column_name, $order_by)
-                           ->offset($start)
-                           ->limit($length);
+            ->offset($start)
+            ->limit($length);
 
         return datatables()->of($carrier)
             ->addIndexColumn()
@@ -208,69 +196,69 @@ class CarrierController extends Controller
             ->make(true);
     }
 
+    public function create($pending = 1)
+    {
+        $page_type = 1;
+        $insurance_type = InsuranceType::where('status', 1)->where('carrier', 1)->pluck('name', 'id')->toArray();
 
-    public function create($pending=1)
-    {   
-        $page_type = 1;  
-        $insurance_type = InsuranceType::where('status',1)->where('carrier',1)->pluck('name', 'id')->toArray();
-
-        // echo "<pre>";
-        // print_r($insurance_type);exit;
         $selected_insurance_types = [];
-        return view('carrier.create',compact('insurance_type','page_type','selected_insurance_types','pending'));
+
+        return view('carrier.create', compact('insurance_type', 'page_type', 'selected_insurance_types', 'pending'));
     }
 
-    public function edit($id,$pending=1)
-    {   
-        // $is_admin = auth()->user()->can('agent-create');
+    public function edit($id, $pending = 1)
+    {
         $id = base64_decode($id);
         $carrier = Carrier::find($id);
-        if (!$carrier) {
+        if (! $carrier) {
 
             toastr()->error('This Carrier doesn\'t exist');
+
             return redirect('/carrier');
         }
         $page_type = 2;
-        $insurance_type = InsuranceType::where('status',1)->where('carrier',1)->pluck('name', 'id')->toArray();
+        $insurance_type = InsuranceType::where('status', 1)->where('carrier', 1)->pluck('name', 'id')->toArray();
         $selected_insurance_types = $carrier->insuranceTypes->pluck('id')->toArray();
-        return view('carrier.create', compact('carrier','page_type','insurance_type','selected_insurance_types','pending'));
+
+        return view('carrier.create', compact('carrier', 'page_type', 'insurance_type', 'selected_insurance_types', 'pending'));
     }
 
-    public function show($id,$pending=1)
-    {   
-        // $is_admin = auth()->user()->can('agent-create');
+    public function show($id, $pending = 1)
+    {
         $id = base64_decode($id);
         $carrier = Carrier::find($id);
-        if (!$carrier) {
+        if (! $carrier) {
 
             toastr()->error('This Carrier doesn\'t exist');
+
             return redirect('/carrier');
         }
         $page_type = 3;
-        $insurance_type = InsuranceType::where('status',1)->where('carrier',1)->pluck('name', 'id')->toArray();
+        $insurance_type = InsuranceType::where('status', 1)->where('carrier', 1)->pluck('name', 'id')->toArray();
         $selected_insurance_types = $carrier->insuranceTypes->pluck('id')->toArray();
-        return view('carrier.create', compact('carrier','page_type','insurance_type','selected_insurance_types','pending'));
+
+        return view('carrier.create', compact('carrier', 'page_type', 'insurance_type', 'selected_insurance_types', 'pending'));
     }
 
     public function store(Request $request)
     {
-        $rules =[
+        $rules = [
             'carrier_name' => 'required|string|max:255',
             'insurance_type' => 'required|array',
         ];
 
-        //validate fields using nice name in error messages
+        // validate fields using nice name in error messages
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            // $errorMessages = $validator->errors()->all();
             toastr()->error($validator->errors()->first());
+
             return back()->withErrors($validator)->withInput();
         }
 
-        $alreadyEntry = Carrier::where('name',$request->carrier_name)->first();
+        $alreadyEntry = Carrier::where('name', $request->carrier_name)->first();
 
-        if(!$alreadyEntry){
+        if (! $alreadyEntry) {
             // Check if the carrier already exists by name
             $carrier = Carrier::Create(
                 ['name' => $request->carrier_name]
@@ -279,11 +267,12 @@ class CarrierController extends Controller
             // Attach the carrier to the provided insurance types
             $carrier->insuranceTypes()->sync($request->insurance_type);
             toastr()->success('Carrier created and attached to insurance types successfully.');
+
             return redirect()->route('carrier.index');
- 
-        }
-        else{
-            toastr()->error( "Carrier Already Exists");
+
+        } else {
+            toastr()->error('Carrier Already Exists');
+
             return back()->withInput();
         }
 
@@ -292,72 +281,68 @@ class CarrierController extends Controller
     public function update(Request $request)
     {
 
-        if(!empty($request->pending) && $request->pending == 2 && !empty($request->acceptance) && $request->acceptance == 3){
+        if (! empty($request->pending) && $request->pending == 2 && ! empty($request->acceptance) && $request->acceptance == 3) {
             $rules = [
                 'id' => 'required',
                 'carrier_name' => 'required|string|max:255',
             ];
-        }
-        else{
+        } else {
             $rules = [
                 'id' => 'required',
                 'carrier_name' => 'required|string|max:255',
                 'insurance_type' => 'required|array',
             ];
         }
-        
 
         // Validate fields using nice names in error messages
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             toastr()->error($validator->errors()->first());
+
             return back()->withErrors($validator)->withInput();
         }
 
         // Find the carrier by ID or return error if it doesn't exist
         $id = $request->id;
         $carrier = Carrier::find($id);
-        if (!$carrier) {
+        if (! $carrier) {
             toastr()->error("This Carrier doesn't exist");
+
             return redirect()->route('carrier.index');
         }
 
-        if(!empty($request->pending) && $request->pending == 1){
+        if (! empty($request->pending) && $request->pending == 1) {
             // Check if another carrier with the same name exists
             $alreadyEntry = Carrier::where('name', $request->carrier_name)
-                                ->where('id', '!=', $id)
-                                ->first();
+                ->where('id', '!=', $id)
+                ->first();
             if ($alreadyEntry) {
-                toastr()->error("Carrier with this name already exists");
+                toastr()->error('Carrier with this name already exists');
+
                 return back()->withInput();
             }
         }
         $res_msg = 'Carrier updated and attached to insurance types successfully.';
         $res_success = 1;
         $carrier->name = $request->carrier_name;
-        if(!empty($request->pending) && $request->pending == 2){
+        if (! empty($request->pending) && $request->pending == 2) {
             $carrier->status = $request->acceptance;
-            if($carrier->status == 3){
+            if ($carrier->status == 3) {
                 $res_msg = 'Carrier Request Rejected';
                 $res_success = 2;
             }
         }
         $carrier->save();
 
-        // echo "<pre>";
-        // print_r($carrier);
-        // exit;
-        
-
-        if($res_success == 1){
+        if ($res_success == 1) {
             // Sync the carrier with the provided insurance types
             $carrier->insuranceTypes()->sync($request->insurance_type);
             toastr()->success($res_msg);
-        }
-        else{
+        } else {
             toastr()->success($res_msg);
         }
+
         return redirect()->route('carrier.index');
     }
 
@@ -366,8 +351,9 @@ class CarrierController extends Controller
         // Find the carrier by ID
         $carrier = Carrier::find($id);
 
-        if (!$carrier) {
+        if (! $carrier) {
             toastr()->error("This Carrier doesn't exist");
+
             return redirect()->route('carrier.index');
         }
 
@@ -378,6 +364,7 @@ class CarrierController extends Controller
         $carrier->delete();
 
         toastr()->success('Carrier deleted successfully.');
+
         return redirect()->route('carrier.index');
     }
 
@@ -386,8 +373,9 @@ class CarrierController extends Controller
         $ids = $request->input('selectedValues', []);
 
         // Validate that we have an array of IDs
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             toastr()->error('No carriers selected for deletion.');
+
             return redirect()->route('carrier.index');
         }
 
@@ -396,6 +384,7 @@ class CarrierController extends Controller
 
         if ($carriers->isEmpty()) {
             toastr()->error('No valid carriers found for deletion.');
+
             return redirect()->route('carrier.index');
         }
 
@@ -408,7 +397,7 @@ class CarrierController extends Controller
         Carrier::whereIn('id', $ids)->delete();
 
         toastr()->success('Selected carriers deleted successfully.');
+
         return redirect()->route('carrier.index');
     }
-
 }

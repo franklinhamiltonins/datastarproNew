@@ -49,7 +49,7 @@
     }
 
     .pac-container {
-        font-family: Roboto;
+        font-family: Roboto, sans-serif;
     }
 
     #type-selector {
@@ -59,7 +59,7 @@
     }
 
     #type-selector label {
-        font-family: Roboto;
+        font-family: Roboto, sans-serif;
         font-size: 13px;
         font-weight: 300;
     }

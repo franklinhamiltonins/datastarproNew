@@ -14,18 +14,17 @@ class AddContactsTableIndexAndTableForeign extends Migration
     public function up()
     {
         Schema::table('contacts', function (Blueprint $table) {
-            //drop foreign pivot table 
+            // drop foreign pivot table
             Schema::dropIfExists('leads_contacts');
-            
-            $table->unsignedBigInteger('lead_id')->nullable()->change(); //change lead_id type
 
-            //foreign Key
+            $table->unsignedBigInteger('lead_id')->nullable()->change(); // change lead_id type
+
+            // foreign Key
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
-            $table->index(['c_first_name','c_last_name']);
+            $table->index(['c_first_name', 'c_last_name']);
             $table->index(['c_phone']);
-            $table->index(['c_first_name','c_last_name','c_address1']);
+            $table->index(['c_first_name', 'c_last_name', 'c_address1']);
 
-            
         });
     }
 
@@ -37,9 +36,9 @@ class AddContactsTableIndexAndTableForeign extends Migration
     public function down()
     {
         Schema::table('contacts', function (Blueprint $table) {
-            $table->dropIndex(['c_first_name','c_last_name']);
+            $table->dropIndex(['c_first_name', 'c_last_name']);
             $table->dropIndex(['c_phone']);
-            $table->dropIndex(['c_first_name','c_last_name','c_address1']);
+            $table->dropIndex(['c_first_name', 'c_last_name', 'c_address1']);
         });
     }
 }

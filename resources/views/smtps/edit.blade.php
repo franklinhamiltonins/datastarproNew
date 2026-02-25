@@ -182,7 +182,7 @@
 <script>
 jQuery(document).ready(function() {
 
-    $('#password').attr('type',"password"); 
+    $('#password').attr('type',"password");
     ClassicEditor
         .create(document.querySelector('#signature_text'))
         .then(editor => {
@@ -206,13 +206,13 @@ jQuery(document).ready(function() {
     $('#showPassword').on('click', function() {
         $("#showPassword").css('display','none');
         $("#hidePassword").css('display','inline-block');
-        $('#password').attr('type',"text"); 
+        $('#password').attr('type',"text");
     });
 
     $('#hidePassword').on('click', function() {
         $("#hidePassword").css('display','none');
         $("#showPassword").css('display','inline-block');
-        $('#password').attr('type',"password"); 
+        $('#password').attr('type',"password");
     });
 
     $('#changeEmailProvider').on('change', function() {
@@ -245,7 +245,7 @@ jQuery(document).ready(function() {
             $("select[name='encryption']").val('None');
             $("select[name='auth']").val('None');
         }
-        
+
     });
     $('.custom-file-input').on('change', function() {
         var $this = $(this),

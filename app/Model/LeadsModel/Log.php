@@ -18,20 +18,16 @@ class Log extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'id','lead_id','user_id','action','created_at'
+        'id', 'lead_id', 'user_id', 'action', 'created_at',
     ];
-
 
     public function leads()
     {
-      
-      return $this->belongsTo(Lead::class,'lead_id');
-    }
-    public function users()
-    {
-      
-      return $this->belongsTo('App\Model\User','user_id');
+        return $this->belongsTo(Lead::class, 'lead_id');
     }
 
-    
+    public function users()
+    {
+        return $this->belongsTo('App\Model\User', 'user_id');
+    }
 }

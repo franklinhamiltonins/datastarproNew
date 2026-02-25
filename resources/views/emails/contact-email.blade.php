@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
 </head>
 <body style="margin: 0;">
     <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 5px 10px 0px 10px;">
@@ -12,10 +13,9 @@
                     {!! $data['content'] !!}
                 </div>
             </td>
-        </tr> 
+        </tr>
     </table>
-   
-    <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 0 10px 0; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">   
+    <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 0 10px 0; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">
     @if($data['signature_image'] || $data['signature_text'])
         <tr>
             <td>

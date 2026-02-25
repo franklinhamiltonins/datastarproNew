@@ -220,7 +220,7 @@ function draw_table() {
                                 <i class="fa fa-edit"></i>
                             </a>
                             <form method="get" action="{{url('contactstatus/destroy')}}/`+data+`" accept-charset="UTF-8" style="display:inline" class="leadForm-3"><input name="_method" type="hidden" value="DELETE"><input name="_token" type="hidden" value="{{ csrf_token() }}">
-                        
+
                                 <a href="#" title="Delete Sms Provider" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'3')" class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
                                     <i class="fa fa-trash"></i>
                                 </a>
@@ -299,7 +299,7 @@ function draw_table() {
     var $thead = jQuery('#contact_status_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#contact_status_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);

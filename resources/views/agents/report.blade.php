@@ -28,41 +28,6 @@
 				<i class="fas fa-times-circle text-danger"></i>
 			</sup>
 		</div>
-		<!-- <div class="p-3">
-            <div class="row">
-                <div class="col-lg-12 margin-tb table-top-sec">
-                    <div class="d-flex align-items-center justify-content-between mt-3">
-                        <div class="d-flex flexwrap-wrap action-dropdown">
-                            <div class="custom_search_page d-flex align-items-center justify-content-between ml-2">
-                                <div id="custom_length_menu">
-                                    <label class="d-flex align-items-center justify-content-between mb-0">Show
-                                        <select id="customPageLength"
-                                            class="form-control form-control-sm mx-1 px-0 bg-transparent"
-                                            aria-controls="agents_datatable">
-                                            <option value="10">10</option>
-                                            <option value="25">25</option>
-                                            <option value="50">50</option>
-                                            <option value="100">100</option>
-                                        </select>
-                                        entries
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex flexwrap-wrap" >
-                            <div id="agents_datatable_filter" class="dataTables_filter search-sec mb-0">
-                                <label
-                                    class="d-flex align-items-center justify-content-end mb-0 position-relative"><input
-                                        type="search" id="customSearchBox" placeholder="Search for Entries"
-                                        aria-controls="agents_datatable" class="form-control">
-                                    <i class="fas fa-search position-absolute"></i>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
 		<div class="table-container pt-2 pb-2">
 			<table class="order-column compact hover searchHighlight" id="agents_datatable">
 				<thead class="text-nowrap" style="font-size: 0.93rem;">
@@ -187,9 +152,7 @@
 		});
 
 	}
-
-	// Updates "Select all" control in a data table 
-	//
+	// Updates "Select all" control in a data table
 	function updateDataTableSelectAllCtrl(table) {
 		var $table = table.table().node();
 		var $chkbox_all = $('#agents_datatable tbody input[type="checkbox"]', $table);
@@ -221,6 +184,4 @@
 		}
 	}
 </script>
-<!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
 @endpush

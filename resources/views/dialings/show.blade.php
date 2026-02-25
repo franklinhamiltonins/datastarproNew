@@ -133,7 +133,7 @@
 
     /****  Document Ready ****/
     var agentlist_id = 0;
-    
+
     jQuery(document).ready(function() {
         agentlist_id = '{{$agentlist_id}}';
         jQuery.ajaxSetup({
@@ -186,7 +186,7 @@
         // console.log(pagination_number + '=>' + previous_clicked_lead_id);
         console.log(savedOrder);
 
-        var isAdmin = @json($is_admin); 
+        var isAdmin = @json($is_admin);
 
         var columns = [
             {
@@ -325,7 +325,7 @@
             if (!event.target.value) {
                 console.log('contact search cross clicked');
                 $(event.target).blur(); // to remove cursiour from search field.
-                
+
                 $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
                 $(event.target).after('<i class="fas fa-search position-absolute"></i>');
                 table.search(event.target.value).draw(); // drow the table
@@ -396,7 +396,7 @@
             type: 'POST',
             url: "{{ url('/dialings/reassignagent') }}",
             data: {
-                agent_list: agent_list, 
+                agent_list: agent_list,
                 selectedValues: selectedValues,
                 dialing_id: agentlist_id,
             },

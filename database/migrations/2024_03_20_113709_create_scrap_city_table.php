@@ -15,7 +15,7 @@ class CreateScrapCityTable extends Migration
     {
         Schema::create('scrap_cities', function (Blueprint $table) {
             $table->id();
-            //add Current Insurances columns
+            // add Current Insurances columns
             $table->string('search_keyword', 255)->nullable();
             $table->string('city', 255);
             $table->string('state', 255);

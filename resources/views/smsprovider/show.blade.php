@@ -10,13 +10,13 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 margin-tb mb-3">
-               
+
                 <div class="pull-right">
                     <a class="btn btn-sm btn-primary" href="{{ route('smsprovider.index') }}"><i class="fas fa-arrow-circle-left"></i> Back</a>
                 </div>
             </div>
         </div>
-        
+
         <div class="row  mt-2 mt-md-4">
             <div class="col-xl-6">
                 <div class="card card-secondary">
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->

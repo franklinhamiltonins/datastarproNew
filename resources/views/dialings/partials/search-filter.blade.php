@@ -16,7 +16,7 @@
                 <strong class="text-info mb-2 d-block">Agent :</strong>
                 <div class="row">
                     <div class="col-6">
-                        {!! Form::select("agent_list", $agent_users, [], array('class' => 'form-control ml-0','id'=>'agent_list')) !!}
+                        {!! Form::select("agent_list", $agentUsers, [], array('class' => 'form-control ml-0','id'=>'agent_list')) !!}
                     </div>
                 </div>
             </div>

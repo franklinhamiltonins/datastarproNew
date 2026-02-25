@@ -6,14 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Model\LeadSource;
-use App\Model\User;
-
 class MailerLeadTracker extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = "mailer_leads_tracker";
+    protected $table = 'mailer_leads_tracker';
 
     protected $fillable = [
         'description',
@@ -39,11 +36,11 @@ class MailerLeadTracker extends Model
 
     public function leadSource()
     {
-        return $this->hasOne(LeadSource::class,'id', 'lead_source');
+        return $this->hasOne(LeadSource::class, 'id', 'lead_source');
     }
 
     public function agent()
     {
-        return $this->hasOne(User::class,'id', 'user_id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }

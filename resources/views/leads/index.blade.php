@@ -7,7 +7,7 @@
 @section('content')
 <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" defer></script>
-<script src="https://maps.google.com/maps/api/js?sensor=false&key={{$google_map_api_key}}"></script>
+<script src="https://maps.google.com/maps/api/js?sensor=false&key={{$googleMapApiKey}}"></script>
 <script src="/js/keydragzoom.js"></script>
 <!-- Main content -->
 <section class="content">
@@ -169,7 +169,7 @@
                             <i class="fas fa-times-circle text-danger"></i>
                         </sup>
                     </div>
-                    @if(!$all_account_list_permission)
+                    @if(!$allAccountListPermission)
                         <div  id="backButton" class="backButton mt-4 text-primary" onclick="backBtnClickSubAccount()" style="display:none">
                             <i class="fas fa-arrow-left f-icon"></i>
                             <span class="backtext">Back</span>
@@ -254,18 +254,19 @@
 <script src="{{ asset('js/custom-helper.js') }}"></script>
 <script>
 var base_url = "{{url('/')}}";
-var google_map_api_key = '{{$google_map_api_key}}';
+var googleMapApiKey = '{{$googleMapApiKey}}';
 var map;
 var markers = [];
 var infowindow = new google.maps.InfoWindow();
 var location_leads_id = [];
 var selected_markers = [];
 var marker = null;
+var table = null;
 var imagered = base_url + '/images/red.png';
 var imagegreen = base_url + '/images/green.png';
 
 /****  Document Ready ****/
-const all_account_permission = @json($all_account_list_permission);
+const all_account_permission = @json($allAccountListPermission);
 jQuery(document).ready(function() {
     // console.log("hi");
     var localCustomSearchVal = localStorage.getItem('DataTables_leads_datatable_/leads');
@@ -431,7 +432,7 @@ function draw_table() {
         }
     });
     // stateSave- when there are no filters
-    var table = jQuery('#leads_datatable').DataTable({
+    table = jQuery('#leads_datatable').DataTable({
         // dom: 'lBfrtip',
         processing: true,
         oLanguage: {
@@ -1284,7 +1285,7 @@ function changeInput(elem) {
     var addedByScrap =
         `{!! Form::select("added_by_scrap_apis",[0,1,2],[], array("class" => "form-control input")) !!}`;
 
-    const selectAgentSelection = `{!! Form::select("pipeline_agent_id",$agent_users,[], array("class" => "form-control multiple input")) !!}`;
+    const selectAgentSelection = `{!! Form::select("pipeline_agent_id",$agentUsers,[], array("class" => "form-control multiple input")) !!}`;
 
     // get php columns var
     var numberColumns = @json($columnsType['number']); // get integer columns
@@ -1582,7 +1583,7 @@ function saveFilter() {
                     filter_html +=
                         '<button class="btn btn-success btn-sm mr-2 apply" type="button">Apply</button>';
                     filter_html +=
-                        '<button class="btn btn-danger btn-sm closebtn mr-1" type="button" onclick="deletSavedFilter(' +
+                        '<button class="btn btn-danger btn-sm closebtn mr-1" type="button" onclick="deleteSavedFilterConfirm(' +
                         response.id + ')">';
                     filter_html += '<i class="fas fa-trash"></i>';
                     filter_html += '</button>';

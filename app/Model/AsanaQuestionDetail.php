@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use App\Model\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,8 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class AsanaQuestionDetail extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $fillable = ["asana_question_id","question","status"];
+
+    protected $fillable = ['asana_question_id', 'question', 'status'];
+
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
     protected $table = 'asana_question_details';
 
     public function setCreatedAtAttribute($value)

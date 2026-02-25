@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Model\LeadsModel\Contact;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Console\Command;
 
 class MarkArchiveContact extends Command
 {
@@ -24,34 +23,23 @@ class MarkArchiveContact extends Command
     protected $description = 'Command description';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
      */
-    public function handle()
+    public function handle():void
     {
-        Contact::
-        whereNull('contacts.archive_sms')
+        Contact::whereNull('contacts.archive_sms')
         ->join('sms_provider_queue as spq', 'contacts.id', '=', 'spq.contact_id')
         ->leftJoin('messages', 'contacts.id', '=', 'messages.contact_id')
         ->where('spq.sms_sent_flag', 1)
-        ->where(function($query) {
+        ->where(function ($query) {
             $query->whereNull('messages.id')
-                  ->orWhere('messages.created_at', '<', Carbon::now()->subDays(3));
+                ->orWhere('messages.created_at', '<', Carbon::now()->subDays(3));
         })
         ->update(['contacts.archive_sms' => 1]);
 
-        $this->info("Done");
+        $this->info('Done');
 
     }
 }

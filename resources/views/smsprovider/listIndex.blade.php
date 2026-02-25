@@ -228,7 +228,7 @@ $(document).ready(function() {
         let url = '{{ url("leads/edit") }}/' + encryptedId;
 
         // Open the new page in a new tab
-        window.open(url, '_blank'); 
+        window.open(url, '_blank');
     });
 
     $(document).on('click', '.mark_comolete_button', function() {
@@ -264,7 +264,7 @@ $(document).ready(function() {
                 $('#chat-complete-model').modal('hide');
                 setTimeout(function(){
                     location.reload(); // Reload the page
-                }, 6000); 
+                }, 6000);
             },
             error: function(xhr, status, error) {
                 toastr.error("Something went wrong.Please contact administrator.");
@@ -298,7 +298,7 @@ $(document).ready(function() {
                 $('#chat-complete-model').modal('hide');
                 setTimeout(function(){
                     location.reload(); // Reload the page
-                }, 6000); 
+                }, 6000);
             },
             error: function(xhr, status, error) {
                 toastr.error("Something went wrong.Please contact administrator.");
@@ -378,8 +378,8 @@ function draw_table() {
     });
 
     function callChatOpenFunction() {
-        var chat_type = parseInt("{{ $type }}"); 
-        var chat_id = parseInt("{{ $id }}"); 
+        var chat_type = parseInt("{{ $type }}");
+        var chat_id = parseInt("{{ $id }}");
 
         if(chat_id != 0){
             if(chat_type == 1){
@@ -400,7 +400,7 @@ function draw_table() {
     function formatDate(dateString) {
         if(dateString && dateString != ''){
             const date = new Date(dateString);
-    
+
             // Get day, month, year, and time components
             const day = date.getDate();
             const month = date.toLocaleString('default', { month: 'short' });
@@ -408,13 +408,13 @@ function draw_table() {
             const hours = date.getHours();
             const minutes = date.getMinutes();
             const ampm = hours >= 12 ? 'PM' : 'AM';
-            
+
             // Convert hours from 24-hour to 12-hour format
             const formattedHours = hours % 12 || 12; // if hours is 0, set to 12
             const formattedMinutes = minutes < 10 ? '0' + minutes : minutes; // pad minutes with leading zero if needed
 
             // Get day suffix
-            const suffix = (day % 10 === 1 && day !== 11) ? 'st' : 
+            const suffix = (day % 10 === 1 && day !== 11) ? 'st' :
                            (day % 10 === 2 && day !== 12) ? 'nd' :
                            (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
 
@@ -422,7 +422,7 @@ function draw_table() {
             return `${day}${suffix} ${month} ${year}, ${formattedHours}:${formattedMinutes} ${ampm}`;
         }
         return '';
-        
+
     }
 
 
@@ -473,7 +473,7 @@ function draw_table() {
     var $thead = jQuery('#smsproviderlist_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#smsproviderlist_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);
@@ -595,9 +595,9 @@ $(document).on('change', '#templateSelect', function() {
 function applySavedTemplate(templateId, singleContactId) {
     // getting data from contact table
     let isNewsletterContact = localStorage.getItem("isNewsletterContact");
-    if(isNewsletterContact == "yes") 
+    if(isNewsletterContact == "yes")
         var data_url = `/newsletter/singleDetail/logDetail/${singleContactId}`;
-    else 
+    else
         var data_url = `/template/singleDetail/contactDetail/${singleContactId}`;
 
     $.ajax({
@@ -615,23 +615,23 @@ function applySavedTemplate(templateId, singleContactId) {
                 let template_content = jsonTemplate.response[0].template_content;
                 let email_content = jsonTemplate.response[0].template_content;
                 let template_subject = jsonTemplate.response[0].template_subject;
-             
+
                 if(isNewsletterContact == "yes") {
                     let c_first_name  = responseData.response.first_name || '';
                     let c_last_name   = responseData.response.last_name || '';
                     template_content = template_content.replace(/{CANDIDATE_FIRST_NAME}/g, c_first_name);
-                    template_content = template_content.replace(/{CANDIDATE_LAST_NAME}/g, c_last_name); 
+                    template_content = template_content.replace(/{CANDIDATE_LAST_NAME}/g, c_last_name);
                     template_content = template_content.replace(/{BUSINESS_NAME}/g, "");
                 } else {
                     let c_first_name  = responseData.response[0].c_first_name;
                     let c_last_name   = responseData.response[0].c_last_name;
                     let business_name = responseData.response[0].leads.name;
                     template_content = template_content.replace(/{CANDIDATE_FIRST_NAME}/g, c_first_name);
-                    template_content = template_content.replace(/{CANDIDATE_LAST_NAME}/g, c_last_name); 
+                    template_content = template_content.replace(/{CANDIDATE_LAST_NAME}/g, c_last_name);
                     template_content = template_content.replace(/{BUSINESS_NAME}/g, business_name);
-                }     
+                }
                 // txtToElem(template_content);
-                          
+
 
                 // Create a temporary div element
                 let tempDiv = document.createElement('div');
@@ -642,7 +642,7 @@ function applySavedTemplate(templateId, singleContactId) {
 
                 // Set the plain text content as the value of the textarea
                 $(`#chat_footer_${singleContactId} textarea.text-input`).val(renderedContent);
-                
+
 
             } catch (error) {
                 console.log(error);
@@ -662,8 +662,8 @@ function applySavedTemplate(templateId, singleContactId) {
             toastr.error(jsonResponse.response);
             return;
         }
-    });   
-    
+    });
+
 }
 
 function closeSavedTemplateNav() {

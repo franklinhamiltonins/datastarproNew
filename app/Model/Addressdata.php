@@ -17,6 +17,6 @@ class Addressdata extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'id', 'address', 'latitude', 'longitude'
+        'id', 'address', 'latitude', 'longitude',
     ];
 }

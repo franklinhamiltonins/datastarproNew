@@ -5,7 +5,6 @@
 <li class="breadcrumb-item active">Import Scrap Bot </li>
 @endpush
 @section('content')
-
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
@@ -18,34 +17,23 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-xl-6">
                 <div class="card card-secondary">
                     <div class="card-header bg-info mb-3">
                         <h3 class="card-title">Import Scrap Bot </h3>
                     </div>
-
                     <div class="card-body">
-
-
-
                         @foreach ($errors->all() as $error)
                         <div>{{ $error }}</div>
                         @endforeach
-
-
-
-
-
-                        {{-- {{The custom made errors when an important column is missing in file --}}
                         @if(session('customErrors'))
                         @foreach (session('customErrors') as $error)
                         <span class="text-danger"><small>{!! $error !!}</small></span>
                         @endforeach
                         @endif
 
-                        <form action="{{ route('bot.import_scrap') }}" method="POST" enctype="multipart/form-data"
+                        <form action="{{ route('bot.importScrap') }}" method="POST" enctype="multipart/form-data"
                             class="mt-2" id="importForm">
 
                             @csrf
@@ -67,7 +55,6 @@
                             </div>
                             <div class="mt-3 text-secondary d-none waitInfo">Please wait...This might take a
                                 while.<br /> Do not close this window while importing.</div>
-                            {{-- <a class="btn btn-success" href="{{ route('import_scrap') }}">Export data</a> --}}
                         </form>
 
                         {{-- errors/success logs --}}

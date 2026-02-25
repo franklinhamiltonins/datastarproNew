@@ -20,12 +20,12 @@ class File extends Model
     protected $fillable = [
         'name',
         'file_path',
-        'description'
+        'description',
     ];
 
     // public function leads()
     // {
-      
+
     //   return $this->belongsTo(Lead::class,'lead_id');
     // }
 
@@ -33,5 +33,4 @@ class File extends Model
     {
         return $this->morphTo();
     }
-    
 }

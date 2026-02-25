@@ -10,10 +10,10 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class SendNewMessageNotification implements ShouldQueue
 {
-	use InteractsWithQueue;
+    use InteractsWithQueue;
 
-	public function handle(NewMessage $event)
-	{
-		// Send notification logic here
-	}
+    public function handle(NewMessage $event)
+    {
+        // Send notification logic here
+    }
 }

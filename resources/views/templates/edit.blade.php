@@ -98,7 +98,7 @@
                         <div class="col-12 col-md-6 mt-3">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" 
+                                    <input type="checkbox" class="custom-control-input"
                                      {{ $template && $template->set_for_all == 'yes' ? 'checked' : '' }}
                                         name="set_for_all" value="{{ $template && $template->set_for_all == 'yes' ? 1 : 0 }}" id="templateForAll">
                                     <label class="custom-control-label" for="templateForAll">Set for all Agents</label>
@@ -109,8 +109,8 @@
                             <div class="form-group">
                                 <strong>User Name:</strong>
                                 <select class="select2 form-control" name="user_id[]" multiple="multiple" id="selectUser" data-placeholder='Select User'>
-                                    @foreach ($agent_users as $agent_id => $agent_user)
-                                        <option value="{{$agent_id}}" 
+                                    @foreach ($agentUsers as $agent_id => $agent_user)
+                                        <option value="{{$agent_id}}"
                                             @if (in_array($agent_id, $selected_agents)){{'selected'}} @endif>
                                                 {{$agent_user}}
                                         </option>
@@ -211,9 +211,9 @@ jQuery(document).ready(function() {
             $("#show_user_option").css("display","none");
         } else {
             $(this).val(0);
-            $("#show_user_option").css("display","block"); 
+            $("#show_user_option").css("display","block");
         }
-            
+
     });
 
     // $(document).on('change','#template_type',function() {

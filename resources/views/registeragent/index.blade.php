@@ -272,7 +272,7 @@
                 $table.search(event.target.value).draw(); // draw the table
             }
         }, 500));
-            
+
     });
     document.getElementById('applyFilters').addEventListener('click', function () {
 

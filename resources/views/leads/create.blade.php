@@ -27,7 +27,7 @@
                         <div class="p-3">
                             @include('leads.partials.lead-form')
                         </div>
-                        
+
                         <div class="card-footer p-2 p-lg-3">
                             <button type="submit " class="btn btn-primary btn-sm">Add Lead</button>
                             <p class="text-muted mt-2 small mb-0">* You will be redirected to the new lead Edit page, in

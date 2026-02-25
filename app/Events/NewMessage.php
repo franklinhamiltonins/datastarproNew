@@ -9,17 +9,17 @@ use Illuminate\Queue\SerializesModels;
 
 class NewMessage
 {
-	use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-	public $message;
+    public $message;
 
-	public function __construct(Message $message)
-	{
-		$this->message = $message;
-	}
+    public function __construct(Message $message)
+    {
+        $this->message = $message;
+    }
 
-	public function broadcastOn()
-	{
-		return ['chat.' . $this->message->contact_id];
-	}
+    public function broadcastOn()
+    {
+        return ['chat.'.$this->message->contact_id];
+    }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Model\LeadsModel\Contact;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class UpdateContactPhone extends Command
@@ -22,61 +22,69 @@ class UpdateContactPhone extends Command
      */
     protected $description = 'Update contact phone to exclude +1';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function handle():void
     {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-        try{
-
+        try {
             Contact::chunk(200, function ($contacts) {
-                $update_arr = [];
-                foreach($contacts as $contact) {
-                    $id = $contact->id;
-                    $phone = $contact->c_phone;
-                    $c_phone_updated = 0;
-                    $c_phone_update_status = "";
-    
-                    if(!$phone) {
-                        $c_phone_update_status = "Phone no not added.";
-                    } elseif (!str_contains($phone, '+1')) {
-                        $c_phone_update_status = "Phone no does not contain +1";
-                    } else {
-                        $phone = str_replace("+1","",$contact->c_phone);
-                        if(strlen($phone) < 10) { 
-                            $c_phone_update_status = "Not Updated! Phone length is ". strlen($phone)." (excluding +1).";
-                        } else {
-                                $c_phone_updated = 1;
-                                $c_phone_update_status = "Updated successfully.";
-                        }
-                    }
-                    // get the array to update
-                    $update_arr[] = [
-                        'id' => $id, 
-                        'c_phone' => $phone, 
-                        'c_phone_updated' => $c_phone_updated, 
-                        'c_phone_update_status' => $c_phone_update_status
-                    ];
+                $updateData = [];
+
+                foreach ($contacts as $contact) {
+                    $updateData[] = $this->prepareContactUpdateData($contact);
                 }
-        
-                Contact::upsert($update_arr, ['id'], ['c_phone', 'c_phone_updated', 'c_phone_update_status']);
-                // Log::info("Contact updated successfully");
+
+                Contact::upsert(
+                    $updateData,
+                    ['id'],
+                    ['c_phone', 'c_phone_updated', 'c_phone_update_status']
+                );
             });
 
         } catch (\Exception $e) {
-			Log::error('Failed to update contact!' . $e->getMessage());
-		}        
+            Log::error('Failed to update contact: ' . $e->getMessage());
+        }
     }
+
+    // Prepare a single contact update array
+    private function prepareContactUpdateData($contact)
+    {
+        $id = $contact->id;
+        $phone = $contact->c_phone;
+        
+        if (!$phone) {
+            return [
+                'id' => $id,
+                'c_phone' => $phone,
+                'c_phone_updated' => 0,
+                'c_phone_update_status' => 'Phone no not added.',
+            ];
+        }
+
+        // Initialize defaults
+        $cleanPhone = $phone;
+        $updated = 0;
+        $status = '';
+
+        // Check if phone contains +1
+        if (!str_contains($phone, '+1')) {
+            $status = 'Phone no does not contain +1';
+        } else {
+            // Strip +1
+            $cleanPhone = str_replace('+1', '', $phone);
+
+            if (strlen($cleanPhone) < 10) {
+                $status = 'Not Updated! Phone length is ' . strlen($cleanPhone) . ' (excluding +1).';
+            } else {
+                $updated = 1;
+                $status = 'Updated successfully.';
+            }
+        }
+
+        return [
+            'id' => $id,
+            'c_phone' => $cleanPhone,
+            'c_phone_updated' => $updated,
+            'c_phone_update_status' => $status,
+        ];
+    }
+
 }

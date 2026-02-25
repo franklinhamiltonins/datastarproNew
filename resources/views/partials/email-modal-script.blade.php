@@ -87,7 +87,7 @@
                                     </div>`
                                 );
                             }
-                            
+
                         }
 
                         $("#lead-saved-filter-sidebar").addClass('show');
@@ -265,7 +265,7 @@
                     $(".hide-create-form-button").val("Send");
                     return false;
                 }
-            })  
+            })
         });
 
     function deleteSavedTemplate(id) {

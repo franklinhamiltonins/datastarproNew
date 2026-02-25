@@ -4,7 +4,6 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,17 +14,19 @@ class NewSmsReceived implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message, $user_id;
+    public $message;
+
+    public $userId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($message, $user_id)
+    public function __construct($message, $userId)
     {
         $this->message = $message;
-        $this->user_id = $user_id;
+        $this->userId = $userId;
     }
 
     /**
@@ -35,9 +36,8 @@ class NewSmsReceived implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('channel-name');
-        // Log::info('TestEvent is being broadcasted.',);
-        Log::info(' Broadcast FUNCTION - $this->message - ' . $this->message . ' $this->user_id ' . $this->user_id);
+        Log::info(' Broadcast FUNCTION - $this->message - '.$this->message.' $this->userId '.$this->userId);
+
         return new Channel('notify-channel');
     }
 }

@@ -14,10 +14,10 @@
 		data-email-to-contact="{{$row->first_name.' '.$row->last_name}} ({{$row->email}})">
 		<i class="fas fa-envelope"></i>
 	</a>
-	
+
 	{!! Form::open(['method' => 'DELETE','route' => ['newsletter.destroy', $row->id],'style'=>'display:inline','class' => ['leadForm-'.$row->id]]) !!}
 	{{-- trigger confirmation modal --}}
-	<a href="#" title="Delete SMTP Configuration" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')" 
+	<a href="#" title="Delete SMTP Configuration" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'{{$row->id}}')"
 		class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
 		<i class="fa fa-trash"></i>
 	</a>

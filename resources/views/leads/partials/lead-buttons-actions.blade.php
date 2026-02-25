@@ -21,7 +21,6 @@
         class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
         <i class="fa fa-trash"></i>
     </a>
+    {!! Form::close() !!}
 </div>
-
-{!! Form::close() !!}
 @endcan

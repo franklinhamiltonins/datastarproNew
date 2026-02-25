@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-
-use App\Model\LeadsModel\Log;
-use Yajra\Datatables\Datatables;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use App\Model\LeadSource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Yajra\Datatables\Datatables;
 
 class LeadSourceController extends Controller
 {
@@ -41,8 +35,8 @@ class LeadSourceController extends Controller
 
         // Apply ordering and pagination
         $leadSourceQuery = $leadSourceQuery->orderBy($filter_on_column_name, $order_by)
-                                           ->offset($start)
-                                           ->limit($length);
+            ->offset($start)
+            ->limit($length);
 
         // Use datatables() with the query
         return datatables($leadSourceQuery)
@@ -55,67 +49,74 @@ class LeadSourceController extends Controller
     }
 
     public function create()
-    {   
-        $page_type = 1;  
-        return view('leadsource.create',compact('page_type'));
+    {
+        $page_type = 1;
+
+        return view('leadsource.create', compact('page_type'));
     }
 
     public function edit($id)
-    {   
+    {
         // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $leadsource = LeadSource::find($id);
-        if (!$leadsource) {
+        if (! $leadsource) {
 
             toastr()->error('This Lead Source doesn\'t exist');
+
             return redirect('/leadsource');
         }
         $page_type = 2;
-        return view('leadsource.create', compact('leadsource','page_type'));
+
+        return view('leadsource.create', compact('leadsource', 'page_type'));
     }
 
     public function show($id)
-    {   
+    {
         $id = base64_decode($id);
         $leadsource = LeadSource::find($id);
-        if (!$leadsource) {
+        if (! $leadsource) {
 
             toastr()->error('This Lead Source doesn\'t exist');
+
             return redirect('/leadsource');
         }
         $page_type = 3;
-        return view('leadsource.create', compact('leadsource','page_type'));
+
+        return view('leadsource.create', compact('leadsource', 'page_type'));
     }
 
     public function store(Request $request)
     {
-        $rules =[
+        $rules = [
             'leadsource_name' => 'required|string|max:255',
         ];
 
-        //validate fields using nice name in error messages
+        // validate fields using nice name in error messages
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             // $errorMessages = $validator->errors()->all();
             toastr()->error($validator->errors()->first());
+
             return back()->withErrors($validator)->withInput();
         }
 
-        $alreadyEntry = LeadSource::where('name',$request->leadsource_name)->first();
+        $alreadyEntry = LeadSource::where('name', $request->leadsource_name)->first();
 
-        if(!$alreadyEntry){
+        if (! $alreadyEntry) {
             // Check if the rating already exists by name
             LeadSource::Create(
                 ['name' => $request->leadsource_name]
             );
 
             toastr()->success('Lead Source created');
+
             return redirect()->route('leadsource.index');
- 
-        }
-        else{
-            toastr()->error( "Lead Source Already Exists");
+
+        } else {
+            toastr()->error('Lead Source Already Exists');
+
             return back()->withInput();
         }
 
@@ -128,35 +129,36 @@ class LeadSourceController extends Controller
             'id' => 'required',
             'leadsource_name' => 'required|string|max:255',
         ];
-        
 
         // Validate fields using nice names in error messages
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             toastr()->error($validator->errors()->first());
+
             return back()->withErrors($validator)->withInput();
         }
 
         $leadsource = LeadSource::find($request->id);
-        if (!$leadsource) {
+        if (! $leadsource) {
             toastr()->error("This Lead Source doesn't exist");
+
             return redirect()->route('leadsource.index');
         }
 
-        $leadsourceOther = LeadSource::where('id','!=',$request->id)->where('name',$request->leadsource_name)->first();
-        if($leadsourceOther){
-            toastr()->error("This Lead Source with same name already exist");
+        $leadsourceOther = LeadSource::where('id', '!=', $request->id)->where('name', $request->leadsource_name)->first();
+        if ($leadsourceOther) {
+            toastr()->error('This Lead Source with same name already exist');
+
             return redirect()->route('leadsource.index');
         }
         unset($leadsourceOther);
 
-
         $leadsource->name = $request->leadsource_name;
         $leadsource->save();
 
-        toastr()->success("Lead Source Updated");
-        
+        toastr()->success('Lead Source Updated');
+
         return redirect()->route('leadsource.index');
     }
 
@@ -165,8 +167,9 @@ class LeadSourceController extends Controller
         // Find the Rating by ID
         $leadsource = LeadSource::find($id);
 
-        if (!$leadsource) {
+        if (! $leadsource) {
             toastr()->error("This Lead Source doesn't exist");
+
             return redirect()->route('leadsource.index');
         }
 
@@ -174,6 +177,7 @@ class LeadSourceController extends Controller
         $leadsource->delete();
 
         toastr()->success('Lead Source deleted successfully.');
+
         return redirect()->route('leadsource.index');
     }
 
@@ -182,8 +186,9 @@ class LeadSourceController extends Controller
         $ids = $request->input('selectedValues', []);
 
         // Validate that we have an array of IDs
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             toastr()->error('No Lead Source selected for deletion.');
+
             return redirect()->route('leadsource.index');
         }
 
@@ -192,6 +197,7 @@ class LeadSourceController extends Controller
 
         if ($leadsources->isEmpty()) {
             toastr()->error('No valid Lead Source found for deletion.');
+
             return redirect()->route('leadsource.index');
         }
 
@@ -199,6 +205,7 @@ class LeadSourceController extends Controller
         LeadSource::whereIn('id', $ids)->delete();
 
         toastr()->success('Selected Lead Source deleted successfully.');
+
         return redirect()->route('leadsource.index');
     }
 }

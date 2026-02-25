@@ -9,6 +9,7 @@
 			</div>
 
 			{!! Form::open(array('route' => ['leads.contact_status_update',$lead->id],'method'=>'POST')) !!}
+			@csrf
 
 			<div class="modal-body p-2 p-lg-3">
 				@php
@@ -17,7 +18,7 @@
 				@endphp
                 <div class="form-group mb-2">
                     <label class="form-label small mb-1 font-weight-normal">Status:</label>
-                    <select class="commonClass form-control leadscontactstatus contact-info-list-select px-2" class="form-control leadselectstatus" name="c_status">
+                    <select class="commonClass form-control leadscontactstatus contact-info-list-select px-2 leadselectstatus" name="c_status">
                         {{-- False Status Options (Displayed on Top) --}}
 					    @foreach($statusOptions as $keyStatus => $statusOption)
 					        @if(!empty($statusOption->false_status) && $statusOption->false_status == 1)
@@ -53,10 +54,10 @@
 			    <div class="form-group mb-0">
 					<label class="form-label small mb-1 font-weight-normal">Assign Agent:</label>
 					<select class="commonClass form-control leadscontactassignagent contact-info-list-select px-2" name="c_agent_id">
-						@if(count($agentlist) > 1)
+						@if(count($agentList) > 1)
 							<option value="0" selected>Select Agent</option>
 						@endif
-						@foreach($agentlist as $keyagent => $agentvalue)
+						@foreach($agentList as $keyagent => $agentvalue)
 						<option value="{{ $keyagent }}" {{ !empty($contact) && $contact->c_agent_id == $keyagent ? 'selected' : '' }}>
 							{{ $agentvalue }}
 						</option>

@@ -18,9 +18,7 @@
                 </div>
             </div>
         </div>
-
         <div class="table-container pb-4">
-
             <table class="table table-bordered m-0" id="cityTable">
                 <thead>
                     <tr>
@@ -44,12 +42,8 @@
                 </tbody>
             </table>
         </div>
-
-
         {!! $cities->render() !!}
-
     </div><!-- /.container-fluid -->
-
     @include('partials.delete-modal')
 </section>
 <!-- /.content -->

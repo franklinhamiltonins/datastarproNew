@@ -2,16 +2,15 @@
 
 namespace App\Model;
 
-use App\Model\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Model\Carrier;
 
 class LeadAdditionalPolicy extends Model
 {
     use HasFactory,SoftDeletes;
+
     protected $fillable = [
         'lead_id',
         'carrier',
@@ -20,10 +19,11 @@ class LeadAdditionalPolicy extends Model
         'policy_renewal_date',
         'hurricane_deductible',
         'all_other_perils',
-        'insurance_coverage'
+        'insurance_coverage',
     ];
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
     protected $table = 'leads_additional_policy';
 
     public function listCarrier()

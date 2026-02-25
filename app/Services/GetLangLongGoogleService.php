@@ -2,42 +2,94 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use App\Model\Addressdata;
+use Illuminate\Support\Facades\Log;
 
 class GetLangLongGoogleService
 {
-
-    public function getLatLngFromGoogleService($address)
+    // Get latitude and longitude for a given address using Google Maps API
+    // Caches result in DB if not already present
+    public function getLatLngFromGoogleService(string $address): array
     {
-        $address_data = Addressdata::where('address', $address)->first();
-        if ($address_data) {
-            $data['lat'] = $address_data->latitude;
-            $data['long'] = $address_data->longitude;
-            return $data;
+        // Return cached data if available
+        if ($cached = $this->getCachedAddress($address)) {
+            return $cached;
         }
-        //Google Map API URL
-        $API_KEY = env('GOOGLE_MAP_API_KEY');
-        $url = "https://maps.google.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $API_KEY;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $result = json_decode($response);
 
-        // echo "<pre>";print_r($result);exit;
+        $response = $this->callGoogleApi($address);
 
-        $data['lat'] = null;
-        $data['long'] = null;
-        if ($result && $result->status == "OK") {
-            $data['lat'] = $result->results[0]->geometry->location->lat;
-            $data['long'] = $result->results[0]->geometry->location->lng;
-            Addressdata::create(['address' => $address, 'latitude' => $data['lat'], 'longitude' => $data['long']]);
+        if (! $response) {
+            return ['lat' => null, 'long' => null];
         }
+
+        $data = $this->parseGoogleResponse($response);
+
+        if ($data['lat'] && $data['long']) {
+            $this->cacheAddress($address, $data['lat'], $data['long']);
+        }
+
         return $data;
+    }
+
+    private function getCachedAddress(string $address): ?array
+    {
+        $addressData = Addressdata::where('address', $address)->first();
+
+        return $addressData ? [
+            'lat' => $addressData->latitude,
+            'long' => $addressData->longitude,
+        ] : null;
+    }
+
+    private function callGoogleApi(string $address): ?object
+    {
+        $apiKey = env('GOOGLE_MAP_API_KEY');
+        $url = 'https://maps.google.com/maps/api/geocode/json?address='
+            .urlencode($address).'&key='.$apiKey;
+
+        $ch = curl_init();
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_CONNECTTIMEOUT => 15,
+            CURLOPT_TIMEOUT => 20,
+        ]);
+
+        $response = curl_exec($ch);
+
+        if ($response === false) {
+            Log::error('Google API CURL Error: '.curl_error($ch));
+            curl_close($ch);
+            return null;
+        }
+
+        curl_close($ch);
+
+        return json_decode($response);
+    }
+
+    private function parseGoogleResponse(object $response): array
+    {
+        if (isset($response->status) && $response->status === 'OK'
+            && isset($response->results[0]->geometry->location)) {
+            $loc = $response->results[0]->geometry->location;
+            return [
+                'lat' => $loc->lat ?? null,
+                'long' => $loc->lng ?? null,
+            ];
+        }
+        return ['lat' => null, 'long' => null];
+    }
+
+    private function cacheAddress(string $address, float $lat, float $lng): void
+    {
+        Addressdata::create([
+            'address' => $address,
+            'latitude' => $lat,
+            'longitude' => $lng,
+        ]);
     }
 }

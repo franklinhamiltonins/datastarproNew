@@ -15,7 +15,7 @@ class AddCurrentInsurancesColumnsOnLeads extends Migration
     {
         Schema::table('leads', function (Blueprint $table) {
 
-            //add Current Insurances columns
+            // add Current Insurances columns
             $table->string('general_liability')->after('ins_flood')->nullable();
             $table->string('GL_ren_month')->after('general_liability')->nullable();
             $table->string('crime_insurance')->after('GL_ren_month')->nullable();

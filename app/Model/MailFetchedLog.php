@@ -10,8 +10,9 @@ class MailFetchedLog extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = "mail_fetched_log";
+    protected $table = 'mail_fetched_log';
 
-    protected $fillable = ['date', 'time', 'type', 'file_path','status'];
+    protected $fillable = ['date', 'time', 'type', 'file_path', 'status'];
+
     protected $dates = ['deleted_at'];
 }

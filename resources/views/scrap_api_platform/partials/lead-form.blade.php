@@ -26,7 +26,6 @@
 		</div>
 
 	</div>
-
 	<div class="form-row">
 		<div class="form-group col">
 			<strong>Auth Token Required</strong>

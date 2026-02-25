@@ -123,7 +123,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const now = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-    
+
         // Convert to Date object
         const estDate = new Date(now);
         flatpickr("#min_time", {
@@ -308,7 +308,7 @@ function draw_table() {
         ],
         dom: 'rt<"bottom"ip><"clear">',
         rowCallback: function(row, data) {
-            
+
 
 
         }
@@ -361,7 +361,7 @@ function draw_table() {
     var $thead = jQuery('#agents_leads_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#agents_leads_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);

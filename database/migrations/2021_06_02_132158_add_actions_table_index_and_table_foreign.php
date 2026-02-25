@@ -14,16 +14,14 @@ class AddActionsTableIndexAndTableForeign extends Migration
     public function up()
     {
         Schema::table('actions', function (Blueprint $table) {
-            //drop foreign pivot table 
+            // drop foreign pivot table
             Schema::dropIfExists('leads_actions');
-            //add foreign on table
+            // add foreign on table
             $table->unsignedBigInteger('lead_id')->nullable()->change();
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
-            //add index
+            // add index
             $table->index(['contact_name']);
 
-          
-            
         });
     }
 

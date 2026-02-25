@@ -2,27 +2,22 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\MailReaderService;
+use Illuminate\Console\Command;
 
 class ProcessMailAttachments extends Command
-{   
-
+{
     protected $signature = 'mail:process-attachments';
-    protected $description = 'Read specific emails, download attachments and process them';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Read specific emails, download attachments and process them';
 
     public function handle(MailReaderService $readerService)
     {
         try {
             $readerService->fetchMails();
             $this->info('Mail processing completed.');
-        } catch (Exception $e) {
-            $this->error('Error: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            $this->error('Error: '.$e->getMessage());
         }
     }
 }

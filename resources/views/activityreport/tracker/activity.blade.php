@@ -17,11 +17,6 @@
                         <form id="agent_activity_reports">
                             @csrf
                             <div class="form-row p-3">
-                                <!-- <div class="form-group col-12 col-md-6 col-lg-4 mb-2">
-                                    <strong>Email:</strong>
-                                    <input placeholder="Valid Email" class="form-control capitalize" name="valid-email" type="email">
-                                    <small class="text-xs muted">This form is collecting email</small>
-                                </div> -->
                                 <input type="hidden" name="created_by" value="{{$agentId}}">
                                 <div class="form-group col-12 col-md-6 col-lg-4 mb-2">
                                     <strong>Agent<sup class="mandatoryClass">*</sup>:</strong>
@@ -121,7 +116,7 @@
 
                                 <!-- Hidden file input -->
                                 <input type="file" id="fileInput" name="signed_aor_doc[]" multiple style="display: none;" onchange="handleFiles(this.files)">
-                            </div>  
+                            </div>
 
                             <!-- File preview area -->
                             <div id="fileList" class="px-3"></div>
@@ -229,7 +224,7 @@
                 else{
                     toastr.error(response.message);
                 }
-                
+
             },
             error: function(xhr) {
                 console.error(xhr);
@@ -317,9 +312,9 @@
                     success: function (data) {
                         if (Array.isArray(data) && data.length > 0) {
                             const suggestions = data.map(lead => `
-                                <a href="javascript:void(0)" 
+                                <a href="javascript:void(0)"
                                     class="list-group-item list-group-item-action p-2 small community-suggestion"
-                                    data-id="${lead.id}" 
+                                    data-id="${lead.id}"
                                     data-name="${lead.name}">
                                     <strong class="text-primary">${lead.name}</strong>
                                     <br>

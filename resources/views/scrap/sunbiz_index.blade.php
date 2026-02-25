@@ -23,9 +23,6 @@
 	<div class="container-fluid">
 		<div class="card">
 			<div class="card-body p-0 pb-3">
-
-
-
 				<div class="px-3 pt-3 pb-1">
 					<div class="row">
 						<div class="col-lg-12 margin-tb d-flex flex-wrap justify-content-between table-top-sec">
@@ -99,7 +96,7 @@
 					</a>
 					<table class="row-border order-column compact hover searchHighlight mt-5 border-top" id="contact_scrap_datatable">
 						<thead style="font-size: 0.93rem;">
-							<tr>								
+							<tr>
 								<th></th>
 								<th id="serial_no"></th>
 								<th>Business Name</th>
@@ -143,10 +140,6 @@ $(document).ready(function() {
 
 	var base_url = "{{url('/')}}";
 	var dataTableId = 'contact_scrap_datatable';
-
-
-
-
 	/****  Document Ready ****/
 	jQuery(document).ready(function() {
 
@@ -213,10 +206,7 @@ $(document).ready(function() {
 				}
 			});
 		});
-
-
 	});
-
 
 	jQuery(document).ready(function() {
 		// Use a parent element that exists in the DOM when DataTables initializes
@@ -275,10 +265,6 @@ $(document).ready(function() {
 		html += '</ul>';
 		return html;
 	}
-
-
-
-
 	/**** Draw dataTable Ajax ****/
 	function draw_table() {
 		// ajax setup for table ajax
@@ -311,17 +297,6 @@ $(document).ready(function() {
 
 			},
 			columns: [
-				//set table columns
-				// {
-				// 	data: 'DT_RowIndex',
-				// 	name: 'DT_RowIndex',
-				// 	"targets": [0],
-				// 	"searchable": false,
-				// 	"orderable": false,
-				// 	render: function(data, type, row, meta) {
-				// 		//return '<input type="checkbox" class="select-row" value="' + row.id + '">';
-				// 	}
-				// },
 				{
 					data: 'id',
 					name: 'id',
@@ -428,7 +403,7 @@ $(document).ready(function() {
 		var $thead = jQuery('#contact_scrap_datatable thead #serial_no');
 		$thead.prepend('<input type="checkbox" class="select-all">');
 
-		// Select all checkboxes 
+		// Select all checkboxes
 		jQuery('#contact_scrap_datatable').on('change', '.select-all', function() {
 			var checked = this.checked;
 			jQuery('.select-row').prop('checked', checked);
@@ -462,7 +437,7 @@ $(document).ready(function() {
 			jQuery(`#formBusiness-${leadId}`).hide();
 			jQuery(this).hide();
 			const innerHtmlData = `<form method="post" class="form-group d-flex" id="formBusiness-${leadId}">
-						@csrf 
+						@csrf
 						<input class="form-control rounded-right-0" value="${leadName}" type="text" name="business_name" id="input_${leadId}" />
 						<button class="btn btn-sm btn-primary rounded-left-0 submit_business_button" type="button" data-text_id="input_${leadId}" data-lead_id="${leadId}"><i class="fas fa-save"></i></button>
 					</form>
@@ -583,11 +558,6 @@ $(document).ready(function() {
         });
 	}
 </script>
-<!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" integrity="sha512-LDB28UFxGU7qq5q67S1iJbTIU33WtOJ61AVuiOnM6aTNlOLvP+sZORIHqbS9G+H40R3Pn2wERaAeJrXg+/nu6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
 <script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
 <script src="//bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css"> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script> -->
 @endpush

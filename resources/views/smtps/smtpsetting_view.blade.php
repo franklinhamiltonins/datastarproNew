@@ -12,7 +12,7 @@
                     <!-- <div class="card-header">
                         <h3 class="card-title">SMTP Settings</h3>
                     </div> -->
-                    {!! Form::model($smtp_data, ['method' => 'POST', 'id' => 'createSmtp','route' => ['smtp.store'], 'enctype'=> 'multipart/form-data']) !!}
+                    {!! Form::model($smtpData, ['method' => 'POST', 'id' => 'createSmtp','route' => ['smtp.store'], 'enctype'=> 'multipart/form-data']) !!}
                     @csrf
                     <div class="card-body p-3">
                         <div class="row">
@@ -46,7 +46,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
-                                    <strong>Password<sup class="mandatoryClass">*</sup>:</strong> 
+                                    <strong>Password<sup class="mandatoryClass">*</sup>:</strong>
                                     <span style="font-size: 0.80rem;">(For Gmail, use App password)</span>
                                     <div class="position-relative password-input">
                                         {!! Form::text('password', null, array('placeholder' => 'Password','class' => 'form-control', 'id' => 'password')) !!}
@@ -72,7 +72,7 @@
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <strong>From Name<sup class="mandatoryClass">*</sup>:</strong>
-                                    {!! Form::text('from_name', (!is_null($smtp_data->from_name)) ? $smtp_data->from_name : auth()->user()->name, array('placeholder' => 'From Name','class' =>
+                                    {!! Form::text('from_name', (!is_null($smtpData->from_name)) ? $smtpData->from_name : auth()->user()->name, array('placeholder' => 'From Name','class' =>
                                         'form-control')) !!}
                                 </div>
                             </div>
@@ -96,25 +96,25 @@
                                 <!-- <div class="form-group">
                                     <img id="signature-image-preview" src="" alt="Signature image preview" style="display:none" class="form-control-file h-25 p-3 w-25">
                                 </div> -->
-                            </div>                            
+                            </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-lg-6">
                             <strong>Email Signature Preview:</strong>
-                                <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">   
-                                
+                                <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">
+
                                     <tr>
                                         <td>
                                             <table cellspacing="0" cellpadding="0" width="100%">
                                                 <tr>
                                                     <td align="left" valign="middle" width="24%" style="padding-right: 8px; border-right: 1px solid #000;">
                                                         <figure style="margin: 0;">
-                                                            <img id="signature-image-preview" style="width: 100%;" src="<?= $smtp_data->signature_image ?>" alt="Signature image">
+                                                            <img id="signature-image-preview" style="width: 100%;" src="<?= $smtpData->signature_image ?>" alt="Signature image">
                                                         </figure>
                                                     </td>
-                                                    @if($smtp_data['signature_text'])
+                                                    @if($smtpData['signature_text'])
                                                     <td align="left" valign="top" width="80%" style="padding-left: 8px;">
-                                                        {!! $smtp_data['signature_text'] !!}
+                                                        {!! $smtpData['signature_text'] !!}
                                                     </td>
                                                     @else
                                                     <td align="left" valign="middle" width="76%" style="padding-left: 8px;">
@@ -130,12 +130,12 @@
                                             </table>
                                         </td>
                                     </tr>
-                                
-                                
+
+
                                 </table>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="card-footer">
                         <input name="user_id" type="hidden" value="{{ auth()->user()->id }}">
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -167,7 +167,7 @@ jQuery(document).ready(function() {
             console.error(error);
         });
 
-    $('#password').attr('type',"password"); 
+    $('#password').attr('type',"password");
 
     $('#createSmtp').submit(function(event) {
         event.preventDefault();
@@ -183,13 +183,13 @@ jQuery(document).ready(function() {
     $('#showPassword').on('click', function() {
         $("#showPassword").css('display','none');
         $("#hidePassword").css('display','inline-block');
-        $('#password').attr('type',"text"); 
+        $('#password').attr('type',"text");
     });
 
     $('#hidePassword').on('click', function() {
         $("#hidePassword").css('display','none');
         $("#showPassword").css('display','inline-block');
-        $('#password').attr('type',"password"); 
+        $('#password').attr('type',"password");
     });
 
     $('#changeEmailProvider').on('change', function() {
@@ -222,7 +222,7 @@ jQuery(document).ready(function() {
             $("select[name='encryption']").val('None');
             $("select[name='auth']").val('None');
         }
-        
+
     });
 
     $('.custom-file-input').on('change', function() {

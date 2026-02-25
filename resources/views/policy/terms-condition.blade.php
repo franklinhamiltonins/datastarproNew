@@ -29,34 +29,6 @@
             display: flex;
             line-height: 1.2;
         }
-        /* .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            background-color: #4a90e2;
-            color: white;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .card-header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        h2 {
-            font-size: 1.4rem;
-            font-weight: 500;
-            margin-top: 1.5rem;
-            color: #4a90e2;
-        }
-        p, li {
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        ul {
-            padding-left: 1.2rem;
-        } */
         p{
             margin-bottom: 0.8rem;
         }
@@ -73,8 +45,8 @@
         <div class="container">
             <a href="/" class="text-decoration-none">
                 <div class="d-flex align-items-center text-light">
-                    <img src="{{ asset('/images/logo.png') }}" alt="DatastarPro Logo" 
-                        class="brand-image img-circle me-2" 
+                    <img src="{{ asset('/images/logo.png') }}" alt="DatastarPro Logo"
+                        class="brand-image img-circle me-2"
                         style="width: 40px; height: 40px; opacity: .8;">
                     <h5 class="h4 m-0">Datastarpro</h5>
                 </div>
@@ -82,7 +54,6 @@
         </div>
     </div>
     <div class="container my-3 my-md-4">
-           
                 <h2 class="mb-3 pb-1">Terms & Conditions</h2>
 
                 <p>Welcome to <a href="https://datastarpro.com" target="_blank">datastarpro.com</a>. Please read these Terms and Conditions ("Terms") carefully before using our website.</p>

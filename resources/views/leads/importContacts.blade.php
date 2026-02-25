@@ -26,19 +26,12 @@
                     </div>
 
                     <div class="card-body p-2 p-lg-3">
-
-
-
-
                         {{-- {{The custom made errors when an important column is missing in file --}}
                         @if(session('customErrors'))
                         @foreach (session('customErrors') as $error)
                         <span class="text-danger"><small>{!! $error !!}</small></span>
                         @endforeach
                         @endif
-
-
-
                         <form action="{{ route('leads.processContacts') }}" method="POST" enctype="multipart/form-data" id="importForm">
                             @csrf
                             <div class="form-group mb-2">
@@ -153,12 +146,6 @@ function download_text(elem, name) {
 
 $(document).ready(function() {
     $('#create_campaign').prop('checked', false);
-    //   $('#importForm .importDataBtn').on('click',function(){
-    //     $(this).children('.spinner-border').removeClass('d-none')
-    //      $('#importForm .waitInfo').removeClass('d-none')
-    //   });
-    // });
-
 
     //import leads from csv file
     $('.importDataBtn').on('click', function() {

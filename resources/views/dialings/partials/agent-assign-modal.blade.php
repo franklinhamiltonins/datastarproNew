@@ -8,15 +8,9 @@
 				</button>
 			</div>
 			<div class="modal-body p-2 p-lg-3">
-				<!-- <div class="form-group">
-					<strong>List Name:</strong>
-					{!! Form::text('agent_list_name', null, array('placeholder' => 'List Name','class' => 'form-control', 'required')) !!}
-				</div> -->
 				<div class="form-group m-0">
 					<strong class="mb-2 d-inline-block">Agent:</strong>
-					<!-- {!! Form::select("agent_list", $agent_users, [], array('id' => 'agent_list','class' => 'form-control ml-0', 'required', 'multiple' => 'multiple')) !!} -->
-
-					{!! Form::select('agent_list[]',  $agent_users, [], ['id'=>'agent_list','class' => 'form-control  px-1', 'multiple' => true, 'size' => 1, 'style' => 'height: 2rem']) !!}
+					{!! Form::select('agent_list[]',  $agentUsers, [], ['id'=>'agent_list','class' => 'form-control  px-1', 'multiple' => true, 'size' => 1, 'style' => 'height: 2rem']) !!}
 				</div>
 
 			</div>

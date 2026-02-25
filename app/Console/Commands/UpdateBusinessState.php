@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Model\LeadsModel\Lead;
+use Illuminate\Console\Command;
 
 class UpdateBusinessState extends Command
 {
@@ -22,28 +22,18 @@ class UpdateBusinessState extends Command
     protected $description = 'Updates empty lead states to "FL"';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle()
     {
-        $leads = Lead::all();
-        foreach($leads as $lead){
-            if($lead && empty($lead->state)){
-                $lead->update(array('state'=>'FL'));
+        $leads = Lead::limit(10)->get();
+        foreach ($leads as $lead) {
+            if ($lead && empty($lead->state)) {
+                $lead->update(['state' => 'FL']);
             }
-           
+
         }
     }
 }

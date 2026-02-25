@@ -61,7 +61,6 @@
                                     <th>No</th>
                                     <th></th>
                                     <th>List Name <span class="arrow"></span></th>
-                                    <!-- <th style="min-width: 80px;">No. of leads</th> -->
 
                                     <th>Agent <span class="arrow"></span></th>
                                     <th>Status</th>
@@ -75,7 +74,6 @@
             </div>
         </div>
 </section>
-<!-- @include('dialings.partials.ownagentlead-modal') -->
 @include('partials.delete-modal')
 @include('dialings.partials.agent-assign-modal')
 <!-- /.content -->
@@ -145,7 +143,7 @@ $(document).on('click', '#save_agent_list_button', function() {
                 toastr.success(data.message);
                 setTimeout(function() {
                     location.reload();
-                }, 3000); 
+                }, 3000);
             } else {
                 toastr.error(data.message);
             }
@@ -294,7 +292,7 @@ function draw_table() {
         if (!event.target.value) {
             console.log('contact search cross clicked');
             $(event.target).blur(); // to remove cursiour from search field.
-            
+
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
             $(event.target).after('<i class="fas fa-search position-absolute"></i>');
             table.search(event.target.value).draw(); // drow the table

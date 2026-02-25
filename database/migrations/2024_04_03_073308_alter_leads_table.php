@@ -15,7 +15,6 @@ class AlterLeadsTable extends Migration
     {
         //
 
-
         Schema::table('leads', function (Blueprint $table) {
             $table->enum('is_added_by_bot', ['0', '1'])->default(0);
         });

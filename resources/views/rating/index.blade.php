@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('pagetitle')
-    @if($pending == 1) Rating Management 
+    @if($pending == 1) Rating Management
     @elseif($pending == 2) Rating Management (Pending Request)
     @endif
 @endsection
@@ -178,7 +178,7 @@ jQuery(document).ready(function() {
                                     <i class="fa fa-exclamation-triangle pt-1 pr-2 text-warning"></i>
                                     <p class="mb-2 small">You have `+response.totalcount+` associations with this rating, Please reassign those associations before deleting, or, you can proceed without reassigning:</p>
                                 </div>
-                               
+
                                 <button type="button" id="forcefullydelete" data-id="`+data_id+`" class="btn btn-sm btn-danger mt-2">Delete Anyway</button>
                             </div>
                         `);
@@ -188,7 +188,7 @@ jQuery(document).ready(function() {
                                 let selectBox = $('<select>')
                                     .attr("name", key)
                                     .addClass("rating-select form-control mb-2");
-                                
+
                                 selectBox.append($('<option>').text("Select " + value.name).attr("value", ""));
 
                                 if (value.rating.length > 0) {
@@ -205,7 +205,7 @@ jQuery(document).ready(function() {
                                     let warningMessage = $("<p>")
                                         .addClass("text-danger my-1 text-xs py-1 px-2 border border-danger rounded warniing-cntnt")
                                         .text("No alternate Rating available for " + value.name + ". Please create a new rating before reassigning and deleting.");
-                                    
+
                                     deleteBodyContent.append(warningMessage);
                                 }
                             }
@@ -409,7 +409,7 @@ function draw_table() {
     var $thead = jQuery('#rating_status_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#rating_status_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);

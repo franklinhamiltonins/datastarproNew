@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -16,8 +15,11 @@ class StatusChangeNotification extends Mailable
      *
      * @return void
      */
-    public $data,$subject;
-    public function __construct($data,$subject)
+    public $data;
+
+    public $subject;
+
+    public function __construct($data, $subject)
     {
         $this->data = $data;
         $this->subject = $subject;
@@ -31,6 +33,6 @@ class StatusChangeNotification extends Mailable
     public function build()
     {
         return $this->view('emails.status_change_notification')
-                    ->subject($this->subject);
+            ->subject($this->subject);
     }
 }

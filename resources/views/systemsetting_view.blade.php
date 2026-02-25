@@ -51,7 +51,7 @@
                                     value="{{ isset($setting_time_data) && $setting_time_data->renewal_days_in_pipeline ? $setting_time_data->renewal_days_in_pipeline : '' }}">
                                 <span class="notifySpan">You can set this to a maximum of 365 days.</span>
                             </div>
-                            
+
                         </div>
                     </div>
                     <div class="p-3 border-top text-right">

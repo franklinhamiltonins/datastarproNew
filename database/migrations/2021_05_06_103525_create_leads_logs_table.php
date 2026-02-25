@@ -17,13 +17,13 @@ class CreateLeadsLogsTable extends Migration
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('log_id');
 
-         //FOREIGN KEY CONSTRAINTS
-           $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
-           $table->foreign('log_id')->references('id')->on('logs')->onDelete('cascade');
+            // FOREIGN KEY CONSTRAINTS
+            $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
+            $table->foreign('log_id')->references('id')->on('logs')->onDelete('cascade');
 
-         //SETTING THE PRIMARY KEYS
-           $table->primary(['lead_id','log_id']);
-        
+            // SETTING THE PRIMARY KEYS
+            $table->primary(['lead_id', 'log_id']);
+
         });
     }
 

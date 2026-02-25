@@ -17,12 +17,12 @@ class LeadsFilesTable extends Migration
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('file_id');
 
-         //FOREIGN KEY CONSTRAINTS
-           $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
-           $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+            // FOREIGN KEY CONSTRAINTS
+            $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
 
-         //SETTING THE PRIMARY KEYS
-           $table->primary(['lead_id','file_id']);
+            // SETTING THE PRIMARY KEYS
+            $table->primary(['lead_id', 'file_id']);
         });
     }
 

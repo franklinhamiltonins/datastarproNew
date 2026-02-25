@@ -14,18 +14,17 @@
                     <div class="col-12">
                         <div id="logsView" class="logsview">
                             <div class="">
-                                @if(!count($logs) < 1 ) @foreach ($logs as $log) <p>
-
+                                @if(count($logs) >= 1)
+                                    @foreach ($logs as $log)
+                                    <p>
                                     User <span class="text-info">{{$log->users?$log->users->name : ''}}</span> performed
                                     action "<span class="text-danger">{{$log->action}}</span>" on date:
                                     {{$log->created_at}}
                                     </p>
                                     @endforeach
-
-                                    @else
+                                @else
                                     <p>No actions.</p>
-                                    @endif
-
+                                @endif
                             </div>
                         </div>
                     </div>

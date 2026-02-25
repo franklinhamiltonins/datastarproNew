@@ -145,7 +145,7 @@ function draw_table() {
             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
         }
     });
-    
+
     var table = jQuery('#smtps_datatable').DataTable({
         // dom: 'lBfrtip',
         processing: true,
@@ -278,18 +278,18 @@ function draw_table() {
         if (!event.target.value) {
             console.log('contact search cross clicked');
             $(event.target).blur(); // to remove cursiour from search field.
-            
+
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
             $(event.target).after('<i class="fas fa-search position-absolute"></i>');
             table.search(event.target.value).draw(); // drow the table
         }
-    }, 500));    
+    }, 500));
 
     // Add select all checkbox to table header
     var $thead = jQuery('#smtps_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#smtps_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);

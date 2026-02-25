@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Model\LeadsModel\Contact;
+use Illuminate\Console\Command;
 
 class FormatContactPhone extends Command
 {
@@ -22,16 +22,6 @@ class FormatContactPhone extends Command
     protected $description = 'Update contacts phone from xxx-xxx-xxxx to 1xxxxxxxxxx ';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
@@ -40,25 +30,22 @@ class FormatContactPhone extends Command
     {
         self::formatPhone();
     }
-    private function formatPhone(){
+
+    private function formatPhone()
+    {
         $contacts = Contact::all();
-        foreach($contacts as $contact){
-            $phone =$contact->c_phone;
-            if($contact && !empty( $phone)){
-               
-                  //format phone to xxxxxxxxxx
-                
-                  if(preg_match( '/[-!$%^&*()_+|~=`{}\[\]:";<>?,. \/]/',$phone, $matches)){
-                    $phone =  preg_replace('/[-!$%^&*()_+|~=`{}\[\]:";<>?,. \/]/', '', $phone);
-                   
-                    }
-                    
-                       $contact->update(array('c_phone'=>$phone));
-                 
-                  
-              }
-             
-           
+        foreach ($contacts as $contact) {
+            $phone = $contact->c_phone;
+            if ($contact && ! empty($phone)) {
+                if (preg_match('/[-!$%^&*()_+|~=`{}\[\]:";<>?,. \/]/', $phone, $matches)) {
+                    $phone = preg_replace('/[-!$%^&*()_+|~=`{}\[\]:";<>?,. \/]/', '', $phone);
+
+                }
+
+                $contact->update(['c_phone' => $phone]);
+
+            }
+
         }
     }
 }

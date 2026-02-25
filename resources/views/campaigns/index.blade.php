@@ -251,7 +251,7 @@ jQuery(document).ready(function() {
             updatedLocalCustomSearchVal.search.search = '';
             localStorage.setItem('DataTables_campaignsTable_/marketing-campaigns', JSON.stringify(updatedLocalCustomSearchVal));
             $(event.target).blur(); // to remove cursiour from search field.
-            
+
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
             $(event.target).after('<i class="fas fa-search position-absolute"></i>');
             t.search(event.target.value).draw(); // drow the table

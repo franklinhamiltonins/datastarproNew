@@ -17,14 +17,14 @@
 				<div class="form-group">
 					<strong>Contacts:</strong>
 					@csrf
-					<select class="commonClass form-control leadscontactstatus contact-info-list-select noteContactEdit" class="form-control leadselectstatus" name="contact_id">
+					<select class="commonClass form-control leadscontactstatus contact-info-list-select noteContactEdit leadselectstatus" name="contact_id">
 						<option value="">Select contact</option>
 						@foreach($contacts as $contact)
 						<option value="{{$contact->id}}">
 							{{$contact->c_full_name}}
 						</option>
 						@endforeach
-					</select> 
+					</select>
 				</div>
 				<div class="form-group">
 					<strong>Description<sup class="mandatoryClass">*</sup>:</strong>
@@ -40,10 +40,3 @@
 		</div>
 	</div>
 </div>
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-});
-</script>
-@endpush

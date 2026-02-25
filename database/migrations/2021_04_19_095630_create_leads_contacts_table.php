@@ -17,12 +17,12 @@ class CreateLeadsContactsTable extends Migration
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('contact_id');
 
-         //FOREIGN KEY CONSTRAINTS
-           $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
-           $table->foreign('contact_id')->references('id')->on('contacts')->onDelete('cascade');
+            // FOREIGN KEY CONSTRAINTS
+            $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
+            $table->foreign('contact_id')->references('id')->on('contacts')->onDelete('cascade');
 
-         //SETTING THE PRIMARY KEYS
-           $table->primary(['lead_id','contact_id']);
+            // SETTING THE PRIMARY KEYS
+            $table->primary(['lead_id', 'contact_id']);
         });
     }
 

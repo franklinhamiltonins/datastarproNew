@@ -2,163 +2,185 @@
 
 namespace App\Jobs;
 
+use App\Model\Campaign;
+use App\Model\LeadsModel\Lead;
+use App\Traits\MailingRelatedTrait;
+use App\Traits\SMTPRelatedTrait;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use App\Model\File;
-use App\Model\Campaign;
-use App\Model\LeadsModel\Filter;
-use App\Model\Setting;
-use Carbon\Carbon;
-use App\Model\LeadsModel\Lead;
-use App\Traits\SMTPRelatedTrait;
-use App\Traits\MailingRelatedTrait;
 
 class CreateCampaignJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,SMTPRelatedTrait,MailingRelatedTrait;
+    use Dispatchable, InteractsWithQueue, MailingRelatedTrait, Queueable, SerializesModels, SMTPRelatedTrait;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */ 
-    public $timeout = 1800; 
+    public $timeout = 1800;
 
-    public $filters,$campaignName,$campaignId,$location_leads_id,$location_leads_id_search, $mail_agent_id;
-    public function __construct($filters,$campaignName,$campaignId,$location_leads_id,$location_leads_id_search, $mail_agent_id)
+    public $filters;
+    public $campaignName;
+    public $campaignId;
+    public $locationId;
+    public $locationSId;
+    public $mailAgentId;
+
+    public function __construct($filters, $campaignName, $campaignId, $locationId, $locationSId, $mailAgentId)
     {
         $this->filters = $filters;
         $this->campaignName = $campaignName;
         $this->campaignId = $campaignId;
-        $this->location_leads_id = $location_leads_id;
-        $this->location_leads_id_search = $location_leads_id_search;
-        $this->mail_agent_id = $mail_agent_id;
+        $this->locationId = $locationId;
+        $this->locationSId = $locationSId;
+        $this->mailAgentId = $mailAgentId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-        $leadColumns =  $this->getleadColumns(); 
+        $leadColumns = $this->getleadColumns();      // Lead columns for CSV
+        $contactColumns = $this->getcontactColumns(); // Contact columns for CSV
+        $columnsType = Lead::Get_column_type();      // Get column types
+        $leadsQuery = $this->getFilteredLeads($columnsType);
 
-        $contactColumns =  $this->getcontactColumns(); 
-
-        $columnsType = Lead::Get_column_type(); //get columns type
-        $table =  Lead::query();
-
-        $leadsQuery = filter_leads($table, $this->filters, $columnsType, $this->campaignId); // filter leads by search filters. FN: Support/helper.php
-
-        $queryareachunk = $this->location_leads_id_search ? $leadsQuery->select('*')->whereIn('id', $this->location_leads_id)->orderBy('id', 'DESC'):
-            $leadsQuery->select('*')->orderBy('id', 'DESC');
-
-        $fileName =  'Mailing_list'.date('Y_m_d_H_i_s'). '.csv';
-        $path = storage_path('app/public/csv');
-        Storage::makeDirectory('public/csv');
-        $filePath = $path . '/' . $fileName;
+        $fileName = $this->generateFileName();
+        $filePath = $this->createCsvDirectory($fileName);
         $csvContent = fopen('php://memory', 'w');
 
         $columns = $this->columninsidefile();
+        fputcsv($csvContent, $columns); // CSV headers
 
-        fputcsv($csvContent, $columns);
+        $campaign = $this->createCampaign($leadsQuery); // Create campaign entry
 
-        $campaign = Campaign::create([
+        $this->processLeadsInChunks($leadsQuery, $leadColumns, $contactColumns, $campaign, $csvContent);
+
+        $this->storeCsv($csvContent, $fileName); // Save CSV file
+
+        $this->sendCampaignMail($filePath, $fileName); // Send CSV via email
+
+        $this->deleteCsv($filePath); // Clean up CSV file
+    }
+
+    // Get filtered leads query
+    private function getFilteredLeads($columnsType)
+    {
+        $table = Lead::query();
+        $leadsQuery = filter_leads($table, $this->filters, $columnsType, $this->campaignId);
+
+        return $this->locationSId
+            ? $leadsQuery->select('*')->whereIn('id', $this->locationId)->orderBy('id', 'DESC')
+            : $leadsQuery->select('*')->orderBy('id', 'DESC');
+    }
+
+    // Generate CSV file name
+    private function generateFileName(): string
+    {
+        return 'Mailing_list'.date('Y_m_d_H_i_s').'.csv';
+    }
+
+    // Create CSV directory and return full path
+    private function createCsvDirectory($fileName): string
+    {
+        $path = storage_path('app/public/csv');
+        Storage::makeDirectory('public/csv');
+
+        return $path.'/'.$fileName;
+    }
+
+    // Create campaign entry in DB
+    private function createCampaign($leadsQuery)
+    {
+        return Campaign::create([
             'name' => $this->campaignName,
             'status' => 'PENDING',
-            'lead_number' => $queryareachunk->count()
+            'lead_number' => $leadsQuery->count(),
         ]);
+    }
 
-
-        // Process leads in chunks to avoid memory issues
-        $chunkSize = 1000; // Adjust chunk size as needed
-        $queryareachunk->chunk($chunkSize, function ($leads) use ($csvContent, $leadColumns, $contactColumns,$campaign) {
+    // Process leads in chunks and write CSV rows
+    private function processLeadsInChunks($leadsQuery, $leadColumns, $contactColumns, $campaign, $csvContent)
+    {
+        $chunkSize = 1000;
+        $leadsQuery->chunk($chunkSize, function ($leads) use ($leadColumns, $contactColumns, $campaign, $csvContent) {
             foreach ($leads as $lead) {
-                $csvRow = [];
-                if (count($lead->contacts) == 0) {
-                    foreach ($leadColumns as $leadColumn) {
-                        $csvRow[] = $leadColumn == 'creation_date' ||  $leadColumn == 'renewal_date' ? 
-                                ($lead->$leadColumn ? Carbon::parse($lead->$leadColumn)->format('Y/m/d') : "") : 
-                                $lead->$leadColumn;
-                    }
-                    fputcsv($csvContent, $csvRow);
-                } else {
-                    foreach ($lead->contacts as $contact) {
-                        $csvRow = [];
-                        foreach ($leadColumns as $leadColumn) {
-                            if($leadColumn != 'response_date'){
-                                $csvRow[] = $leadColumn == 'creation_date' ||  $leadColumn == 'renewal_date' ? 
-                                    ($lead->$leadColumn ? Carbon::parse($lead->$leadColumn)->format('Y/m/d') : "") : 
-                                    $lead->$leadColumn;
-                            }
-                        }
-                        foreach ($contactColumns as $contactColumn) {
-                            $csvRow[] = $contact->$contactColumn;
-                        }
-                        $ctName = $contact->c_first_name . ' ' . $contact->c_last_name;
-                        $action = $lead->actions()->where('contact_name', $ctName)->latest('contact_date')->first();
-                        $actionDate = $action ? Carbon::parse($action->contact_date)->format('Y/m/d') : "";
-                        $csvRow[] = $actionDate;
-                        fputcsv($csvContent, $csvRow);
-                    }
-                }
-                $campaign->leads()->attach($lead->id);
+                $this->processSingleLead($lead, $leadColumns, $contactColumns, $campaign, $csvContent);
             }
         });
+    }
 
+    // Process a single lead and its contacts
+    private function processSingleLead($lead, $leadColumns, $contactColumns, $campaign, $csvContent)
+    {
+        if (count($lead->contacts) == 0) {
+            $csvRow = $this->generateLeadRow($lead, $leadColumns);
+            fputcsv($csvContent, $csvRow);
+        } else {
+            foreach ($lead->contacts as $contact) {
+                $csvRow = $this->generateLeadContactRow($lead, $contact, $leadColumns, $contactColumns);
+                fputcsv($csvContent, $csvRow);
+            }
+        }
+
+        $campaign->leads()->attach($lead->id); // Attach lead to campaign
+    }
+
+    // Generate CSV row for lead without contacts
+    private function generateLeadRow($lead, $leadColumns): array
+    {
+        $row = [];
+        foreach ($leadColumns as $col) {
+            $row[] = ($col == 'creation_date' || $col == 'renewal_date')
+                ? ($lead->$col ? Carbon::parse($lead->$col)->format('Y/m/d') : '')
+                : $lead->$col;
+        }
+        return $row;
+    }
+
+    // Generate CSV row for lead with contact
+    private function generateLeadContactRow($lead, $contact, $leadColumns, $contactColumns): array
+    {
+        $row = [];
+        foreach ($leadColumns as $col) {
+            if ($col != 'response_date') {
+                $row[] = ($col == 'creation_date' || $col == 'renewal_date')
+                    ? ($lead->$col ? Carbon::parse($lead->$col)->format('Y/m/d') : '')
+                    : $lead->$col;
+            }
+        }
+
+        foreach ($contactColumns as $col) {
+            $row[] = $contact->$col;
+        }
+
+        // Add latest action date for this contact
+        $ctName = $contact->c_first_name.' '.$contact->c_last_name;
+        $action = $lead->actions()->where('contact_name', $ctName)->latest('contact_date')->first();
+        $row[] = $action ? Carbon::parse($action->contact_date)->format('Y/m/d') : '';
+
+        return $row;
+    }
+
+    // Store CSV to storage
+    private function storeCsv($csvContent, $fileName)
+    {
         rewind($csvContent);
         $csvData = stream_get_contents($csvContent);
         fclose($csvContent);
-
-        Storage::put('public/csv/' . $fileName, $csvData);
-
-        try {
-            $setting_time_data = Setting::select('notify_email')->first();
-            if($setting_time_data && !empty($setting_time_data->notify_email)){
-                $recipientEmail_arr = explode(',', $setting_time_data->notify_email);
-
-                $recipientEmail = $recipientEmail_arr[0];
-
-                $ccEmails = array_slice($recipientEmail_arr, 1);
-
-                $this->setDynamicSMTPUserWise($this->mail_agent_id);
-                
-                Mail::send([], [], function ($message) use ($fileName, $filePath,$recipientEmail,$ccEmails) {
-                    $message->to($recipientEmail);
-
-                    if (count($ccEmails) > 0) {
-                        $message->cc($ccEmails);
-                    }
-                    $message->subject('Campaign Leads CSV')
-                    ->attach($filePath, [
-                        'as' => $fileName,
-                        'mime' => 'text/csv',
-                    ])
-                    ->html('Please find the attached CSV file containing the campaign leads.');
-                });
-            }
-            unset($setting_time_data);
-            
-        } catch (\Throwable $th) {
-            Log::error('Error while sending campaign leads CSV email: ' . $th->getMessage(), [
-                'file' => $th->getFile(),
-                'line' => $th->getLine(),
-                'trace' => $th->getTraceAsString(),
-            ]);
-        }
-
-        if (Storage::exists('public/csv/' . $fileName)) {
-            Storage::delete('public/csv/' . $fileName);
-        }
-        unset($campaign,$queryareachunk,$csvContent,$columns,$leadColumns,$contactColumns,$columnsType,$table,$leadsQuery);
+        Storage::put('public/csv/'.$fileName, $csvData);
     }
+
+    // Send campaign CSV via email
+    private function sendCampaignMail($filePath, $fileName)
+    {
+        $file = [
+            "filePath" => $filePath,
+            "fileName" => $fileName,
+            "mime" => 'text/csv',
+        ];
+        $subject = "Campaign Leads CSV";
+        $body = "Please find the attached CSV file containing the campaign leads.";
+        $this->sendSimpleNotificationMail($this->mailAgentId, $subject, $body, $file);
+    }
+
 }

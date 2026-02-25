@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Model\LeadsModel\Contact;
+use Illuminate\Console\Command;
 
 class AddContactFullName extends Command
 {
-    /** 
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -22,39 +22,32 @@ class AddContactFullName extends Command
     protected $description = 'Combines c_first_name with c_last_name and adds it to c_full_name';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
      */
     public function handle()
     {
         self::addFullName();
     }
-    private function addFullName(){
-        $contacts = Contact::all();
-        foreach($contacts as $contact){
-            $fullname = $contact->c_first_name.' '.$contact->c_last_name;
-           
-            if($contact && !empty( $fullname) && empty($contact->c_full_name)){
-               
+
+    private function addFullName():void
+    {
+        // Fetch only 10 contacts that don't have full_name
+        $contacts = Contact::whereNull('c_full_name')
+            ->orWhere('c_full_name', '')
+            ->limit(10)
+            ->get();
+
+        foreach ($contacts as $contact) {
+            $fullName = trim($contact->c_first_name . ' ' . $contact->c_last_name);
+
+            // Update only if fullname is not empty
+            if (!empty($fullName)) {
                 $contact->update([
-                    'c_full_name' => $fullname
+                    'c_full_name' => $fullName,
                 ]);
-               
-                  
-              }
-             
-           
+            }
         }
     }
 }

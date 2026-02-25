@@ -17,12 +17,12 @@ class CreateCampaignsLeadsTable extends Migration
             $table->unsignedBigInteger('campaign_id');
             $table->unsignedBigInteger('lead_id');
 
-         //FOREIGN KEY CONSTRAINTS
-           $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade');
-           $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
+            // FOREIGN KEY CONSTRAINTS
+            $table->foreign('campaign_id')->references('id')->on('campaigns')->onDelete('cascade');
+            $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
 
-         //SETTING THE PRIMARY KEYS
-           $table->primary(['campaign_id','lead_id']);
+            // SETTING THE PRIMARY KEYS
+            $table->primary(['campaign_id', 'lead_id']);
         });
     }
 

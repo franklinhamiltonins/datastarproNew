@@ -1,4 +1,5 @@
 {
     "snyk.advanced.organization": "8f42c3dd-70e5-4b27-a47a-7f342db6bb11",
-    "snyk.advanced.autoSelectOrganization": true
+    "snyk.advanced.autoSelectOrganization": true,
+    "workbench.settings.useSplitJSON": true
 }

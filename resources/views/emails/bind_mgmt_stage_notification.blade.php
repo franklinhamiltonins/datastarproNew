@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bind Management Stage Changes Notification</title>
     <style>
         .info-table {
             border-collapse: collapse;

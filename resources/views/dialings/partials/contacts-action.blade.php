@@ -19,7 +19,6 @@
 
         <div class="d-flex w-50" id="{{$value['id']}}"
             onclick="handlecallInitiation({lead_id: '{{$row->id}}',contact_id: {{$value['id']}},lead_url: '/leads/edit/{{base64_encode($row->id)}}',backpage_url: window.location.href,page_type: '{{$page_type}}',dialing_id:{{$agentlist_id}}})">
-
             <button {{ $disableButton ? 'disabled' : '' }}
                 class="btn p-1 btn-success btn-sm w-100 flex align-items-center justify-content-center contact-info-list-btn "
                 data-agent-id="{{$agent_id}}" data-lead-id="{{$row->id}}" data-dialing-id="{{$agentlist_id}}"
@@ -32,7 +31,6 @@
         </div>
     </div>
     @endif
-
     @endforeach
 </div>
 

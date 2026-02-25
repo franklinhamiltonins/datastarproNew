@@ -17,7 +17,7 @@ class AlterContactsTable extends Migration
             $table->string('c_address1')->nullable()->change();
             $table->string('c_city')->nullable()->change();
             $table->string('c_state')->nullable()->change();
-            $table->string('c_zip')->nullable()->change();  
+            $table->string('c_zip')->nullable()->change();
             $table->string('c_county')->nullable()->change();
         });
     }

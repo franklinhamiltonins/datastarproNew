@@ -31,20 +31,15 @@
             </div>
         </div>
         <button type="button" class="btn btn-outline-info btn-sm mt-2 btn_add_or" onclick="add_or_condition(this)">+ <b>OR</b></button>
-        <!-- <div class="btn btn-outline-info btn-sm mt-2 btn_add_or" onclick="add_or_condition(this)">+ <b>OR</b></div> -->
     </div>
 </div>
 <div class="dropdown-divider mb-2 mt-2"></div>
 <div class="row flex-wrap align-items-center justify-content-center justify-content-md-between">
     <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
         <button type="button" class="btn btn-outline-info btn-sm mr-3" onclick="add_and_condition()">+ <b>AND</b></button>
-        <!-- <div class="btn btn-outline-info btn-sm btn_add_and mr-3" onclick="add_and_condition()">+ <b>AND</b></div> -->
         <button type="submit" class="btn btn-outline-primary btn-sm mr-3" id="btnFiterSubmitSearch" onclick="filter_table()">Filter</button>
-        <!-- <button type="submit" class="btn btn-outline-primary btn-sm mr-3" id="btn_save_filter" onclick="openSaveFilterModal(event, 'save_new', 'save-filter')">Save</button> -->
-        <!-- <button type="submit" class="btn btn-outline-primary btn-sm mr-3 d-none" id="btn_save_as_filter" onclick="openSaveFilterModal(event, 'save_as', 'save-filter')">Save as</button> -->
     </div>
     <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end  align-items-md-center">
         <button type="button" class="btn btn-outline-danger btn-sm andClose" onclick="resetCloseFiltersTab(this)">Reset</button>
-        <!-- <div class="btn btn-outline-danger andClose" onclick="resetCloseFiltersTab(this)">Reset Filters and Close</div> -->
     </div>
 </div>

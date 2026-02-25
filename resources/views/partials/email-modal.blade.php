@@ -58,10 +58,10 @@
                     <div class="text-left modal-btns mt-3 pt-3">
                         <!-- <input type="button" id="openSavedEmailTemplate" value="Saved Templates" class="btn btn-default btn-sm" style="float:left;"> -->
                         <input type="button" value="Close" class="btn btn-secondary btn-sm email_modal_close_class">
-                        <input type="submit" value="Send" class="btn btn-primary btn-sm hide-create-form-button" {{ ($smtp_data < 1) ? "disabled" : "" }} title="{{$smtp_data > 0 ? '': 'Please add your SMTP configuration to send email.'}}">
+                        <input type="submit" value="Send" class="btn btn-primary btn-sm hide-create-form-button" {{ ($smtpData < 1) ? "disabled" : "" }} title="{{$smtpData > 0 ? '': 'Please add your SMTP configuration to send email.'}}">
                         <input type="button" id="saveEmailTemplate" value="Save Template" class="btn btn-primary btn-sm show-create-form-button" style="display:none">
                     </div>
-                    @if($smtp_data < 1)
+                    @if($smtpData < 1)
                     <div style="margin: 12px 0;">
                         <p class="small mandatoryClass">Please add your <a href="{{route('smtp.settings')}}">SMTP configuration</a> to send email.</p>
                     </div>

@@ -18,10 +18,10 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 mb-3">
-
                 <div class="pull-right">
-                    <a class="btn btn-sm btn-primary" href="{{ route('contactstatus.index') }}"><i
-                            class="fas fa-arrow-circle-left"></i> Back</a>
+                    <a class="btn btn-sm btn-primary" href="{{ route('contactstatus.index') }}">
+                        <i class="fas fa-arrow-circle-left"></i> Back
+                    </a>
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
                         {!! Form::close() !!}
                     @endif
                 </div>
-                
+
             </div>
         </div>
     </div>

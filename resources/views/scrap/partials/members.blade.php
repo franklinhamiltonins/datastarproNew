@@ -42,6 +42,4 @@
 		background-color: #f4f6f9;
 		color: black;
 	}
-
-	/* Add more colors if needed */
 </style>

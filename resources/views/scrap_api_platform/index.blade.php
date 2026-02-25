@@ -21,7 +21,6 @@
 
 <!-- Main content -->
 <section class="content">
-
     <div class="container-fluid">
         <div class="card">
             <div class="card-body p-0 pb-3">
@@ -68,11 +67,6 @@
                                     </label>
                                 </div>
                                 <div class="ml-1 d-flex">
-                                    <!-- <a class="btn btn-success btn-sm create-btn" href="{{route('leads.create')}}"
-                                        title="Create New">
-                                        <i class="fas fa-plus-circle"></i> -->
-                                        <!-- <span class="d-none d-md-inline">Create</span> -->
-                                    <!-- </a> -->
                                     <a title="Create New" class="btn btn-success btn-sm d-flex align-items-center justify-content-center" href="{{route('platform_setting.create')}}" style="width: 42px;height: 42px;">
                                         <i class="fas fa-plus-circle"></i>
                                     </a>
@@ -81,24 +75,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="row">
-                    <div class="col-lg-12 margin-tb d-flex flex-wrap justify-content-between">
-                        <div class="d-flex flex-wrap">
-                            <div class="mr-1">
-                                <a class="btn btn-secondary btn-sm" href="{{route('platform_setting.create')}}">
-                                    <i class="fas fa-plus-circle"></i>
-                                    <span class="d-none d-md-inline">Create</span>
-                                </a>
-                            </div>
-                            <div class="mr-1">
-                                <a class="btn btn-info btn-sm" href="{{route('platform_setting.scrap_contact_view')}}">
-                                    <i class="fas fa-database"></i>
-                                    <span class="d-none d-md-inline">Scrap Contacts</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="px-3 pt-1">
                     <div class="table-container pb-2">
                         <table class="row-border order-column compact hover searchHighlight scrap_api_platforms_datatable border-top" id="scrap_api_platforms_datatable">
@@ -160,17 +136,6 @@
 
                 },
                 columns: [
-                    //set table columns
-                    // {
-                    //     data: 'DT_RowIndex',
-                    //     name: 'DT_RowIndex',
-                    //     "targets": [0],
-                    //     "searchable": false,
-                    //     "orderable": false,
-                    //     render: function(data, type, row, meta) {
-                    //         return '<input type="checkbox" class="select-row" value="' + row.id + '">';
-                    //     }
-                    // },
                     {
                         data: 'id',
                         name: 'id',
@@ -256,7 +221,7 @@
                 if (!event.target.value) {
                     console.log('contact search cross clicked');
                     $(event.target).blur(); // to remove cursiour from search field.
-                    
+
                     $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
                     $(event.target).after('<i class="fas fa-search position-absolute"></i>');
                     table.search(event.target.value).draw(); // drow the table
@@ -266,11 +231,6 @@
         }
     });
 </script>
-<!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" integrity="sha512-LDB28UFxGU7qq5q67S1iJbTIU33WtOJ61AVuiOnM6aTNlOLvP+sZORIHqbS9G+H40R3Pn2wERaAeJrXg+/nu6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
 <script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
 <script src="//bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css"> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script> -->
 @endpush

@@ -53,18 +53,29 @@
                                  <label class="label text-secondary">Super Admin role has all permissions granted</label>
                                 @else
                                     <div class="d-flex flex-wrap  justify-content-center  justify-content-md-start">
-                                        @foreach($permissionPage as $value)
-                                            <div class="d-flex p-2 page-{{$value}}"  style="width: 25%;min-width:200px;max-width:300px" >
-                                                <div class="card bg-light  mb-3 w-100" >
-                                                    <div class="card-header bg-light"><h6 class="text-info">{{$value}}</h6></div>
+                                        @foreach($permissionPage as $page)
+                                            @php
+                                                // Group permissions for this page
+                                                $pagePermissions = $permission->where('page', $page);
+                                            @endphp
+
+                                            <div class="d-flex p-2 page-{{ $page }}" style="width: 25%; min-width:200px; max-width:300px">
+                                                <div class="card bg-light mb-3 w-100">
+                                                    <div class="card-header bg-light">
+                                                        <h6 class="text-info">{{ $page }}</h6>
+                                                    </div>
+
                                                     <div class="card-body">
-                                                        @foreach($permission as $key)                          
-                                                            @if($key->page == $value )
-                                                                <div>
-                                                                    {{ Form::checkbox('permission[]', $key->id, in_array($key->id, $rolePermissions) ? true : false, array('class' => 'name')), }}
-                                                                    {{ $key->name }}
-                                                                </div> 
-                                                            @endif   
+                                                        @foreach($pagePermissions as $perm)
+                                                            <div>
+                                                                {{ Form::checkbox(
+                                                                    'permission[]',
+                                                                    $perm->id,
+                                                                    in_array($perm->id, $rolePermissions),
+                                                                    ['class' => 'name']
+                                                                ) }}
+                                                                {{ $perm->name }}
+                                                            </div>
                                                         @endforeach
                                                     </div>
                                                 </div>

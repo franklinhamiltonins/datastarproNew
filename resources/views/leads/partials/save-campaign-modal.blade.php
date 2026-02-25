@@ -7,8 +7,9 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-       
         <div class="modal-body">
+            {!! Form::open(array('id'=>'saveCampaignForm')) !!}
+            @csrf
             <div class="form-group">
                 <strong>Campaign Name:</strong>
                 {!! Form::text('name', null, array('placeholder' => 'Campaign Name','class' => 'form-control campName','required')) !!}
@@ -22,7 +23,7 @@
             Do not close this window.
         </div>
         </div>
-        
+        {!! Form::close() !!}
       </div>
     </div>
   </div>

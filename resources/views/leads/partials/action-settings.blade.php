@@ -3,7 +3,7 @@
         <i class="fas fa-cog"></i>
     </button>
     <div class="dropdown-menu dropdown-menu-right adjust-column-dropdown px-2 text-sm">
-        <form action="">
+        <form >
             <div class="pre-scrollable mb-2">
                 <div class="form-check pb-1 mb-1 border-bottom">
                     <input class="form-check-input" type="checkbox" checked value="type">

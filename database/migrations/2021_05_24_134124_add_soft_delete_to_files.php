@@ -28,7 +28,7 @@ class AddSoftDeleteToFiles extends Migration
     {
         Schema::table('files', function (Blueprint $table) {
             //
-            $table->dropSoftDeletes(); 
+            $table->dropSoftDeletes();
         });
     }
 }

@@ -5,14 +5,6 @@
 <li class="breadcrumb-item active">Scrap Contact</li>
 @endpush
 @section('content')
-<?php //dd($scrap_vars);
-// foreach ($scrap_vars['all_scrap'] as $key => $val) {
-//     echo $key;
-// foreach ($scrap_vars['all_scrap'][$key] as $innerkey => $innerval) {
-//     print_r($innerval['contacts']);
-// }
-// }
-?>
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
@@ -38,11 +30,11 @@
                         <div class="form-row">
                             <div class="form-group col">
                                 <strong>Platform Name<sup class="mandatoryClass">*</sup>:</strong>
-                                {!! Form::text('platform_name', isset($scrap_vars['platform_name'])? $scrap_vars['platform_name'] : '', array('placeholder' => 'Platform Name ','class'=> 'form-control','id'=>'scrap_platform_name' ,isset($scrap_vars['platform_name'])? 'disabled' : '')) !!}
+                                {!! Form::text('platform_name', isset($scrapVars['platform_name'])? $scrapVars['platform_name'] : '', array('placeholder' => 'Platform Name ','class'=> 'form-control','id'=>'scrap_platform_name' ,isset($scrapVars['platform_name'])? 'disabled' : '')) !!}
                             </div>
                             <div class="form-group col">
                                 <strong>Contact Limit<sup class="mandatoryClass">*</sup></strong>
-                                {!! Form::number('limit', isset($scrap_vars['limit'])? $scrap_vars['limit'] : '', array('placeholder' => 'Contact Limit','class'=> 'form-control','id'=>'scrap_limit' )) !!}
+                                {!! Form::number('limit', isset($scrapVars['limit'])? $scrapVars['limit'] : '', array('placeholder' => 'Contact Limit','class'=> 'form-control','id'=>'scrap_limit' )) !!}
                             </div>
                         </div>
 
@@ -72,15 +64,15 @@
                                 <div class="accordion" id="myAccordion">
                                     <div class="row">
                                         <?php $key_id = 0; ?>
-                                        @foreach($scrap_vars['all_scrap'] as $key=>$val)
+                                        @foreach($scrapVars['all_scrap'] as $key=>$val)
 
-                                        <div class="col-12 col-md-6 {{count($scrap_vars['all_scrap']) > 3 ? 'col-lg-3' : 'col-lg-4'}}">
+                                        <div class="col-12 col-md-6 {{count($scrapVars['all_scrap']) > 3 ? 'col-lg-3' : 'col-lg-4'}}">
                                             <div class="accordion-item">
                                                 <div class="position-relative">
                                                     <h2 class="accordion-header" id="header1">
                                                         <button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#panel-{{$key_id}}">
                                                             {{ucfirst($key)}} :
-                                                            {{count($scrap_vars['all_scrap'][$key])}}
+                                                            {{count($scrapVars['all_scrap'][$key])}}
 
                                                         </button>
                                                     </h2>
@@ -91,8 +83,8 @@
 
                                                     <div class="accordion-body">
                                                         <div class="scrap-lists">
-                                                            @if(count($scrap_vars['all_scrap'][$key]) > 0)
-                                                            @foreach($scrap_vars['all_scrap'][$key] as $inner_key=>$inner_val)
+                                                            @if(count($scrapVars['all_scrap'][$key]) > 0)
+                                                            @foreach($scrapVars['all_scrap'][$key] as $inner_key=>$inner_val)
                                                             <ul class="list-unstyled">
                                                                 <!-- <li>Api Used : {{$inner_val['apiPlatform']['platform_name']}}</li> -->
                                                                 <li>Lead : {{ucwords(strtolower($inner_val['leads']['name']))}}</li>
@@ -168,7 +160,7 @@
                     setTimeout(function() {
                         window.location.reload();
                     }, 2000);
-                    // reload in order to see toaster 
+                    // reload in order to see toaster
                 },
                 error: function(response) {
                     $('#spinner-div').hide();

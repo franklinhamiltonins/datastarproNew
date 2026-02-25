@@ -12,9 +12,6 @@
             Back
         </a>
         <div class="card mt-3">
-            <!-- <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0">Agent Activity Report Details</h5>
-            </div> -->
             <div class="card-body">
                 <div class="border p-3 mb-4 rounded">
                     <div class="form-row">
@@ -43,7 +40,7 @@
                             <span class="small">
                                 @if(!empty($report->community_id))
                                     <a  class="anchortag" href="/leads/edit/{{base64_encode($report->community_id)}}" >{{ $report->leads->name ?? '' }}</a>
-                                @else 
+                                @else
                                     {{ $report->community_name ?? '' }}
                                 @endif
 

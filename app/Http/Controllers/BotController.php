@@ -2,265 +2,212 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Model\ScrapCounty;
 use App\Model\ScrapCity;
+use App\Traits\MessageConstantsTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
-
-// use Log;
-use DB;
-
-use Illuminate\Validation\ValidationException;
-
 
 class BotController extends Controller
 {
+    use MessageConstantsTrait;
 
-	/**
-	 * Import county and city from CSV file
-	 * @param object $request
-	 * @return bool true
-	 */
-	public function import_scrap(Request $request)
-	{
-		// return 'import_scrap';
-		//validate file existance
-		$this->validate($request, [
-			'file' => 'required',
-		]);
+    /**
+     * Import county and city from CSV file
+     *
+     * @param  object  $request
+     * @return bool true
+     */
+    public function importScrap(Request $request)
+    {
+        // validate file existance
+        $this->validate($request, [
+            'file' => 'required',
+        ]);
 
-		//collect success/errors
-		$dataSuccess = collect();
-		$dataErrors = collect();
-		$csvLeads = collect();
-		$createdLeads = array();
+        // collect success/errors
+        $dataSuccess = collect();
+        $dataErrors = collect();
 
-		$niceNames = [
-			'search_keyword' => 'Search Keyword',
-			'city' => 'City',
-			'state' => 'State',
-			'state_code' => 'State Code',
-			'county' => 'County',
-		];
+        $niceNames = [
+            'search_keyword' => self::SEARCH_KEYWORD,
+            'city' => 'City',
+            'state' => 'State',
+            'state_code' => self::STATE_CODE,
+            'county' => 'County',
+        ];
 
-		//check if file exist and is readable
-		if (!file_exists($request->file) || !is_readable($request->file)) {
-			toastr()->error('Invalid file !');
-			return redirect()->back();
-		}
+        // check if file exist and is readable
+        if (! file_exists($request->file) || ! is_readable($request->file)) {
+            toastr()->error('Invalid file !');
 
-		// get the file extension in order to validate
-		$extension = $request->file('file')->getClientOriginalExtension();
-		// dd($extension);
-		$name = $request->file('file')->getClientOriginalName();
-		if ($extension == "xlsx" || $extension == "xls" || $extension == "csv") { // if the extension matches, proceed
+            return redirect()->back();
+        }
 
-			//get data from csv file
-			$fileData = self::readDataFromCsvForScrap($request->file, $extension);
-			// dd($fileData);
-			//if the fileData returns error, abort import
-			if (isset($fileData['errors'])) {
-				toastr()->error($fileData['errors']);
-				return redirect()->back();
-			}
+        // get the file extension in order to validate
+        $extension = $request->file('file')->getClientOriginalExtension();
+        // if the extension matches, proceed
+        if ($extension == 'xlsx' || $extension == 'xls' || $extension == 'csv') {
 
+            // get data from csv file
+            $fileData = self::readDataFromCsvForScrap($request->file, $extension);
+            // if the fileData returns error, abort import
+            if (isset($fileData['errors'])) {
+                toastr()->error($fileData['errors']);
 
-			//created leads
-			$created = 0;
-			//updated rows (except heading)
-			$updated = 1;
-			//loop trough rows
-			foreach ($fileData as $key => $data) {
-				$updated++;  //increment updated rows
+                return redirect()->back();
+            }
 
-				//format fields that do not have the required DB format
-				// $alldata =  self::format_csv_data($data, $updated, $niceNames); //returns data and errors
-				$alldata =  self::format_csv_data($data, $updated, $niceNames); //returns data and errors
+            // created leads
+            $created = 0;
+            // updated rows (except heading)
+            $updated = 1;
+            // loop trough rows
+            foreach ($fileData as $data) {
+                $updated++;  // increment updated rows
 
-				$data = $alldata['data']; //get data
+                // format fields that do not have the required DB format
+                $alldata = self::formatCsvData($data, $updated, $niceNames); // returns data and errors
 
-				//if there are errors , store them
-				if (count($alldata['errors']) > 0) {
-					$dataErrors->push($alldata['errors']);
-				}
-				// dd($data);
-				$scraps = ScrapCity::storeCountyAndCity($data);
-				// dd($scraps);
-				$contact = false;
+                $data = $alldata['data']; // get data
 
-				// messages variable to use in blade
-				$dataSuccess ? $messages['success'] = $dataSuccess : '';
-				$dataErrors ? $messages['failures'] = $dataErrors : '';
+                // if there are errors , store them
+                if (count($alldata['errors']) > 0) {
+                    $dataErrors->push($alldata['errors']);
+                }
+                // dd($data);
+                ScrapCity::storeCountyAndCity($data);
 
-				toastr()->success($created . ' City created and ' . $updated . ' rows processed!', 'Import Success!');
-			}
-			return redirect()->back()->withErrors('messages',  $messages);
-			return redirect()->back();
-		} else { //if the file exension doesn't match the required
-			// toastr()->error('The file must be a file of type: csv, xlsx, xls.');
-			// session(['error' => 'The file must be a file of type: csv, xlsx, xls.']);
-			// return redirect()->back();
-			// dd('error');
-			// return redirect()->back()->withErrors('The file must be a file of type: csv, xlsx, xls.');
-			return redirect()->back()->with('warning', 'Login is not successful.');
-		}
-	}
+                // messages variable to use in blade
+                $dataSuccess ? $messages['success'] = $dataSuccess : '';
+                $dataErrors ? $messages['failures'] = $dataErrors : '';
 
-	/**
-	 * Read data from csv file
-	 * @param object $csvFile
-	 * @return array $csvData
-	 */
-	private static function readDataFromCsvForScrap($csvFile, $extension)
-	{
+                toastr()->success($created.' City created and '.$updated.' rows processed!', 'Import Success!');
+            }
 
-		//store file
-		$fileName = Carbon::now()->format('mdYHisu');
-		//if the file is xlsx or xls , convert it to csv
-		if ($extension == "xlsx" || $extension == "xls") {
-			if ($extension == "xlsx") {
-				$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
-			} else if ($extension == "xls") {
-				$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xls");
-			}
+            return redirect()->back()->withErrors('messages', $messages);
+        } else {
+            return redirect()->back()->with('warning', 'The file must be a file of type: csv, xlsx, xls.');
+        }
+    }
 
-			$reader->setReadDataOnly(true);
+    /**
+     * Read data from csv file
+     *
+     * @param  object  $csvFile
+     * @return array $csvData
+     */
+    private static function readDataFromCsvForScrap($csvFile, $extension)
+    {
 
+        // store file
+        $fileName = Carbon::now()->format('mdYHisu');
+        // if the file is xlsx or xls , convert it to csv
+        if ($extension == 'xlsx' || $extension == 'xls') {
+            if ($extension == 'xlsx') {
+                $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+            } elseif ($extension == 'xls') {
+                $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xls');
+            }
 
-			$path = '../storage/app/public/uploads/' . $fileName . '.csv';
-			$excel = $reader->load($csvFile);
-			// dd($excel);
-			$writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($excel);
-			// $writer->setUseBOM(true);
-			// $writer->setOutputEncoding('UTF-8');
-			$writer->setUseBOM(false);
-			$writer->setOutputEncoding('UTF-8');
-			$writer->setEnclosureRequired(false);
-			$writer->save($path);
+            $reader->setReadDataOnly(true);
 
-			$csvFile =  $path;
-		} else {
+            $path = '../storage/app/public/uploads/'.$fileName.'.csv';
+            $excel = $reader->load($csvFile);
+            // dd($excel);
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($excel);
+            // $writer->setUseBOM(true);
+            // $writer->setOutputEncoding('UTF-8');
+            $writer->setUseBOM(false);
+            $writer->setOutputEncoding('UTF-8');
+            $writer->setEnclosureRequired(false);
+            $writer->save($path);
 
-			$file = Storage::putFileAs('public/uploads', $csvFile, $fileName . '.csv');
-		}
+            $csvFile = $path;
+        } else {
 
-		$delimiter = ',';
-		$header = null;
-		$csvData = array();
-		//the required columns
-		$requiredColumns = array(
-			0 => "Search Keyword",
-			1 => "City",
-			2 => "State",
-			3 => "State Code",
-			4 => "County",
+            Storage::putFileAs('public/uploads', $csvFile, $fileName.'.csv');
+        }
 
-		);
-		//read data and add it to array
-		if (($handle = fopen($csvFile, 'r')) !== false) {
-			while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+        $delimiter = ',';
+        $header = null;
+        $csvData = [];
+        // the required columns
+        $requiredColumns = [
+            0 => self::SEARCH_KEYWORD,
+            1 => 'City',
+            2 => 'State',
+            3 => self::STATE_CODE,
+            4 => 'County',
 
-				if (!$header) {
-					$header = $row;
-					//loop trough required columns and if one of them is missing in csv, send error
-					foreach ($requiredColumns as $req) {
+        ];
+        // read data and add it to array
+        if (($handle = fopen($csvFile, 'r')) !== false) {
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
 
-						if (!in_array($req, $header)) {
+                if (! $header) {
+                    $header = $row;
+                    // loop trough required columns and if one of them is missing in csv, send error
+                    foreach ($requiredColumns as $req) {
 
-							$ColumnError =  'Column ' . $req . ' is missing. File was not imported';
-							return array('errors' => $ColumnError);
-						}
-					}
-				} else {
-					if (count($header) > count($row)) {
-						$csvData[] = mb_convert_encoding(array_combine($header, array_pad($row, count($header), "")), 'UTF-8', 'UTF-8');
-					} else if (count($header) < count($row)) {
-						$csvData[] =  mb_convert_encoding(array_combine($header, array_slice($row, 0, count($header))), 'UTF-8', 'UTF-8');
-					} else {
-						$csvData[] = mb_convert_encoding(array_combine($header, $row), 'UTF-8', 'UTF-8');
-					}
-				}
-			}
-			fclose($handle);
-		}
-		return $csvData;
-	}
+                        if (! in_array($req, $header)) {
 
-	private static function storeCountyAndCity($data)
-	{
-		// dd($data);
-		//store into scrap county
-		if ($data['County']) {
-			$scrapCounty = ScrapCounty::updateOrCreate([
-				'name'   => $data['County'],
-			], [
-				'name'     => $data['County'],
-				'status' => 1,
-			]);
-			// dd($scrapCounty->id);
+                            $ColumnError = 'Column '.$req.' is missing. File was not imported';
 
-			if ($scrapCounty) {
-				//store into scrap city
-				$scrapCity = ScrapCity::updateOrCreate([
-					'search_keyword'   => $data['Search Keyword'],
-					'city' => $data['City'],
-					'state' => $data['State'],
-					'state_code' => $data['State Code'],
-					'county_id' => $scrapCounty->id
-				], [
-					'search_keyword'   => $data['Search Keyword'],
-					'city' => $data['City'],
-					'state' => $data['State'],
-					'state_code' => $data['State Code'],
-					'county_id' => $scrapCounty->id,
-					'status' => 1
-				]);
+                            return ['errors' => $ColumnError];
+                        }
+                    }
+                } else {
+                    if (count($header) > count($row)) {
+                        $csvData[] = mb_convert_encoding(array_combine($header, array_pad($row, count($header), '')), 'UTF-8', 'UTF-8');
+                    } elseif (count($header) < count($row)) {
+                        $csvData[] = mb_convert_encoding(array_combine($header, array_slice($row, 0, count($header))), 'UTF-8', 'UTF-8');
+                    } else {
+                        $csvData[] = mb_convert_encoding(array_combine($header, $row), 'UTF-8', 'UTF-8');
+                    }
+                }
+            }
+            fclose($handle);
+        }
 
-				return $scrapCity->id;
-			}
-		}
-	}
+        return $csvData;
+    }
 
+    private static function formatCsvData($data, $updated, $niceNames)
+    {
+        $dataErrors = collect();
+        // loop trough row cells
+        foreach ($data as $key => $r) {
+            // echo $key;
+            if ($key) {
+                if ($key !== 'County' || $key !== 'county') {
+                    $dataErrors->push(
+                        [
+                            'row' => $updated,
+                            'attribute' => $key,
+                            'errors' => "Invalid '".$key."'  value: ".$data[$key].' - was not imported ',
+                            'values' => $data[$key],
+                        ]
+                    );
+                }
+                $data[$key] = $r;
+            }
+        }
 
-	private static function format_csv_data($data, $updated, $niceNames)
-	{
-		$dataErrors = collect();
-		foreach ($data as $key => $r) { // loop trough row cells
-			echo $key;
-			if ($key) {
-				if ($key !== 'County' || $key !== 'county') {
-					$dataErrors->push(
-						array(
-							"row" => $updated,
-							"attribute" => $key,
-							"errors" => "Invalid '" . $key . "'  value: " . $data[$key] . " - was not imported ",
-							"values" => $data[$key],
+        return ['data' => $data, 'errors' => $dataErrors];
+    }
 
-						)
-					);
-				}
-				$data[$key] = $r;
-			}
-		}
+    // view to index
+    public function botSettings(Request $request)
+    {
+        $cities = ScrapCity::with('scrapCounty')->orderBy('city')->paginate(30);
 
-		return array('data' => $data, 'errors' => $dataErrors);
-	}
+        return view('bot.index', compact('cities'))->with('i', ($request->input('page', 1) - 1) * 10);
+    }
 
-	//view to index
-	public function botSettings(Request $request)
-	{
-		$vars = array();
-		$cities = ScrapCity::with('scrapCounty')->orderBy('city')->paginate(30);
-		// dd($cities);
-		return view('bot.index', compact('cities'))->with('i', ($request->input('page', 1) - 1) * 10);
-	}
-
-	//view to settings import
-	public function botImport(Request $request)
-	{
-		$vars = array();
-		return view('bot.settings', compact($vars));
-	}
+    // view to settings import
+    public function botImport(Request $request)
+    {
+        return view('bot.settings');
+    }
 }

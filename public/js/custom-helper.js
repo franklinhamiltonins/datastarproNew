@@ -235,9 +235,9 @@ $(document).on('input', '#customSearchBox', debounce(function (event) {
 
 
 function debounce(func, wait) {
-    var timeout;
+    let timeout;
     return function() {
-        var context = this,
+        let context = this,
             args = arguments;
         clearTimeout(timeout);
         timeout = setTimeout(function() {

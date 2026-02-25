@@ -14,7 +14,7 @@ class CreateContactsTable extends Migration
     public function up()
     {
         Schema::create('contacts', function (Blueprint $table) {
-             $table->bigIncrements('id');
+            $table->bigIncrements('id');
             $table->bigInteger('lead_id')->nullable();
             $table->string('c_first_name');
             $table->string('c_last_name');
@@ -23,12 +23,12 @@ class CreateContactsTable extends Migration
             $table->string('c_address2')->nullable();
             $table->string('c_city');
             $table->string('c_state');
-            $table->string('c_zip');  
+            $table->string('c_zip');
             $table->string('c_county');
             $table->string('c_phone')->nullable();
             $table->string('c_email')->nullable();
             $table->timestamps();
-      
+
         });
     }
 

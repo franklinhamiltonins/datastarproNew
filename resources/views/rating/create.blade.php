@@ -1,22 +1,22 @@
 @extends('layouts.app')
 @section('pagetitle')
-    @if($pending == 1) 
+    @if($pending == 1)
         @if($page_type == 1) Create Rating
-        @elseif($page_type == 2) Edit Rating 
-        @else Show Rating 
-        @endif 
-    @elseif($pending == 2) Rating Approval 
+        @elseif($page_type == 2) Edit Rating
+        @else Show Rating
+        @endif
+    @elseif($pending == 2) Rating Approval
     @endif
 @endsection
 @push('breadcrumbs')
 <li class="breadcrumb-item"><a href="{{route('rating.index')}}">Rating</a></li>
 <li class="breadcrumb-item active">
-    @if($pending == 1) 
+    @if($pending == 1)
         @if($page_type == 1) Create Rating
-        @elseif($page_type == 2) Edit Rating 
-        @else Show Rating 
-        @endif 
-    @elseif($pending == 2) Rating Approval 
+        @elseif($page_type == 2) Edit Rating
+        @else Show Rating
+        @endif
+    @elseif($pending == 2) Rating Approval
     @endif
 </li>
 @endpush
@@ -43,12 +43,12 @@
 
                     <div class="card-header">
                         <h3 class="card-title">
-                            @if($pending == 1) 
+                            @if($pending == 1)
                                 @if($page_type == 1) Create Rating
-                                @elseif($page_type == 2) Edit Rating 
-                                @else Show Rating 
-                                @endif 
-                            @elseif($pending == 2) Rating Approval 
+                                @elseif($page_type == 2) Edit Rating
+                                @else Show Rating
+                                @endif
+                            @elseif($pending == 2) Rating Approval
                             @endif
                         </h3>
                     </div>
@@ -111,7 +111,7 @@
                         {!! Form::close() !!}
                     @endif
                 </div>
-                
+
             </div>
         </div>
     </div>

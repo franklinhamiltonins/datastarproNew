@@ -2,14 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Services\ShootMailViaSystem;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
-use App\Services\ShootMailViaSystem;
 
 class CollabMailJob implements ShouldQueue
 {
@@ -20,9 +18,17 @@ class CollabMailJob implements ShouldQueue
      *
      * @return void
      */
-    public $subject, $bodyMsg, $to, $cc,$data;
+    public $subject;
 
-    public function __construct($subject, $bodyMsg, $to, $cc,$data=[])
+    public $bodyMsg;
+
+    public $to;
+
+    public $cc;
+
+    public $data;
+
+    public function __construct($subject, $bodyMsg, $to, $cc, $data = [])
     {
         $this->subject = $subject;
         $this->bodyMsg = $bodyMsg;
@@ -33,7 +39,7 @@ class CollabMailJob implements ShouldQueue
 
     public function handle()
     {
-        (new ShootMailViaSystem())->shootMail(
+        (new ShootMailViaSystem)->shootMail(
             $this->subject,
             $this->bodyMsg,
             $this->to,

@@ -10,8 +10,6 @@
 <!-- Main content -->
 <section class="content pb-2">
 	<div class="container-fluid">
-
-
 		<table class="assign-table mb-4 table table-bordered bg-white">
 			<tr class="assign-tr bg-gray">
 				<th class="assign-th p-2"><input type="checkbox" name="select_all_assign" value="" class="select_all_assign"></th>
@@ -30,8 +28,6 @@
 				{{-- <th class="assign-th p-2 "> Email</th> --}}
 				<th class="assign-th p-2 "> Status</th>
 			</tr>
-
-
 			@foreach ($contacts as $contact)
 			<tr class="assign-tr">
 				<td class="assign-td bg-gray-light p-2"><input type="checkbox" name="contacts_checkbox" value="{{$contact->id}}" class="column-checkbox"></td>
@@ -73,12 +69,7 @@
 			<button id="sendDataBtn" class="btn btn-primary">Assign</button>
 		</div>
 		@endif
-
-
-
-
 	</div>
-
 </section>
 <!-- /.content -->
 @endsection
@@ -161,5 +152,4 @@
 		});
 	});
 </script>
-
 @endpush

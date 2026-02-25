@@ -18,5 +18,7 @@ class Base64UploadAdapter {
         }));
     }
 
-    abort() {}
+    abort() {
+        // No action required for base64 upload
+    }
 }

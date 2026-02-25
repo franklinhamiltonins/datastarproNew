@@ -34,7 +34,7 @@
                             </div>
                             <div class="ml-1">
                                 <div class="d-flex flex-wrap">
-                                    <div id="searchAreaMenu"> 
+                                    <div id="searchAreaMenu">
                                     </div>
                                     @can('report-activity-form')
                                         <a class="btn btn-success btn-sm create-btn d-inline-flex align-items-center justify-content-center" href="{{route('agentreport.activityIndex')}}" title="Create New" style="width: 42px;height: 42px;">
@@ -67,7 +67,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>

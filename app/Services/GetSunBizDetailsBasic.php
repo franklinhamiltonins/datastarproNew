@@ -2,132 +2,190 @@
 
 namespace App\Services;
 
-
-use Illuminate\Support\Facades\Http;
-use Goutte\Client;
-use Symfony\Component\DomCrawler\Crawler;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Carbon;
-
 use App\Traits\CommonFunctionsTrait;
-use App\Model\Setting;
-use DB;
-use App\Model\LeadsModel\Lead;
-
+use Goutte\Client;
 use Spatie\Browsershot\Browsershot;
-
+use Symfony\Component\DomCrawler\Crawler;
 
 class GetSunBizDetailsBasic
 {
     use CommonFunctionsTrait;
 
-    public function replaceSubstrings($string) {
-
-        $replacements = [
-            " ASSOC "   => " ASSOCIATION ",
-            " ASSC "    => " ASSOCIATION ",
-            " ASSN "    => " ASSOCIATION ",
-            " APRTMNTS " => " APPARTMENTS ",
-            " AVE "     => " AVENUE ",
-            " BCH "     => " BEACH ",
-            " BLDG "    => " BUILDING ",
-            " CLB "     => " CLUB ",
-            " COMM "    => " COMMERCIAL ",
-            " CMNTY "   => " COMMUNITY ",
-            " CONDO "   => " CONDOMINIUM ",
-            " CNDO "    => " CONDOMINIUM ",
-            " CONDOS "  => " CONDOMINIUM ",
-            " CNDMMS "  => " CONDOMINIUM ",
-            " CLRWTER " => " CLEARWATER ",
-            " CTR "     => " CENTER ",
-            " DSTIN "   => " DISTINCT ",
-            " POA "     => " PROPERTY OWNERS' ASSOCIATION ",
-            " PROF "    => " PROFESSIONAL ",
-            " PRFSSNL " => " PROFESSIONAL ",
-            " PRTNERS " => " PARTNERS ",
-            " STN "     => " STATION ",
-            " ST "      => " STREET ",
-            " SNSHINE " => " SUNSHINE ",
-            " TWERS "   => " TOWERS ",
-            " HLMES "   => " HOLMES ",
-            " MED "     => " MEDICAL ",
-            " CLNY "    => " COLONY ",
-            " MASTER "  => " MASTER ",
-            " HSE "     => " HOUSE ",
-            " HSES "    => " HOUSES ",
-            " HMOWNERS " => " HOMEOWNERS ",
-            " BRCKELL " => " BRICKELL ",
-            " BLVD "    => " Boulevard ",
-            " DRV "     => " DRIVE ",
-            " VLG "     => " VILLAGE ",
-            " LK "      => " LAKE ",
-            " MNGROVE " => " MANGROVE ",
-            " ASSOCIATES " => " ASSOCIATION ",
-            " HBR "     => " HARBOR ",
-            " EGLE "    => " EAGLE ",
-            " PT "      => " POINT ",
-            " PNTE "    => " POINTE ",
-            " VDRA "    => " VEDRA ",
-            " RSORT "   => " RESORT ",
-            " CNTRY "   => " COUNTRY ",
-            " CORP "    => " CORPORATION ",
-            " ADM "     => " ADMINISTRATIVE ",
-            " MGT "     => " MANAGEMENT ",
-            " PK "      => " PARK ",
-            " FREST "   => " FOREST ",
-            " FLMING "  => " FLEMING ",
-            " TWNHSES " => " TOWNHOUSES ",
-            " CCO "     => " COCOA ",
-            " GRDNS "   => " GARDENS ",
-            " SCTION "  => " SECTION ",
-            " RSDNCE "  => " RESIDENCE ",
-            " PL "      => " PLACE ",
-            " TNEY "    => " TONEY ",
-            " PNNA "    => " PENNA ",
-            " HTS "     => " HEIGHTS ",
-            " VNDRBILT " => " VANDERBILT ",
-            " SMNOLE "  => " SEMINOLE ",
-            " TSCANY "  => " TUSCANY ",
-            " COML "    => " COMMERCIAL ",
-            " S "       => " SOUTH ",
-            " ORNGE "   => " ORANGE ",
-            " SNST "    => " SUNSET ",
-            " NE "      => " NEIGHBORHOOD ",
-            " CNWAY "   => " CONWAY ",
-            " WODS "    => " WOODS ",
-            " LNDS "    => " LANDS ",
-            " PR "      => " PRESIDENT ",
-            " TR "      => " TERRACE ",
-            " FRTY "    => " FORTY ",
-            " PRPRTY "  => " PROPERTIES ",
-            " BOCA W "  => " BOCA WEST ",
-            " RE "      => " REAL ESTATE ",
-            " HNTERS "  => " HUNTERS ",
-            " JPITER "  => " JUPITER ",
-            " MGNLIA "  => " MAGNOLIA ",
-            " SQ "      => " SQUARE ",
-            " MAMI "    => " MIAMI ",
-            " HRITG "   => " HERITAGE ",
-            " DGLAS "   => " DOUGLAS ",
-            " RDGE "    => " RIDGE ",
-            " SRSOTA "  => " SARASOTA ",
-            " TURNBRRY " => " TURNBERRY ",
-            " DNES "    => " DUNES ",
-            " RVGOLF "  => " R.V./GOLF ",
-            " E "       => " EAST ",
-            " W "       => " WEST ",
-            " RCRTL "   => " RECREATIONAL ",
-            " VHCL "    => " VEHICLE ",
-            " PRKG "    => " PARKING ",
-            " CMMRCE "  => " COMMERCE ",
-            " BUS "     => " BUSINESS ",
+    /**
+     * Get replacement mappings part 1
+     */
+    protected function getReplacementsPart1(): array
+    {
+        return [
+            ' ASSOC ' => ' ASSOCIATION ',
+            ' ASSC ' => ' ASSOCIATION ',
+            ' ASSN ' => ' ASSOCIATION ',
+            ' APRTMNTS ' => ' APPARTMENTS ',
+            ' AVE ' => ' AVENUE ',
+            ' BCH ' => ' BEACH ',
+            ' BLDG ' => ' BUILDING ',
+            ' CLB ' => ' CLUB ',
+            ' COMM ' => ' COMMERCIAL ',
+            ' CMNTY ' => ' COMMUNITY ',
+            ' CONDO ' => ' CONDOMINIUM ',
+            ' CNDO ' => ' CONDOMINIUM ',
+            ' CONDOS ' => ' CONDOMINIUM ',
+            ' CNDMMS ' => ' CONDOMINIUM ',
+            ' CLRWTER ' => ' CLEARWATER ',
+            ' CTR ' => ' CENTER ',
+            ' DSTIN ' => ' DISTINCT ',
         ];
+    }
 
-        $string = $string." ";
+    /**
+     * Get replacement mappings part 2
+     */
+    protected function getReplacementsPart2(): array
+    {
+        return [
+            ' POA ' => " PROPERTY OWNERS' ASSOCIATION ",
+            ' PROF ' => ' PROFESSIONAL ',
+            ' PRFSSNL ' => ' PROFESSIONAL ',
+            ' PRTNERS ' => ' PARTNERS ',
+            ' STN ' => ' STATION ',
+            ' ST ' => ' STREET ',
+            ' SNSHINE ' => ' SUNSHINE ',
+            ' TWERS ' => ' TOWERS ',
+            ' HLMES ' => ' HOLMES ',
+            ' MED ' => ' MEDICAL ',
+            ' CLNY ' => ' COLONY ',
+            ' MASTER ' => ' MASTER ',
+            ' HSE ' => ' HOUSE ',
+            ' HSES ' => ' HOUSES ',
+            ' HMOWNERS ' => ' HOMEOWNERS ',
+            ' BRCKELL ' => ' BRICKELL ',
+        ];
+    }
+
+    /**
+     * Get replacement mappings part 3
+     */
+    protected function getReplacementsPart3(): array
+    {
+        return [
+            ' BLVD ' => ' Boulevard ',
+            ' DRV ' => ' DRIVE ',
+            ' VLG ' => ' VILLAGE ',
+            ' LK ' => ' LAKE ',
+            ' MNGROVE ' => ' MANGROVE ',
+            ' ASSOCIATES ' => ' ASSOCIATION ',
+            ' HBR ' => ' HARBOR ',
+            ' EGLE ' => ' EAGLE ',
+            ' PT ' => ' POINT ',
+            ' PNTE ' => ' POINTE ',
+            ' VDRA ' => ' VEDRA ',
+            ' RSORT ' => ' RESORT ',
+            ' CNTRY ' => ' COUNTRY ',
+            ' CORP ' => ' CORPORATION ',
+            ' ADM ' => ' ADMINISTRATIVE ',
+            ' MGT ' => ' MANAGEMENT ',
+        ];
+    }
+
+    /**
+     * Get replacement mappings part 4
+     */
+    protected function getReplacementsPart4(): array
+    {
+        return [
+            ' PK ' => ' PARK ',
+            ' FREST ' => ' FOREST ',
+            ' FLMING ' => ' FLEMING ',
+            ' TWNHSES ' => ' TOWNHOUSES ',
+            ' CCO ' => ' COCOA ',
+            ' GRDNS ' => ' GARDENS ',
+            ' SCTION ' => ' SECTION ',
+            ' RSDNCE ' => ' RESIDENCE ',
+            ' PL ' => ' PLACE ',
+            ' TNEY ' => ' TONEY ',
+            ' PNNA ' => ' PENNA ',
+            ' HTS ' => ' HEIGHTS ',
+            ' VNDRBILT ' => ' VANDERBILT ',
+            ' SMNOLE ' => ' SEMINOLE ',
+            ' TSCANY ' => ' TUSCANY ',
+            ' COML ' => ' COMMERCIAL ',
+        ];
+    }
+
+    /**
+     * Get replacement mappings part 5
+     */
+    protected function getReplacementsPart5(): array
+    {
+        return [
+            ' S ' => ' SOUTH ',
+            ' ORNGE ' => ' ORANGE ',
+            ' SNST ' => ' SUNSET ',
+            ' NE ' => ' NEIGHBORHOOD ',
+            ' CNWAY ' => ' CONWAY ',
+            ' WODS ' => ' WOODS ',
+            ' LNDS ' => ' LANDS ',
+            ' PR ' => ' PRESIDENT ',
+            ' TR ' => ' TERRACE ',
+            ' FRTY ' => ' FORTY ',
+            ' PRPRTY ' => ' PROPERTIES ',
+            ' BOCA W ' => ' BOCA WEST ',
+            ' RE ' => ' REAL ESTATE ',
+            ' HNTERS ' => ' HUNTERS ',
+            ' JPITER ' => ' JUPITER ',
+            ' MGNLIA ' => ' MAGNOLIA ',
+        ];
+    }
+
+    /**
+     * Get replacement mappings part 6
+     */
+    protected function getReplacementsPart6(): array
+    {
+        return [
+            ' SQ ' => ' SQUARE ',
+            ' MAMI ' => ' MIAMI ',
+            ' HRITG ' => ' HERITAGE ',
+            ' DGLAS ' => ' DOUGLAS ',
+            ' RDGE ' => ' RIDGE ',
+            ' SRSOTA ' => ' SARASOTA ',
+            ' TURNBRRY ' => ' TURNBERRY ',
+            ' DNES ' => ' DUNES ',
+            ' RVGOLF ' => ' R.V./GOLF ',
+            ' E ' => ' EAST ',
+            ' W ' => ' WEST ',
+            ' RCRTL ' => ' RECREATIONAL ',
+            ' VHCL ' => ' VEHICLE ',
+            ' PRKG ' => ' PARKING ',
+            ' CMMRCE ' => ' COMMERCE ',
+            ' BUS ' => ' BUSINESS ',
+        ];
+    }
+
+    /**
+     * Get all replacements
+     */
+    protected function getAllReplacements(): array
+    {
+        return array_merge(
+            $this->getReplacementsPart1(),
+            $this->getReplacementsPart2(),
+            $this->getReplacementsPart3(),
+            $this->getReplacementsPart4(),
+            $this->getReplacementsPart5(),
+            $this->getReplacementsPart6()
+        );
+    }
+
+    public function replaceSubstrings($string)
+    {
+        $replacements = $this->getAllReplacements();
+        $string = $string.' ';
+
         foreach ($replacements as $search => $replace) {
             $string = str_replace($search, $replace, $string);
         }
-        
+
         return trim($string);
     }
 
@@ -138,8 +196,7 @@ class GetSunBizDetailsBasic
         $entity_name = str_replace('', '%20', $lead_name);
         $searchNameOrder = strtoupper(str_replace(' ', '', $lead_name));
 
-        $list_url = 'https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResults/EntityName/' . $entity_name . '/Page1?searchNameOrder=' . $searchNameOrder;
-        // $response = Http::get($list_url);
+        $list_url = 'https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResults/EntityName/'.$entity_name.'/Page1?searchNameOrder='.$searchNameOrder;
 
         try {
 
@@ -151,13 +208,13 @@ class GetSunBizDetailsBasic
 
         } catch (\Exception $e) {
 
-            Log::error("Browsershot failed for URL: " . $list_url . " | " . $e->getMessage());
+            \Log::error('Browsershot failed for URL: '.$list_url.' | '.$e->getMessage());
+
             return [];
         }
 
         $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
 
-        // $crawler = new Crawler($response->body());
         $entity_name_probability_arr = ['CONDOMINIUM', 'ASSOCIATION', 'INC', 'LLC', 'LIMITED'];
         $scrap_response = [];
         $match_found = false;
@@ -173,32 +230,21 @@ class GetSunBizDetailsBasic
             $business_name_href = $node->filter('.large-width > a')->attr('href');
             $document_number = $node->filter('.medium-width')->text();
 
-            // echo "<pre>";print_r($business_name);print_r($business_name_href);print_r($document_number);exit;
-
             $similarity = $this->calculateSimilarity($lead_name, $business_name, $entity_name_probability_arr);
 
-
-            if ($similarity['similarity'] >= 0.5 && !$match_found) {
+            if ($similarity['similarity'] >= 0.5 && ! $match_found) {
                 $status = ($lead_name === $business_name) ? 'selected' : 'not_selected';
                 $scrap_response['handle_data'] = $this->getcontactDetails($business_name_href, $list_url);
-
-                // echo "<pre>";print_r($scrap_response);exit;
                 $match_found = true;
             }
         });
-        // dd($scrap_response);
         return $scrap_response;
     }
 
     public function calculateSimilarity($lead_name, $business_name, $entity_name_probability_arr)
     {
         $original_business_name = $business_name;
-        
-        // $business_name = $this->replaceSubstrings(strtoupper($business_name), $replacements);
-        echo $business_name."====";
-        echo $lead_name;
-        echo "-------------------------------------------<br>------------------------------";
-        
+
         $lead_name = strtolower(str_replace([' ', '(', ')', '.', ',', '\''], '', $lead_name));
         $business_name = strtolower(str_replace([' ', '(', ')', '.', ',', '\''], '', $business_name));
 
@@ -211,38 +257,34 @@ class GetSunBizDetailsBasic
                 $similarity += 0.1;
             }
         }
-        echo 'similarity' . $similarity;
+        echo 'similarity'.$similarity;
 
         return ['similarity' => $similarity, 'business_name' => $original_business_name];
     }
 
     public function getcontactDetails($url, $list_url)
     {
-        $fullUrl = 'https://search.sunbiz.org' . $url;
+        $fullUrl = 'https://search.sunbiz.org'.$url;
 
-        // echo $fullUrl;exit;
-
-        $client = new Client();
+        $client = new Client;
         $crawler = $client->request('GET', $fullUrl);
 
-        // echo "<pre>";print_r($crawler);exit;
-
-        if (!$crawler) {
+        if (! $crawler) {
             return [];
         }
 
         $finalArr = [
-            'list_url'          => $list_url,
-            'details_url'       => $fullUrl,
+            'list_url' => $list_url,
+            'details_url' => $fullUrl,
             'principal_address' => null,
-            'mailing_address'   => null,
-            'registered_name'   => '',
-            'registered_address'=> '',
-            'members'           => []
+            'mailing_address' => null,
+            'registered_name' => '',
+            'registered_address' => '',
+            'members' => [],
         ];
 
         $spans = $crawler->filter('div.detailSection > span');
-        $data  = [];
+        $data = [];
 
         $spanCount = $spans->count();
         for ($i = 0; $i < $spanCount; $i++) {
@@ -250,15 +292,11 @@ class GetSunBizDetailsBasic
             $data[] = $text;
 
             switch ($text) {
-                case "Principal Address":
-                    $finalArr['principal_address'] = trim($spans->eq($i + 1)->text());
-                    break;
-
-                case "Mailing Address":
+                case 'Mailing Address':
                     $finalArr['mailing_address'] = trim($spans->eq($i + 1)->text());
                     break;
 
-                case "Registered Agent Name & Address":
+                case 'Registered Agent Name & Address':
                     $finalArr['registered_name'] = trim($spans->eq($i + 1)->text());
 
                     $addressDiv = $spans->eq($i + 2)->filter('div');
@@ -270,6 +308,9 @@ class GetSunBizDetailsBasic
                         $finalArr['registered_address'] = implode(' ', $addressLines);
                     }
                     break;
+                default:
+                    $finalArr['principal_address'] = trim($spans->eq($i + 1)->text());
+                    break;
             }
         }
 
@@ -280,16 +321,18 @@ class GetSunBizDetailsBasic
             $crawler = new Crawler($section->ownerDocument->saveHTML($section));
             $crawler->filterXPath('//div[@class="detailSection"]/text()')->each(function ($node) use (&$membersNames) {
                 $val = trim($node->text());
-                if (!empty($val)) $membersNames[] = $val;
+                if (! empty($val)) {
+                    $membersNames[] = $val;
+                }
             });
         }
 
-        $officerIndex = array_search("Officer/Director Detail", $data);
+        $officerIndex = array_search('Officer/Director Detail', $data);
         if ($officerIndex === false) {
-            $officerIndex = array_search("Authorized Person(s) Detail", $data);
+            $officerIndex = array_search('Authorized Person(s) Detail', $data);
         }
 
-        $nameAddrIndex = array_search("Name & Address", $data);
+        $nameAddrIndex = array_search('Name & Address', $data);
 
         if ($officerIndex === false || $nameAddrIndex === false) {
             return $finalArr; // nothing to extract
@@ -301,26 +344,24 @@ class GetSunBizDetailsBasic
         $members = [];
         while ($readIndex < $dataCount) {
 
-            if ($data[$readIndex] === "Annual Reports") {
+            if ($data[$readIndex] === 'Annual Reports') {
                 break;
             }
 
-            $title = isset($data[$readIndex]) ? preg_replace('/^Title\s*/', '', $data[$readIndex]) : "";
-            $address = $data[$readIndex + 1] ?? "";
+            $title = isset($data[$readIndex]) ? preg_replace('/^Title\s*/', '', $data[$readIndex]) : '';
+            $address = $data[$readIndex + 1] ?? '';
 
             $members[] = [
-                'member_title'   => trim($title),
-                'member_address' => trim($address)
+                'member_title' => trim($title),
+                'member_address' => trim($address),
             ];
 
             $readIndex += 2;
         }
-        // echo "<pre>";print_r($members);print_r($membersNames);exit;
 
         if (count($members) && count($membersNames) && count($members) === count($membersNames)) {
 
             for ($i = 0; $i < count($members); $i++) {
-
 
                 $first_name = $membersNames[$i];
                 $last_name = '';
@@ -330,7 +371,7 @@ class GetSunBizDetailsBasic
                     $first_name = end($parts);
                     $last_name = implode(' ', array_slice($parts, 0, -1));
                 }
-                $full_name = trim($first_name . ' ' . $last_name);
+                $full_name = trim($first_name.' '.$last_name);
                 $members[$i]['member_name'] = $full_name;
             }
 
@@ -339,5 +380,4 @@ class GetSunBizDetailsBasic
 
         return $finalArr;
     }
-    
 }

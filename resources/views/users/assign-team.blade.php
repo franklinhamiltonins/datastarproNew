@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <strong>Select Member:</strong>
-                            {!! Form::select("team_member[]", $agentlist, $teams, [
+                            {!! Form::select("team_member[]", $agentList, $teams, [
                                 "class" => "form-control input",
                                 "id" => "team_member",
                                 "multiple" => "multiple",

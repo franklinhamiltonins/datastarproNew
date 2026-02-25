@@ -10,8 +10,6 @@
 <!-- Main content -->
 <section class="content pb-2">
 	<div class="container-fluid">
-
-
 		<table class="merge-table mb-4 table table-bordered bg-white">
 			<thead>
 				<tr class="merge-tr bg-gray">

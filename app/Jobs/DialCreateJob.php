@@ -2,137 +2,165 @@
 
 namespace App\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-
-use App\Model\LeadsModel\Lead;
-use App\Model\Setting;
+use App\Mail\DialcreationConfirmation;
 use App\Model\Dialing;
-use App\Model\LeadsModel\Contact;
 use App\Model\User;
 use App\Traits\CommonFunctionsTrait;
 use App\Traits\DialRelatedTrait;
 use App\Traits\SMTPRelatedTrait;
-use App\Mail\DialcreationConfirmation;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class DialCreateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,CommonFunctionsTrait,DialRelatedTrait,SMTPRelatedTrait;
+    use CommonFunctionsTrait, DialRelatedTrait, SMTPRelatedTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public $timeout = 1800; 
+    public $timeout = 1800;
 
-    public $agent_list_name,$agent_id,$location_leads_id_search,$location_leads_id,$search_fields, $campaignId,$redirect_project_url,$mail_agent_id;
-    public function __construct($agent_list_name,$agent_id,$location_leads_id_search,$location_leads_id,$search_fields, $campaignId,$redirect_project_url,$mail_agent_id)
-    {
-        $this->agent_list_name = $agent_list_name;
-        $this->agent_id = $agent_id;
-        $this->location_leads_id_search = $location_leads_id_search;
-        $this->location_leads_id = $location_leads_id;
-        $this->search_fields = $search_fields;
+    public $agentListName;
+    public $agentId;
+    public $locationLeadsIdSearch;
+    public $locationLeadsId;
+    public $searchFields;
+    public $campaignId;
+    public $redirectProjectUrl;
+    public $mailAgentId;
+
+    public function __construct(
+        $agentListName,
+        $agentId,
+        $locationLeadsIdSearch,
+        $locationLeadsId,
+        $searchFields,
+        $campaignId,
+        $redirectProjectUrl,
+        $mailAgentId
+    ) {
+        $this->agentListName = $agentListName;
+        $this->agentId = $agentId;
+        $this->locationLeadsIdSearch = $locationLeadsIdSearch;
+        $this->locationLeadsId = $locationLeadsId;
+        $this->searchFields = $searchFields;
         $this->campaignId = $campaignId;
-        $this->redirect_project_url = $redirect_project_url;
-        $this->mail_agent_id = $mail_agent_id;
+        $this->redirectProjectUrl = $redirectProjectUrl;
+        $this->mailAgentId = $mailAgentId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-        // DB::beginTransaction();
         try {
-            $checkdialing = Dialing::where('name',$this->agent_list_name)->first();
-            if(!$checkdialing){
-                $dialing = new Dialing();
-                $dialing->name = $this->agent_list_name;
-                $dialing->lead_number = 0;
-                // $dialing->name = $this->agent_list_name;
-                $dialing->save();
+            DB::beginTransaction();
 
-
-                $agent_arr = [];
-                foreach ($this->agent_id as $keyagent => $single_agent_id) {
-                    $agent_arr[$keyagent] = $single_agent_id;
-                    $user = User::find($single_agent_id);
-                    if($user){
-                        $user->dialings()->attach($dialing->id);
-                    }
-                }
-
-                $leadsQuery = $this->leadoutputget_fordialing($this->location_leads_id_search,$this->location_leads_id,$this->search_fields, $this->campaignId);
-
-                $leadsQuery->groupBy('leads.id')->chunk(1000, function($leads)use ($agent_arr, $dialing){
-                    $insert_array = [];
-                    $key = 0;
-                    foreach ($leads as $lead) {
-                        $agentIndex = $key % count($agent_arr);
-                        $agentValue = $agent_arr[$agentIndex];
-
-                        $insert_array[] = [
-                            'dialing_id' => $dialing->id,
-                            'lead_id' => $lead->id,
-                            'owned_by_agent_id' => 0,
-                            'status' => 'free',
-                            'assigned_to_agent_id' => $agentValue
-                        ];
-
-                        // DB::table('dialings_leads')
-                        // ->updateOrInsert(
-                        //     ['dialing_id' => $dialing->id, 'lead_id' => $lead->id],
-                        //     ['owned_by_agent_id' => 0, 'status' => 'free', 'assigned_to_agent_id' => $agentValue]
-                        // );
-                        $key++;
-                    }
-                    DB::table('dialings_leads')
-                    ->Insert($insert_array);
-                    unset($insert_array);
-                });
-                // unset($agent_arr);
-
-                $setting_time_data = Setting::select('notify_email')->first();
-
-                if($setting_time_data && !empty($setting_time_data->notify_email)){
-                    $recipientEmail_arr = explode(',', $setting_time_data->notify_email);
-
-                    $recipientEmail = $recipientEmail_arr[0];
-
-                    $ccEmails = array_slice($recipientEmail_arr, 1);
-                    $data = [
-                        'message' => 'Your dialing creation (' . $dialing->name . ') has been confirmed. Please check this URL: ' . $this->redirect_project_url
-                    ];
-
-                    $this->setDynamicSMTPUserWise($this->mail_agent_id);
-
-                    $mail = Mail::to($recipientEmail);
-
-                    if (count($ccEmails) > 0) {
-                        $mail->cc($ccEmails);
-                    }
-
-                    $mail->send(new DialCreationConfirmation($data));
-
-                    // Mail::to($recipientEmail)->send(new DialCreationConfirmation($data));
-                    unset($recipientEmail,$data,$recipientEmail_arr,$ccEmails);
-                }
-                unset($setting_time_data);
-                DB::disconnect();
+            if ($this->dialingExists()) {
+                return;
             }
-            // DB::commit();
+
+            $dialing = $this->createDialing();
+            $agentArr = $this->attachAgents($dialing);
+            $this->assignLeadsToDialing($dialing, $agentArr);
+            $this->sendConfirmationMail($dialing);
+
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack();
+            // optional: Log::error($e->getMessage());
+        } finally {
+            DB::disconnect();
         }
+    }
+
+    private function dialingExists(): bool
+    {
+        return Dialing::where('name', $this->agentListName)->exists();
+    }
+
+    private function createDialing(): Dialing
+    {
+        $dialing = new Dialing();
+        $dialing->name = $this->agentListName;
+        $dialing->lead_number = 0;
+        $dialing->save();
+
+        return $dialing;
+    }
+
+    private function attachAgents(Dialing $dialing): array
+    {
+        $agentArr = [];
+
+        foreach ($this->agentId as $index => $agentId) {
+            $agentArr[$index] = $agentId;
+
+            $user = User::find($agentId);
+            if ($user) {
+                $user->dialings()->attach($dialing->id);
+            }
+        }
+
+        return $agentArr;
+    }
+
+    private function assignLeadsToDialing(Dialing $dialing, array $agentArr): void
+    {
+        $leadsQuery = $this->leadOutputGetFordialing(
+            $this->locationLeadsIdSearch,
+            $this->locationLeadsId,
+            $this->searchFields,
+            $this->campaignId
+        );
+
+        $leadsQuery->groupBy('leads.id')
+        ->chunk(1000, function ($leads) use ($dialing, $agentArr) {
+            $insertArray = [];
+            $key = 0;
+
+            foreach ($leads as $lead) {
+                $agentValue = $agentArr[$key % count($agentArr)];
+
+                $insertArray[] = [
+                    'dialing_id' => $dialing->id,
+                    'lead_id' => $lead->id,
+                    'owned_by_agent_id' => 0,
+                    'status' => 'free',
+                    'assigned_to_agent_id' => $agentValue,
+                ];
+
+                $key++;
+            }
+
+            DB::table('dialings_leads')->insert($insertArray);
+        });
+    }
+
+    private function sendConfirmationMail(Dialing $dialing): void
+    {
+        $recipientData = $this->getRecipientData('notify_email');
+        if (! $recipientData) {
+            return;
+        }
+        [$recipientEmail, $ccEmails] = $recipientData;
+
+        $data = [
+            'message' => sprintf(
+                'Your dialing creation (%s) has been confirmed. Please check this URL: %s',
+                $dialing->name,
+                $this->redirectProjectUrl
+            ),
+        ];
+
+        $this->setDynamicSMTPUserWise($this->mailAgentId);
+
+        $mail = Mail::to($recipientEmail);
+        if (count($ccEmails) > 0) {
+            $mail->cc($ccEmails);
+        }
+
+        $mail->send(new DialcreationConfirmation($data));
     }
 }

@@ -2,17 +2,16 @@
 
 namespace App\Model;
 
-use App\Model\BaseModel;
+use App\Model\LeadsModel\Lead;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Model\LeadsModel\Lead;
-
 class LeadAsanaDetail extends Model
 {
     use HasFactory,SoftDeletes;
+
     protected $fillable = [
         'lead_id',
         'appraisal',
@@ -48,10 +47,11 @@ class LeadAsanaDetail extends Model
         'workers_comp_payment',
         'flood_payment',
         'status',
-        'asana_stage'
+        'asana_stage',
     ];
 
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+
     protected $table = 'lead_asana_details';
 
     public $timestamps = true;
@@ -75,6 +75,4 @@ class LeadAsanaDetail extends Model
     {
         return $this->belongsTo(Lead::class, 'lead_id', 'id');
     }
-
-
 }
