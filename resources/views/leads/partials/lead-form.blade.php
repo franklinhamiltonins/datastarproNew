@@ -176,7 +176,7 @@
                 @include('leads.partials.form-yes-no', [
                     'name' => 'ins_flood',
                     'label' => 'Flood Zone',
-                    'selected' => $lead->ins_flood ?? '',
+                    'selected' => $lead->ins_flood ?? 'No',
                     'id' => 'ins_flood',
                     'class' => 'form-control'
                 ])
@@ -195,7 +195,7 @@
             @include('leads.partials.form-yes-no', [
                 'name' => 'pool',
                 'label' => 'Pool',
-                'selected' => $lead->pool ?? '',
+                'selected' => $lead->pool ?? 'No',
                 'id' => 'pool',
                 'class' => 'form-control'
             ])
@@ -208,14 +208,14 @@
             @include('leads.partials.form-yes-no', [
                 'name' => 'lakes',
                 'label' => 'Lakes',
-                'selected' => $lead->lakes ?? '',
+                'selected' => $lead->lakes ?? 'No',
                 'id' => 'lakes',
                 'class' => 'form-control'
             ])
             @include('leads.partials.form-yes-no', [
                 'name' => 'clubhouse',
                 'label' => 'Clubhouse',
-                'selected' => $lead->clubhouse ?? '',
+                'selected' => $lead->clubhouse ?? 'No',
                 'id' => 'clubhouse',
                 'class' => 'form-control'
             ])
@@ -228,7 +228,7 @@
             @include('leads.partials.form-yes-no', [
                 'name' => 'tennis_basketball',
                 'label' => 'Tennis/Basketball Court',
-                'selected' => $lead->tennis_basketball ?? '',
+                'selected' => $lead->tennis_basketball ?? 'No',
                 'id' => 'tennis_basketball',
                 'class' => 'form-control'
             ])
@@ -274,13 +274,13 @@
                     @include('leads.partials.form-yes-no', [
                         'name' => 'pool_community',
                         'label' => 'Pool',
-                        'selected' => $lead->pool ?? '',
+                        'selected' => $lead->pool ?? 'No',
                         'class' => 'form-control'
                     ])
                     @include('leads.partials.form-yes-no', [
                         'name' => 'lakes_community',
                         'label' => 'Lakes',
-                        'selected' => $lead->lakes ?? '',
+                        'selected' => $lead->lakes ?? 'No',
                         'class' => 'form-control'
                     ])
                 </div>
@@ -290,13 +290,13 @@
                     @include('leads.partials.form-yes-no', [
                         'name' => 'clubhouse_community',
                         'label' => 'Clubhouse',
-                        'selected' => $lead->clubhouse ?? '',
+                        'selected' => $lead->clubhouse ?? 'No',
                         'class' => 'form-control'
                     ])
                     @include('leads.partials.form-yes-no', [
                         'name' => 'tennis_basketball_community',
                         'label' => 'Tennis/Basketball Court',
-                        'selected' => $lead->tennis_basketball ?? '',
+                        'selected' => $lead->tennis_basketball ?? 'No',
                         'class' => 'form-control'
                     ])
                 </div>
