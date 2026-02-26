@@ -40,11 +40,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
+        $this->mapPipedriveRoutes();
+        
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
+
         
-        $this->mapPipedriveRoutes();
     }
 
     /**
