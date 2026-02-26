@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 // Load pipedrive routes safely
 if (file_exists(base_path('routes/pipedrive.php'))) {
-    Route::middleware(['web_no_csrf'])
-        ->prefix('pipedrive')
+    Route::prefix('pipedrive')
         ->group(base_path('routes/pipedrive.php'));
 }
 
