@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::post('/verifyOtp', 'Auth\LoginController@verifyOtp')->name('login.verifyOtp');
 Route::post('/resendOtp', 'Auth\LoginController@resendOtp')->name('login.resendOtp');
 
@@ -35,6 +36,8 @@ Route::prefix('agentreport')->middleware('check.report.auth')->group(function ()
     Route::get('/activity_details/{id}', 'ActivityReportController@activityDetails')->name('agentreport.activityDetails');
     Route::get('/file_download/{id}', 'ActivityReportController@fileDownload')->name('agentreport.file_download');
 });
+
+
 
 Route::get('/testurl', 'Leads\ContactController@testurl');
 Route::get('/updateDialingLead', 'DialingController@updateDialingLead');
