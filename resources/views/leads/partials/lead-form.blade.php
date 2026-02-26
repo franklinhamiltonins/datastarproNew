@@ -469,7 +469,7 @@
                     @include('leads.partials.form-yes-no', [
                         'name' => 'skin_hole',
                         'label' => 'Sinkhole',
-                        'selected' => $lead->skin_hole ?? '',
+                        'selected' => $lead->skin_hole ?? 'No',
                         'class' => 'form-control'
                     ])
                 </div>
@@ -507,7 +507,7 @@
                     @include('leads.partials.form-yes-no', [
                         'name' => 'secondary_water_insurance',
                         'label' => 'Secondary Water Insurance',
-                        'selected' => $lead->secondary_water_insurance ?? '',
+                        'selected' => $lead->secondary_water_insurance ?? 'No',
                         'class' => 'form-control'
                     ])
                 </div>
@@ -519,7 +519,7 @@
                     @include('leads.partials.form-yes-no', [
                         'name' => 'opening_protection',
                         'label' => 'Opening Protection',
-                        'selected' => $lead->opening_protection ?? '',
+                        'selected' => $lead->opening_protection ?? 'No',
                         'class' => 'form-control'
                     ])
                 </div>
