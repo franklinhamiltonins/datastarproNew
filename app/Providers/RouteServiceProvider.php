@@ -43,7 +43,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
-
+        
         $this->mapPipedriveRoutes();
     }
 
@@ -57,8 +57,8 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/web.php'));
+        ->namespace($this->namespace)
+        ->group(base_path('routes/web.php'));
     }
 
     /**
@@ -77,8 +77,8 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapPipedriveRoutes()
     {
-        Route::middleware(['web', 'web_no_csrf'])
-            ->namespace($this->namespace)
+        Route::middleware(['web_no_csrf'])
+            ->prefix('pipedrive')
             ->group(base_path('routes/pipedrive.php'));
     }
 }

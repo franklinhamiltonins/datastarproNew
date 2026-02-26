@@ -1,13 +1,8 @@
 <?php
+namespace App\Http\Controllers\pipedrive;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\pipedrive\PipedriveLoginController;
-use App\Http\Controllers\pipedrive\PipedriveTemplateController;
-use App\Http\Controllers\pipedrive\PipedriveInitialLoadController;
-use App\Http\Controllers\pipedrive\PipedriveLeadController;
-use App\Http\Controllers\pipedrive\PipedriveContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,19 +15,12 @@ use App\Http\Controllers\pipedrive\PipedriveContactController;
 |
 */
 
-Route::middleware(['web_no_csrf'])
-    ->prefix('pipedrive')
+Route::post('/request_login',      [PipedriveLoginController::class, 'request_login']);
+Route::post('/request_verify',     [PipedriveLoginController::class, 'request_verify']);
+Route::post('/resendOtp',          [PipedriveLoginController::class, 'resendOtp']);
+
+Route::middleware(['auth:web'])
     ->group(function () {
-
-        Route::post('/request_login',      [PipedriveLoginController::class, 'request_login']);
-        Route::post('/request_verify',     [PipedriveLoginController::class, 'request_verify']);
-        Route::post('/resendOtp',          [PipedriveLoginController::class, 'resendOtp']);
-
-    });
-
-Route::prefix('pipedrive')
-    ->group(function () {
-
         // --- Chat / Template ---
         Route::get('/chat/{contactId}',                    [PipedriveTemplateController::class, 'contactChat']);
         Route::post('/sendChat',                           [PipedriveTemplateController::class, 'sendChat']);
