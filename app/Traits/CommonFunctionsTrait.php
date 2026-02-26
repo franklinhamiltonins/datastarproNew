@@ -214,7 +214,7 @@ trait CommonFunctionsTrait
         string $leadSlug,
         float $newLeadLatitude,
         float $newLeadLongitude,
-        string $id = ''
+        string $id = Null
     ): array {
         $existanceArr = [];
         $distanceRange = 0.1;
