@@ -6,9 +6,9 @@
     <title>Dialing List Confirmation</title>
 </head>
 <body style="margin: 0;">
-    <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px;">
+    <table style="background-color: #fff;border-spacing: 0;padding: 10px;width: 100%;">
         <tr>
-            <td align="left" valign="top">
+            <td style="text-align: left;vertical-align: top;">
             <div class="content">
                 {!! $data['message'] !!}
             </div>

@@ -101,23 +101,23 @@
                         <div class="form-row">
                             <div class="form-group col-lg-6">
                             <strong>Email Signature Preview:</strong>
-                                <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">
+                                <table style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;background: #fff;border-spacing: 0;width: 100%;">
 
                                     <tr>
                                         <td>
-                                            <table cellspacing="0" cellpadding="0" width="100%">
+                                            <table style="border-spacing: 0;width: 100%;">
                                                 <tr>
-                                                    <td align="left" valign="middle" width="24%" style="padding-right: 8px; border-right: 1px solid #000;">
+                                                    <td style="padding-right: 8px; border-right: 1px solid #000;text-align: left;vertical-align: middle;width: 24%;">
                                                         <figure style="margin: 0;">
                                                             <img id="signature-image-preview" style="width: 100%;" src="<?= $smtpData->signature_image ?>" alt="Signature image">
                                                         </figure>
                                                     </td>
                                                     @if($smtpData['signature_text'])
-                                                    <td align="left" valign="top" width="80%" style="padding-left: 8px;">
+                                                    <td style="padding-left: 8px;text-align: left;vertical-align: top;width: 80%;">
                                                         {!! $smtpData['signature_text'] !!}
                                                     </td>
                                                     @else
-                                                    <td align="left" valign="middle" width="76%" style="padding-left: 8px;">
+                                                    <td style="padding-left: 8px;text-align: left;vertical-align: middle;width: 76%;">
                                                         <p style="margin: 0 0 2px;">John Doe</p>
                                                         <p style="margin: 0 0 2px;">Agent, Generic Tech Solutions</p>
                                                         <p style="margin: 0 0 2px; text-decoration: underline;">Office: <a href="tel:(555) 123-4567" style="text-decoration: none;">(555) 015-2720</a>  Cell: <a href="tel:(555) 010-2020" style="text-decoration: none;">(555) 123-4567</a></p>

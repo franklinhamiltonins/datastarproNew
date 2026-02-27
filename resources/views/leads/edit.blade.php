@@ -575,7 +575,7 @@
                                             {{date("m/d/Y", strtotime($campaign->campaign_date))}}
                                             @endif
                                         </td>
-                                        <td align="center" valign="middle">
+                                        <td style="text-align: center;vertical-align: middle;">
                                             <a class="btn btn-sm btn-info action-btn" target="_blank"
                                                 title="View Campaign"
                                                 href="{{ route('campaigns.show',$campaign->id) }}"><i

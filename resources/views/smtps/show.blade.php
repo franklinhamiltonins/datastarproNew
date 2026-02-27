@@ -84,21 +84,21 @@
                         <div class="form-row">
                             <div class="form-group col-lg-6">
                                 <strong>Email Signature:</strong>
-                                <table cellspacing="0" cellpadding="0" width="100%" bgcolor="#fff" style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;">
+                                <table style="padding: 10px; font-family: Google Sans,Roboto,sans-serif; font-size: 13px; color: #646464;border-spacing: 0;background: #fff;width: 100%;">
                                 @if($smtpConfiguration['signature_image'] || $smtpConfiguration['signature_text'])
                                     <tr>
                                         <td>
-                                            <table cellspacing="0" cellpadding="0" width="100%">
+                                            <table style="border-spacing: 0;width: 100%;">
                                                 <tr>
                                                     @if($smtpConfiguration['signature_image'] && file_exists(public_path('images/signature/'.$smtpConfiguration['signature_image'])))
-                                                    <td align="left" valign="top" width="" style="padding-right: 8px; border-right: 1px solid #000;">
+                                                    <td style="padding-right: 8px; border-right: 1px solid #000;text-align: left;vertical-align: top;">
                                                         <figure style="margin: 0;">
                                                             <img style="width: 100%;" src="{{asset('images/signature/'.$smtpConfiguration['signature_image'])}}" alt="">
                                                         </figure>
                                                     </td>
                                                     @endif
                                                     @if($smtpConfiguration['signature_text'])
-                                                    <td align="left" valign="top" width="80%" style="padding-left: 8px;">
+                                                    <td style="padding-left: 8px;text-align: left;vertical-align: top;width: 80%;">
                                                         {!! $smtpConfiguration['signature_text'] !!}
                                                     </td>
                                                     @endif
