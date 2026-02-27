@@ -203,7 +203,7 @@ trait PipeDriveTrait
     /**
      * Get Asana questions for lead
      */
-    protected function getAsanaQuestions($leadId, $asanaStage)
+    protected function getAsanaQuestions($leadAsana,$leadId, $asanaStage)
     {
         $questions = AsanaQuestion::select('id', 'name', 'priority')
             ->where('status', 1)
@@ -234,7 +234,7 @@ trait PipeDriveTrait
         $stageCompleted = ! empty($leadAsana->stage_completed) ? $leadAsana->stage_completed : 0;
         $asanaPriority = 0;
 
-        $questions = $this->getAsanaQuestions($leadId, $asanaStage);
+        $questions = $this->getAsanaQuestions($leadAsana,$leadId, $asanaStage);
 
         foreach ($questions as $keyquestion) {
             if ($keyquestion->id == $asanaStage) {

@@ -956,7 +956,7 @@ trait CommonFunctionsTrait
         int $contactStatus,
         int $contactAgentId
     ): void {
-        $oldStatusId = $lead->pipeline_status_id;
+        $oldStatusId = $lead->pipeline_status_id ?? 1;
         $lead->pipeline_status_id = $contactStatus;
         $lead->pipeline_agent_id = $contactAgentId;
         $lead->save();
@@ -1020,8 +1020,8 @@ trait CommonFunctionsTrait
             $this->handleSpecialContactStatusUpdate($leadId);
         } else {
             Lead::where('id', $leadId)->update([
-                'pipeline_status_id' => null,
-                'pipeline_agent_id' => null,
+                'pipeline_status_id' => 1,
+                'pipeline_agent_id' => 0,
             ]);
         }
 
