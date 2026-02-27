@@ -5,7 +5,7 @@
     $id = $id ?? $name;
     $class = $class ?? 'form-control';
     $required = $required ?? false;
-    $selected = $selected ?? 'No';
+    $selected = $selected ?? '';
 @endphp
 
 <div class="form-group col mb-0">
