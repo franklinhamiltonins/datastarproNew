@@ -13,53 +13,126 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 
+/**
+ * Controller for managing SMTP configurations
+ */
 class SmtpConfigurationController extends Controller
 {
     use CommonFunctionsTrait;
 
+    /**
+     * Constructor - Initialize controller
+     */
     public function __construct()
     {
-        // $this->middleware('permission:agent-create', ['only' => ['adminIndex', 'get_smtps', 'show', 'edit', 'destroy', 'create', 'delete_smtps', 'update']]);
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Display SMTP settings page for current user
+     * @return \Illuminate\View\View
      */
     public function index()
     {
+        // Get SMTP data for current user
+        $smtpData = $this->getUserSmtpData();
 
-        $smtpData = SmtpConfiguration::where('user_id', auth()->user()->id)->first();
-        if (! $smtpData) {
-            $smtpData = new SmtpConfiguration;
-        }
-        $smtpData['password'] = isset($smtpData['password']) && $smtpData['password'] ? Crypt::decryptString($smtpData['password']) : null;
-        $providers = EmailProvider::get();
-        $email_providers = [];
-        $email_providers[0] = 'Select Email Provider';
+        // Get email providers for dropdown
+        $emailProviders = $this->getEmailProviders();
 
-        foreach ($providers as $provider) {
-            $email_providers[$provider->id] = $provider->provider_name;
-        }
-
-        if (isset($smtpData->signature_image) && $smtpData->signature_image && file_exists(public_path('images/signature/'.$smtpData->signature_image))) {
-            $smtpData->signature_image = '/images/signature/'.$smtpData->signature_image;
-        } else {
-            $smtpData->signature_image = '/images/placeholder-img.png';
-        }
+        // Handle signature image
+        $smtpData = $this->handleSignatureImage($smtpData);
 
         return view('smtps.smtpsetting_view', compact('smtpData', 'email_providers'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
+     * Get SMTP data for current authenticated user
+     * @return SmtpConfiguration
+     */
+    private function getUserSmtpData(): SmtpConfiguration
+    {
+        $smtpData = SmtpConfiguration::where('user_id', auth()->user()->id)->first();
+
+        if (!$smtpData) {
+            $smtpData = new SmtpConfiguration;
+        }
+
+        // Decrypt password for display
+        $smtpData['password'] = isset($smtpData['password']) && $smtpData['password']
+            ? Crypt::decryptString($smtpData['password'])
+            : null;
+
+        return $smtpData;
+    }
+
+    /**
+     * Get email providers list
+     * @return array Email providers with default option
+     */
+    private function getEmailProviders(): array
+    {
+        $providers = EmailProvider::get();
+        $emailProviders = [0 => 'Select Email Provider'];
+
+        foreach ($providers as $provider) {
+            $emailProviders[$provider->id] = $provider->provider_name;
+        }
+
+        return $emailProviders;
+    }
+
+    /**
+     * Handle signature image path
+     * @param SmtpConfiguration $smtpData SMTP data
+     * @return SmtpConfiguration Updated SMTP data
+     */
+    private function handleSignatureImage(SmtpConfiguration $smtpData): SmtpConfiguration
+    {
+        if (isset($smtpData->signature_image) && $smtpData->signature_image
+            && file_exists(public_path('images/signature/' . $smtpData->signature_image))) {
+            $smtpData->signature_image = '/images/signature/' . $smtpData->signature_image;
+        } else {
+            $smtpData->signature_image = '/images/placeholder-img.png';
+        }
+
+        return $smtpData;
+    }
+
+    /**
+     * Store SMTP configuration for user
+     * @param Request $request HTTP request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // Validate request
+        $validator = $this->validateStoreRequest($request);
+
+        if ($validator->fails()) {
+            return $this->handleValidationFailure($validator);
+        }
+
+        // Handle signature image upload
+        $imageName = $this->handleSignatureImageUpload($request);
+
+        // Get existing configuration to preserve image
+        $imageName = $this->preserveExistingImage($request, $imageName);
+
+        // Save SMTP configuration
+        $settingData = $this->saveSmtpConfiguration($request, $imageName);
+
+        // Return response
+        return $this->handleStoreResponse($settingData);
+    }
+
+    /**
+     * Validate store request
+     * @param Request $request HTTP request
+     * @return \Illuminate\Validation\Validator
+     */
+    private function validateStoreRequest(Request $request): \Illuminate\Validation\Validator
+    {
+        return Validator::make($request->all(), [
             'host' => 'required|max:100',
             'port' => 'required|numeric|min:3',
             'encryption' => 'required',
@@ -68,33 +141,73 @@ class SmtpConfigurationController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
+    }
 
-        if ($validator->fails()) {
-            $errorMessages = $validator->errors()->all();
-            toastr()->error(implode('<br>', $errorMessages));
+    /**
+     * Handle validation failure
+     * @param \Illuminate\Validation\Validator $validator Validator instance
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function handleValidationFailure(\Illuminate\Validation\Validator $validator): \Illuminate\Http\RedirectResponse
+    {
+        $errorMessages = $validator->errors()->all();
+        toastr()->error(implode('<br>', $errorMessages));
 
-            return back()->withErrors($validator)->withInput();
-        }
+        return back()->withErrors($validator)->withInput();
+    }
+
+    /**
+     * Handle signature image upload
+     * @param Request $request HTTP request
+     * @return string|null Image name
+     */
+    private function handleSignatureImageUpload(Request $request): ?string
+    {
+        $imageName = null;
 
         if ($request->hasFile('signature_image')) {
-            // $image_name_with_extension = $request->file('signature_image')->getClientOriginalName();
-            $imageName = time().'.'.$request->signature_image->extension();
-            if (! file_exists(public_path('images/signature'))) {
+            $imageName = time() . '.' . $request->signature_image->extension();
+
+            if (!file_exists(public_path('images/signature'))) {
                 mkdir(public_path('images/signature'), 0777, true);
             }
+
             $request->signature_image->move(public_path('images/signature'), $imageName);
         }
 
-        $smtpConfiguration = SmtpConfiguration::where('user_id', $request->user_id)->first();
-        if (! isset($imageName)) {
+        return $imageName;
+    }
+
+    /**
+     * Preserve existing image if no new one uploaded
+     * @param Request $request HTTP request
+     * @param string|null $imageName Current image name
+     * @return string|null Preserved or new image name
+     */
+    private function preserveExistingImage(Request $request, ?string $imageName): ?string
+    {
+        if (!isset($imageName)) {
+            $smtpConfiguration = SmtpConfiguration::where('user_id', $request->user_id)->first();
+
             if (isset($smtpConfiguration['signature_image']) && $smtpConfiguration['signature_image']) {
                 $imageName = $smtpConfiguration['signature_image'];
             } else {
                 $imageName = null;
             }
         }
-        $settingData = SmtpConfiguration::updateOrCreate(
 
+        return $imageName;
+    }
+
+    /**
+     * Save SMTP configuration
+     * @param Request $request HTTP request
+     * @param string|null $imageName Image name
+     * @return SmtpConfiguration
+     */
+    private function saveSmtpConfiguration(Request $request, ?string $imageName): SmtpConfiguration
+    {
+        return SmtpConfiguration::updateOrCreate(
             ['user_id' => $request->user_id],
             [
                 'provider_id' => $request->provider_id,
@@ -110,71 +223,103 @@ class SmtpConfigurationController extends Controller
                 'signature_text' => $request->signature_text,
             ]
         );
+    }
 
+    /**
+     * Handle store response
+     * @param SmtpConfiguration $settingData Saved data
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function handleStoreResponse(SmtpConfiguration $settingData): \Illuminate\Http\RedirectResponse
+    {
         if ($settingData) {
             toastr()->success('Data submitted successfully');
-
             return redirect()->back();
         } else {
             toastr()->success('Something went wrong!!!');
-
             return redirect()->back();
         }
     }
 
+    /**
+     * Display admin SMTP list page
+     * @return \Illuminate\View\View
+     */
     public function adminIndex()
     {
-        $agents = User::role(['Agent', 'Service & Agent', 'Admin', 'Super Admin'])->with('smtp')->orderBy('name', 'asc')->get();
-        $agentUsers = [];
+        // Get agents without SMTP configuration
+        $agentData = $this->getAgentsWithoutSmtp();
 
-        foreach ($agents as $agent) {
-            if (is_null($agent->smtp)) {
-                $agentUsers[$agent->id] = $agent->name.' ('.$agent->email.')';
-            }
-        }
-        $agent_count = count($agentUsers);
-        if ($agent_count > 0) {
-            $agent_msg = '';
-        } else {
-            $agent_msg = 'No Agent left - SMTP has been configured for all';
-        }
+        $agentCount = $agentData['agentCount'];
+        $agentMsg = $agentData['agentMsg'];
 
         return view('smtps.index', compact('agent_count', 'agent_msg'));
     }
 
-    public function get_smtps(Request $request)
+    /**
+     * Get agents without SMTP configuration
+     * @return array Agent count and message
+     */
+    private function getAgentsWithoutSmtp(): array
     {
-        $start = $request->input('start', 0);
-        $length = $request->input('length', 5); // Default length or adjust as needed
-        $filter_on_column_number = $request->input('order')[0]['column'] ?? 1;
-        $filter_on_column_name = $request->input('columns')[$filter_on_column_number]['name'] ?? 'smtp_configurations.id';
-        $order_by = $request->input('order')[0]['dir'] ?? 'desc';
-        $search_value = $request->input('search')['value'] ?? null;
+        $agents = User::role(['Agent', 'Service & Agent', 'Admin', 'Super Admin'])
+            ->with('smtp')
+            ->orderBy('name', 'asc')
+            ->get();
 
-        $baseQuery = SmtpConfiguration::with(['provider', 'user'])
-        // ->leftJoin('users', 'smtp_configurations.user_id', '=', 'users.id')
-            ->whereNull('smtp_configurations.deleted_at');
-        // ->whereNull('users.deleted_at'); // Ensure deleted users are not considered
+        $agentUsers = [];
+        foreach ($agents as $agent) {
+            if (is_null($agent->smtp)) {
+                $agentUsers[$agent->id] = $agent->name . ' (' . $agent->email . ')';
+            }
+        }
 
+        $agentCount = count($agentUsers);
+        $agentMsg = $agentCount > 0 ? '' : 'No Agent left - SMTP has been configured for all';
+
+        return [
+            'agentCount' => $agentCount,
+            'agentMsg' => $agentMsg,
+            'agentUsers' => $agentUsers,
+        ];
+    }
+
+    /**
+     * Get SMTP records for datatables
+     * @param Request $request HTTP request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSmtps(Request $request)
+    {
+        // Extract request parameters
+        $params = $this->extractListRequestParams($request);
+
+        // Build base query
+        $baseQuery = $this->buildSmtpBaseQuery();
+
+        // Get record counts
         $totalRecords = $baseQuery->count();
         $filteredRecords = $baseQuery->count();
 
+        // Apply search filter if provided
         $searchQuery = clone $baseQuery;
-
-        // Apply search filter
-        if (! empty($search_value)) {
+        if (!empty($params['searchValue'])) {
             $filteredRecords = $searchQuery->count();
         }
 
-        $smtps = $searchQuery->orderBy($filter_on_column_name, $order_by)->offset($start)->limit($length);
+        // Apply ordering and pagination
+        $smtps = $searchQuery
+            ->orderBy($params['filterOnColumnName'], $params['orderBy'])
+            ->offset($params['start'])
+            ->limit($params['length']);
 
         return datatables()->of($smtps)
             ->addIndexColumn()
-            ->editColumn('user_id', function ($searchQuery) {
-                return ! is_null($searchQuery->user) ? $searchQuery->user->name : '';
+            ->editColumn('user_id', function ($query) {
+                return !is_null($query->user) ? $query->user->name : '';
             })
-            ->editColumn('provider_id', function ($searchQuery) {
-                return $searchQuery->provider_id > 0 ? $searchQuery->provider->provider_name : null;
+            ->editColumn('provider_id', function ($query) {
+                return $query->provider_id > 0 ? $query->provider->provider_name : null;
             })
             ->addColumn('action', function ($row) {
                 return view('smtps.partials.buttons-actions', compact('row'));
@@ -185,89 +330,212 @@ class SmtpConfigurationController extends Controller
             ->make(true);
     }
 
-    public function delete_smtps(Request $request)
+    /**
+     * Extract list request parameters
+     * @param Request $request HTTP request
+     * @return array Parameters
+     */
+    private function extractListRequestParams(Request $request): array
+    {
+        return [
+            'start' => $request->input('start', 0),
+            'length' => $request->input('length', 5),
+            'filterOnColumnNumber' => $request->input('order')[0]['column'] ?? 1,
+            'filterOnColumnName' => $request->input('columns')[$request->input('order')[0]['column'] ?? 1]['name'] ?? 'smtp_configurations.id',
+            'orderBy' => $request->input('order')[0]['dir'] ?? 'desc',
+            'searchValue' => $request->input('search')['value'] ?? null,
+        ];
+    }
+
+    /**
+     * Build base query for SMTP list
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function buildSmtpBaseQuery()
+    {
+        return SmtpConfiguration::with(['provider', 'user'])
+            ->whereNull('smtp_configurations.deleted_at');
+    }
+
+    /**
+     * Delete multiple SMTP configurations
+     * @param Request $request HTTP request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteSmtps(Request $request)
     {
         $smtpIds = $request->selectedValues;
+
         if (count($smtpIds) <= 0) {
-            return response()->json(['smtpCount' => 0, 'message' => 'Please check at least one checkbox to continue.']);
+            return response()->json([
+                'smtpCount' => 0,
+                'message' => 'Please check at least one checkbox to continue.'
+            ]);
         }
 
         SmtpConfiguration::whereIn('id', $smtpIds)->delete();
 
-        return response()->json(['smtpCount' => 1, 'message' => 'Records deleted successfully']);
+        return response()->json([
+            'smtpCount' => 1,
+            'message' => 'Records deleted successfully'
+        ]);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Display SMTP configuration details
+     * @param Request $request HTTP request
+     * @param string $id Encoded SMTP ID
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, string $id)
     {
-        $id = base64_decode($id);
-        $smtpConfiguration = SmtpConfiguration::findOrFail($id);
-        if (! $smtpConfiguration) {
-            toastr()->error('This SMTP configuration doesn\'t exist');
+        $decodedId = base64_decode($id);
+        $smtpConfiguration = SmtpConfiguration::findOrFail($decodedId);
 
+        if (!$smtpConfiguration) {
+            toastr()->error('This SMTP configuration doesn\'t exist');
             return redirect('/smtps');
         }
-        $smtpConfiguration = SmtpConfiguration::where('id', $id)->with(['user', 'provider'])->first();
-        $smtpConfiguration['password'] = $smtpConfiguration['password'] ? Crypt::decryptString($smtpConfiguration['password']) : null;
+
+        // Get full configuration with relationships
+        $smtpConfiguration = $this->getFullSmtpConfiguration($decodedId);
 
         return view('smtps.show', compact('smtpConfiguration'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Get full SMTP configuration with relationships
+     * @param int $id SMTP ID
+     * @return SmtpConfiguration
+     */
+    private function getFullSmtpConfiguration(int $id): SmtpConfiguration
+    {
+        $smtpConfiguration = SmtpConfiguration::where('id', $id)
+            ->with(['user', 'provider'])
+            ->first();
+
+        // Decrypt password
+        $smtpConfiguration['password'] = $smtpConfiguration['password']
+            ? Crypt::decryptString($smtpConfiguration['password'])
+            : null;
+
+        return $smtpConfiguration;
+    }
+
+    /**
+     * Display create SMTP form
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        $is_admin = auth()->user()->can('agent-create');
-        if ($is_admin) {
-            $agents = User::with('smtp')->orderBy('name', 'asc')->get();
-        } else {
-            if (auth()->user()->can('all-accounts-list-pipedrive')) {
-                $agents = User::role(['Agent', 'Service Team', 'Service & Agent'])->with('smtp')->orderBy('name', 'asc')->get();
-            } else {
-                $agents = User::role(['Agent', 'Service & Agent'])->with('smtp')->orderBy('name', 'asc')->get();
-            }
-        }
-        $agentUsers = [];
-        $agentUsers[''] = 'Select User';
+        // Check admin status
+        $isAdmin = $this->checkAdminStatus();
 
-        foreach ($agents as $agent) {
-            if (is_null($agent->smtp)) {
-                $agentUsers[$agent->id] = $agent->name.' ( '.$agent->email.' )';
-            }
-        }
+        // Get agents based on permissions
+        $agents = $this->getAgentsForCreation($isAdmin);
 
-        $agent_count = count($agentUsers);
-        $agent_msg = 'No user left - SMTP has been configured for all';
-        if ($agent_count < 0) {
-            toastr()->success($agent_msg);
+        // Filter agents without SMTP
+        $agentUsers = $this->filterAgentsWithoutSmtp($agents);
 
+        // Get email providers
+        $emailProviders = $this->getEmailProviders();
+
+        // Check if any agents available
+        $agentCount = count($agentUsers);
+        if ($agentCount <= 0) {
+            toastr()->success('No user left - SMTP has been configured for all');
             return redirect('/smtps');
-        }
-        $providers = EmailProvider::get();
-        $email_providers = [];
-        $email_providers[0] = 'Select Email Provider';
-
-        foreach ($providers as $provider) {
-            $email_providers[$provider->id] = $provider->provider_name;
         }
 
         return view('smtps.create', compact('agentUsers', 'email_providers'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
+     * Check if current user is admin
+     * @return bool
+     */
+    private function checkAdminStatus(): bool
+    {
+        return auth()->user()->can('agent-create');
+    }
+
+    /**
+     * Get agents for SMTP creation based on permissions
+     * @param bool $isAdmin Whether user is admin
+     * @return \Illuminate\Collection
+     */
+    private function getAgentsForCreation(bool $isAdmin)
+    {
+        if ($isAdmin) {
+            return User::with('smtp')->orderBy('name', 'asc')->get();
+        } else {
+            if (auth()->user()->can('all-accounts-list-pipedrive')) {
+                return User::role(['Agent', 'Service Team', 'Service & Agent'])
+                    ->with('smtp')
+                    ->orderBy('name', 'asc')
+                    ->get();
+            } else {
+                return User::role(['Agent', 'Service & Agent'])
+                    ->with('smtp')
+                    ->orderBy('name', 'asc')
+                    ->get();
+            }
+        }
+    }
+
+    /**
+     * Filter agents without SMTP configuration
+     * @param \Illuminate\Collection $agents Agents collection
+     * @return array Filtered agent list
+     */
+    private function filterAgentsWithoutSmtp($agents): array
+    {
+        $agentUsers = ['' => 'Select User'];
+
+        foreach ($agents as $agent) {
+            if (is_null($agent->smtp)) {
+                $agentUsers[$agent->id] = $agent->name . ' ( ' . $agent->email . ' )';
+            }
+        }
+
+        return $agentUsers;
+    }
+
+    /**
+     * Store new SMTP configuration (admin)
+     * @param Request $request HTTP request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeSmtp(Request $request)
+    {
+        // Build validation rules
+        $rules = $this->buildStoreSmtpRules($request);
+
+        // Validate request
+        $validator = $this->validateSmtpRequest($request, $rules);
+
+        if ($validator->fails()) {
+            return $this->handleValidationFailure($validator);
+        }
+
+        // Prepare input data
+        $input = $this->prepareSmtpInput($request);
+
+        // Create SMTP configuration
+        $smtpConfiguration = SmtpConfiguration::create($input);
+        $encodedId = base64_encode($smtpConfiguration->id);
+
+        toastr()->success('SMTP configuration added successfully');
+
+        return redirect()->route('smtps.update', compact('encodedId'));
+    }
+
+    /**
+     * Build validation rules for SMTP store
+     * @param Request $request HTTP request
+     * @return array Validation rules
+     */
+    private function buildStoreSmtpRules(Request $request): array
     {
         $rules = [
             'host' => 'required|max:100',
@@ -277,140 +545,117 @@ class SmtpConfigurationController extends Controller
             'user_id' => 'required',
             'signature_image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ];
+
+        // Add username/password rules if user is editing their own config
         if (isset($request->user_id) && $request->user_id == auth()->user()->id) {
             $rules['username'] = 'required';
             $rules['password'] = 'required';
         }
 
+        return $rules;
+    }
+
+    /**
+     * Validate SMTP request
+     * @param Request $request HTTP request
+     * @param array $rules Validation rules
+     * @return \Illuminate\Validation\Validator
+     */
+    private function validateSmtpRequest(Request $request, array $rules): \Illuminate\Validation\Validator
+    {
         $niceNames = [
             'user_id' => 'User Name',
             'username' => 'Email',
         ];
-        // validate fields using nice name in error messages
-        $validator = Validator::make($request->all(), $rules, [], $niceNames);
 
-        if ($validator->fails()) {
-            $errorMessages = $validator->errors()->all();
-            toastr()->error(implode('<br>', $errorMessages));
+        return Validator::make($request->all(), $rules, [], $niceNames);
+    }
 
-            return back()->withErrors($validator)->withInput();
-        }
-
+    /**
+     * Prepare input data for SMTP
+     * @param Request $request HTTP request
+     * @return array Input data
+     */
+    private function prepareSmtpInput(Request $request): array
+    {
         $input = $request->all();
 
+        // Handle signature image upload
         if ($request->hasFile('signature_image')) {
-            $imageName = time().'.'.$request->signature_image->extension();
-            if (! file_exists(public_path('images/signature'))) {
+            $imageName = time() . '.' . $request->signature_image->extension();
+
+            if (!file_exists(public_path('images/signature'))) {
                 mkdir(public_path('images/signature'), 0777, true);
             }
+
             $request->signature_image->move(public_path('images/signature'), $imageName);
             $input['signature_image'] = $imageName;
         }
 
+        // Encrypt password
         $input['password'] = Crypt::encryptString($input['password']);
-        $smtpConfiguration = SmtpConfiguration::create($input);
-        $id = base64_encode($smtpConfiguration->id);
 
-        toastr()->success('SMTP configuration added successfully');
-
-        return redirect()->route('smtps.update', compact('id'));
+        return $input;
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Display edit SMTP form
+     * @param string $id Encoded SMTP ID
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function edit($id)
+    public function edit(string $id)
     {
-        $id = base64_decode($id);
-        $smtpConfiguration = SmtpConfiguration::where('id', $id)->with('user')->first();
-        if (! $smtpConfiguration) {
-            toastr()->error('This SMTP configuration doesn\'t exist');
+        $decodedId = base64_decode($id);
+        $smtpConfiguration = SmtpConfiguration::where('id', $decodedId)->with('user')->first();
 
+        if (!$smtpConfiguration) {
+            toastr()->error('This SMTP configuration doesn\'t exist');
             return redirect('/smtps');
         }
-        $providers = EmailProvider::get();
-        $email_providers = [];
-        $email_providers[0] = 'Select Email Provider';
 
-        foreach ($providers as $provider) {
-            $email_providers[$provider->id] = $provider->provider_name;
-        }
-        $smtpConfiguration['password'] = $smtpConfiguration['password'] ? Crypt::decryptString($smtpConfiguration['password']) : null;
+        // Get email providers
+        $emailProviders = $this->getEmailProviders();
 
-        if ($smtpConfiguration->signature_image && file_exists(public_path('images/signature/'.$smtpConfiguration->signature_image))) {
-            $smtpConfiguration->signature_image = '/images/signature/'.$smtpConfiguration->signature_image;
-        } else {
-            $smtpConfiguration->signature_image = '/images/placeholder-img.png';
-        }
+        // Decrypt password
+        $smtpConfiguration['password'] = $smtpConfiguration['password']
+            ? Crypt::decryptString($smtpConfiguration['password'])
+            : null;
+
+        // Handle signature image
+        $smtpConfiguration = $this->handleSignatureImage($smtpConfiguration);
 
         return view('smtps.edit', compact('smtpConfiguration', 'email_providers'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update SMTP configuration
+     * @param Request $request HTTP request
+     * @param int $id SMTP ID
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
-
         $smtpConfiguration = SmtpConfiguration::find($id);
-        if (! $smtpConfiguration) {
-            toastr()->error('Something went wrong');
 
+        if (!$smtpConfiguration) {
+            toastr()->error('Something went wrong');
             return back();
         }
 
-        $rules = [
-            'host' => 'required|max:100',
-            'port' => 'required|numeric|min:3',
-            'encryption' => 'required',
-            'from_name' => 'required|max:100',
-            'signature_image' => 'image|mimes:jpeg,png,jpg|max:2048',
-        ];
-        if ($smtpConfiguration->user_id == auth()->user()->id) {
-            $rules['password'] = 'required';
-        }
+        // Build update rules
+        $rules = $this->buildUpdateRules($smtpConfiguration);
 
-        $niceNames = [];
-        // validate fields using nice name in error messages
-        $validator = Validator::make($request->all(), $rules, [], $niceNames);
+        // Validate request
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            $errorMessages = $validator->errors()->all();
-            toastr()->error(implode('<br>', $errorMessages));
-
-            return back()->withErrors($validator)->withInput();
+            return $this->handleValidationFailure($validator);
         }
 
-        $input = $request->all();
+        // Prepare input data
+        $input = $this->prepareUpdateInput($request, $smtpConfiguration);
 
-        if ($request->hasFile('signature_image')) {
-            $imageName = time().'.'.$request->signature_image->extension();
-            if (! file_exists(public_path('images/signature'))) {
-                mkdir(public_path('images/signature'), 0777, true);
-            }
-            $request->signature_image->move(public_path('images/signature'), $imageName);
-        }
-
-        // if pass is not empty, update it
-        if (! empty($input['password'])) {
-            $input['password'] = Crypt::encryptString($input['password']);
-        }
-
-        if (! isset($imageName)) {
-            if (isset($smtpConfiguration['signature_image']) && $smtpConfiguration['signature_image']) {
-                $imageName = $smtpConfiguration['signature_image'];
-            } else {
-                $imageName = null;
-            }
-        }
-        $input['signature_image'] = $imageName;
-
+        // Update configuration
         $smtpConfiguration->update($input);
         toastr()->success('SMTP configuration updated successfully');
 
@@ -418,46 +663,132 @@ class SmtpConfigurationController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Build validation rules for update
+     * @param SmtpConfiguration $smtpConfiguration SMTP configuration
+     * @return array Validation rules
      */
-    public function destroy($id)
+    private function buildUpdateRules(SmtpConfiguration $smtpConfiguration): array
     {
-        // find the SMTP to delete
-        $smtpConfiguration = SmtpConfiguration::find($id);
-        if (! $smtpConfiguration) {
-            toastr()->error('The SMTP was removed previously');
+        $rules = [
+            'host' => 'required|max:100',
+            'port' => 'required|numeric|min:3',
+            'encryption' => 'required',
+            'from_name' => 'required|max:100',
+            'signature_image' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ];
 
+        // Require password if user is updating their own config
+        if ($smtpConfiguration->user_id == auth()->user()->id) {
+            $rules['password'] = 'required';
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Prepare input data for update
+     * @param Request $request HTTP request
+     * @param SmtpConfiguration $smtpConfiguration SMTP configuration
+     * @return array Input data
+     */
+    private function prepareUpdateInput(Request $request, SmtpConfiguration $smtpConfiguration): array
+    {
+        $input = $request->all();
+
+        // Handle signature image upload
+        if ($request->hasFile('signature_image')) {
+            $imageName = time() . '.' . $request->signature_image->extension();
+
+            if (!file_exists(public_path('images/signature'))) {
+                mkdir(public_path('images/signature'), 0777, true);
+            }
+
+            $request->signature_image->move(public_path('images/signature'), $imageName);
+        }
+
+        // Encrypt password if provided
+        if (!empty($input['password'])) {
+            $input['password'] = Crypt::encryptString($input['password']);
+        }
+
+        // Preserve existing image if not updated
+        if (!isset($imageName)) {
+            if (isset($smtpConfiguration['signature_image']) && $smtpConfiguration['signature_image']) {
+                $imageName = $smtpConfiguration['signature_image'];
+            } else {
+                $imageName = null;
+            }
+        }
+
+        $input['signature_image'] = $imageName;
+
+        return $input;
+    }
+
+    /**
+     * Delete SMTP configuration
+     * @param int $id SMTP ID
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(int $id)
+    {
+        $smtpConfiguration = SmtpConfiguration::find($id);
+
+        if (!$smtpConfiguration) {
+            toastr()->error('The SMTP was removed previously');
             return back();
         }
+
         $smtpConfiguration->delete();
         toastr()->success('SMTP Deleted!');
 
         return redirect()->route('smtps.index');
     }
 
+    /**
+     * Add sample emails to Klaviyo for testing
+     */
     public function addEmailtoKlaviyo()
     {
+        // Generate random number of contacts to process
         $length = $this->generateSecureRandomNumber(1, 3);
 
-        $contacts = Contact::select('id', 'c_first_name', 'c_last_name', 'c_email', 'c_zip', 'klaviyo_call_initiated')->where([
-            ['c_email', 'like', '%mailinator.com%'],
-            ['c_email', '!=', null],
-            ['klaviyo_call_initiated', '=', 0],
-        ])->limit($length)->get();
+        // Get contacts with mailinator.com emails
+        $contacts = Contact::select('id', 'c_first_name', 'c_last_name', 'c_email', 'c_zip', 'klaviyo_call_initiated')
+            ->where([
+                ['c_email', 'like', '%mailinator.com%'],
+                ['c_email', '!=', null],
+                ['klaviyo_call_initiated', '=', 0],
+            ])
+            ->limit($length)
+            ->get();
 
+        // Queue jobs for each contact
+        $ids = $this->queueKlaviyoJobs($contacts);
+
+        // Update contacts that were queued
+        if (!empty($ids)) {
+            Contact::whereIn('id', $ids)->update(['klaviyo_call_initiated' => 1]);
+        }
+    }
+
+    /**
+     * Queue Klaviyo jobs for contacts
+     * @param \Illuminate\Collection $contacts Contacts collection
+     * @return array Contact IDs
+     */
+    private function queueKlaviyoJobs($contacts): array
+    {
         $ids = [];
+
         foreach ($contacts as $contact) {
             $ids[] = $contact->id;
-            $delay = $this->generateSecureRandomNumber(1, 60); // Random delay between 1 second and 5 minutes
+            $delay = $this->generateSecureRandomNumber(1, 60);
+
             AddEmailToKlaviyo::dispatch($contact)
                 ->delay(now()->addSeconds($delay));
         }
-        if (! empty($ids)) {
-            Contact::whereIn('id', $ids)->update(['klaviyo_call_initiated' => 1]);
-        }
 
+        return $ids;
     }
 }

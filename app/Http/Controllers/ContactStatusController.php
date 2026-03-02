@@ -17,7 +17,6 @@ class ContactStatusController extends Controller
 
     public function edit($id)
     {
-        // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $ContactStatus = ContactStatus::find($id);
         if (! $ContactStatus) {
@@ -33,7 +32,6 @@ class ContactStatusController extends Controller
 
     public function show($id)
     {
-        // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $ContactStatus = ContactStatus::find($id);
         if (! $ContactStatus) {

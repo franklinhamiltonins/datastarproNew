@@ -75,7 +75,6 @@ class BotController extends Controller
                 if (count($alldata['errors']) > 0) {
                     $dataErrors->push($alldata['errors']);
                 }
-                // dd($data);
                 ScrapCity::storeCountyAndCity($data);
 
                 // messages variable to use in blade
@@ -114,10 +113,7 @@ class BotController extends Controller
 
             $path = '../storage/app/public/uploads/'.$fileName.'.csv';
             $excel = $reader->load($csvFile);
-            // dd($excel);
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($excel);
-            // $writer->setUseBOM(true);
-            // $writer->setOutputEncoding('UTF-8');
             $writer->setUseBOM(false);
             $writer->setOutputEncoding('UTF-8');
             $writer->setEnclosureRequired(false);
@@ -178,7 +174,6 @@ class BotController extends Controller
         $dataErrors = collect();
         // loop trough row cells
         foreach ($data as $key => $r) {
-            // echo $key;
             if ($key) {
                 if ($key !== 'County' || $key !== 'county') {
                     $dataErrors->push(
@@ -206,7 +201,7 @@ class BotController extends Controller
     }
 
     // view to settings import
-    public function botImport(Request $request)
+    public function botImport()
     {
         return view('bot.settings');
     }

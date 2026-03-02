@@ -100,7 +100,7 @@
                                             <span class="arrow"></span>
                                         </th>
                                         <th style="min-width: 110px">Queued On</th>
-                                        @if ($is_admin_user)
+                                        @if ($isAdminUser)
                                             <th>Owned By</th>
                                         @endif
                                     </tr>
@@ -136,7 +136,7 @@
 
 @push("scripts")
     <script>
-        const IS_ADMIN_USER = parseInt('{{ $is_admin_user }}');
+        const isAdminUser = parseInt('{{ $isAdminUser }}');
         var rows_selected = [];
         var selectedCheckboxes = [];
         /****  Document Ready ****/
@@ -253,7 +253,7 @@
             ];
 
             // Add the "Owned By" column for admin users
-            if (IS_ADMIN_USER) {
+            if (isAdminUser) {
                 columns.splice(9, 0, {
                     // insert after 'name'
                     data: 'owned_by',

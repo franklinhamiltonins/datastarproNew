@@ -94,7 +94,7 @@
                         <br>
                         <p class="small text-secondary mb-0 smsrealtedarea">Note-  The length of dynamic content placeholders like {CANDIDATE_FIRST_NAME}, {CANDIDATE_LAST_NAME}, and {BUSINESS_NAME} is assumed to be 15 characters each. Please ensure that your message fits within the allowed character limit, accounting for these placeholders.</p>
 
-                        @if($is_admin)
+                        @if($isAdmin)
                         <div class="col-12 col-md-6 mt-3">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">

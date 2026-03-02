@@ -1,5 +1,5 @@
 <?php
-if (!function_exists('filter_leads')) {
+if (!function_exists('filterLeads')) {
 
     /**
      * filter leads
@@ -7,23 +7,20 @@ if (!function_exists('filter_leads')) {
      * @param  string $person Name
      * @return string
      */
-    function filter_leads($leadsQuery, $filters, $columnsType, $campaignId)
+    function filterLeads($leadsQuery, $filters, $columnsType, $campaignId)
     {
         $contactColumn =  Schema::getColumnListing('contacts');
         $exculsion_array = ["name"];
-        // dd($leadsQuery->toSql());
         //we can't send json data, because the table uses raw data . This is why we encode and then decode to get the right format data
         $filters = json_decode(json_encode($filters));
-        // echo "<pre>";print_r($filters);exit;
         if ($filters) {
-
             //if there are filters
             //start leads querry
             $leadsQuery->where(function ($q) use ($filters, $columnsType, $contactColumn,$exculsion_array) {
                 // loop trough sections
                 foreach ($filters as $filter) {
                     // open where querry
-                    $q->where(function ($s) use ($filters, $filter, $columnsType, $contactColumn,$exculsion_array) {
+                    $q->where(function ($s) use ($filter, $columnsType, $contactColumn,$exculsion_array) {
                         $count = 0; // the count of the loop
                         foreach ($filter as $fl) {
                             if(!empty($fl->s_name)){
@@ -38,7 +35,7 @@ if (!function_exists('filter_leads')) {
                                     if (in_array($fl->s_name, $contactColumn)) { // if it's contact
                                         //make the querry
                                         $clauseWhereHas =  ($count == 1) ? 'whereHas' : 'orWhereHas';
-                                        $s->$clauseWhereHas('contacts', function ($w) use ($clauseWhereHas, $fl, $sValue) {
+                                        $s->$clauseWhereHas('contacts', function ($w) use ($fl, $sValue) {
                                             //when value is null search for null or empty values
                                             if ($sValue == null) {
                                                 if ($fl->s_op == "like") {
@@ -59,48 +56,48 @@ if (!function_exists('filter_leads')) {
                                         $clauseWhereDoesntHave =  ($count == 1) ? 'whereDoesntHave' : 'orWhereDoesntHave';
                                         if ($sValue == null) {
                                             if ($fl->s_op == "like") {
-                                                $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                $s->$clauseWhereDoesntHave('campaigns', function ($w) {
                                                     $w->where('status', 'COMPLETED')->whereNotNull('campaign_date');
                                                 });
                                             } else {
-                                                $s->$clauseWhereHas('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                $s->$clauseWhereHas('campaigns', function ($w) {
                                                     $w->where('status', 'COMPLETED')->whereNotNull('campaign_date');
                                                 });
                                             }
                                         } else {
                                             switch ($fl->s_op) {
                                                 case 'like':
-                                                    $s->$clauseWhereHas('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                    $s->$clauseWhereHas('campaigns', function ($w)  use ($sValue) {
                                                         $w->where('status', 'COMPLETED')->where('campaign_date', 'like', $sValue);
                                                     });
                                                     break;
 
                                                 case 'not like':
-                                                    $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                    $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($sValue) {
                                                         $w->where('status', 'COMPLETED')->where('campaign_date', 'like', $sValue);
                                                     });
                                                     break;
 
                                                 case '>':
-                                                    $s->$clauseWhereHas('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                    $s->$clauseWhereHas('campaigns', function ($w)  use ($sValue) {
                                                         $w->where('status', 'COMPLETED')->where('campaign_date', '>', $sValue);
                                                     });
                                                     break;
 
                                                 case '<':
-                                                    $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                    $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($sValue) {
                                                         $w->where('status', 'COMPLETED')->where('campaign_date', '>=', $sValue);
                                                     })->with('campaigns');
                                                     break;
 
                                                 case '>=':
-                                                    $s->$clauseWhereHas('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                    $s->$clauseWhereHas('campaigns', function ($w)  use ($sValue) {
                                                         $w->where('status', 'COMPLETED')->where('campaign_date', '>=', $sValue);
                                                     });
                                                     break;
 
                                                 case '<=':
-                                                    $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($filter, $fl, $sValue) {
+                                                    $s->$clauseWhereDoesntHave('campaigns', function ($w)  use ($sValue) {
                                                         $w->where('status', 'COMPLETED')->where('campaign_date', '>', $sValue);
                                                     });
                                                     break;
@@ -111,7 +108,6 @@ if (!function_exists('filter_leads')) {
                                         $clauseWhere =  ($count == 1) ? 'where' : 'orWhere';
                                         $clauseWhereNull = ($count == 1) ? 'whereNull' : 'orWhereNull';
                                         $clauseWhereNotNull = ($count == 1) ? 'whereNotNull' : 'orWhereNotNull';
-                                        // echo $clauseWhere." ---- ".$clauseWhereNull." ---- ".$clauseWhereNotNull." ---- ".$sValue." ---- ";exit;
                                         if ($sValue == null) { //when value is null search for null or empty values
                                             if (in_array($fl->s_name, $columnsType['number'])) {
                                                 if ($fl->s_op == "like") {
@@ -137,8 +133,6 @@ if (!function_exists('filter_leads')) {
                                             else{
                                                 $s->$clauseWhere($fl->s_name, $fl->s_op, (in_array($fl->s_name, $columnsType['date']) || in_array($fl->s_name, $columnsType['number'])) ?  $fl->s_val : '%' . $fl->s_val . '%');
                                             }
-                                            // echo (in_array($fl->s_name, $columnsType['date']) || in_array($fl->s_name, $columnsType['number'])) ?  $fl->s_val : '%' . $fl->s_val . '%';exit;
-                                            
                                         }
                                     }
                                 }
@@ -156,7 +150,6 @@ if (!function_exists('filter_leads')) {
                 if (count($leads) > 0) {
                     //make querry based on campaign lead_ids
                     $leadsQuery->where(function ($q) use ($leads) {
-                        // $campaignIds = json_decode(json_encode($campaignId));
                         $count = 0;
                         foreach ($leads as $lead) {
                             $count++;
@@ -165,7 +158,9 @@ if (!function_exists('filter_leads')) {
                         }
                     });
                 } else {
-                    $leadsQuery = App\Model\LeadsModel\Lead::where('id', '0'); //if there are no leads, search for something that will never exist in db, so that table shows it found nothing
+                    $leadsQuery = App\Model\LeadsModel\Lead::where('id', '0'); 
+                    //if there are no leads, search for something that will never exist in db,
+                    // so that table shows it found nothing
                 }
             }
         }
@@ -173,9 +168,9 @@ if (!function_exists('filter_leads')) {
     }
 }
 
-if (!function_exists('filter_agent_leads')) {
+if (!function_exists('filterAgentLeads')) {
 
-    function filter_agent_leads($agent_leads_query, $filters, $columnsType)
+    function filterAgentLeads($agent_leads_query, $filters, $columnsType)
     {
         //we can't send json data, because the table uses raw data . This is why we encode and then decode to get the right format data
         $filters = json_decode(json_encode($filters));
@@ -184,7 +179,7 @@ if (!function_exists('filter_agent_leads')) {
                 // loop trough sections
                 foreach ($filters as $filter) {
                     // open where querry
-                    $q->where(function ($s) use ($filters, $filter, $columnsType) {
+                    $q->where(function ($s) use ($filter, $columnsType) {
                         $count = 0; // the count of the loop
                         foreach ($filter as $fl) {
                             if (($fl->s_val == "" || $fl->s_val == "null") && $fl->s_val != "0") {
@@ -235,7 +230,7 @@ if (!function_exists('updateLeadActions')) {
      * @param  string $person Name
      * @return string
      */
-    function update_leadActions($campaign)
+    function updateLeadActions($campaign)
     {
         $actions = "0";
         $campaignDate = $campaign->campaign_date; //get campaign date
@@ -247,7 +242,7 @@ if (!function_exists('updateLeadActions')) {
                 $query->whereHas('campaigns', function ($qw) use ($campaign) {
                     $qw->where('id', $campaign->id);
                 });
-            })->where(function ($q) use ($campaign, $campaignDate, $tenDays) {
+            })->where(function ($q) use ($campaignDate, $tenDays) {
                 $q->whereBetween('contact_date', [
                     $campaignDate,
                     $tenDays
@@ -304,9 +299,7 @@ if (!function_exists('totalPremiumCalculationLeadWise')) {
 
         return $total_premium_sum > 0 ? $total_premium_sum : 0;
     }
-
 }
-
 
 if (! function_exists('extractPositiveValue')) {
     function extractPositiveValue($object, $field)

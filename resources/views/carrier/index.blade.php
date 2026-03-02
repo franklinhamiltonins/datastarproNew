@@ -231,7 +231,7 @@ function draw_table() {
                             <a title="Edit carrier" class="btn btn-sm  btn-success action-btn m-0 d-flex justify-content-center align-items-center" href="{{url('carrier/edit')}}/`+encryptedId+`">
                                 <i class="fa fa-edit"></i>
                             </a>`;
-                        if(parseInt('{{$is_admin}}') == 1){
+                        if(parseInt('{{$isAdmin}}') == 1){
                             appendata += `
                                 <a href="javascript:void(0)" title="Delete carrier" data-id="`+data+`" class="btn btn-sm btn-danger deleteCarrierBtn action-btn m-0 d-flex justify-content-center align-items-center">
                                     <i class="fa fa-trash"></i>

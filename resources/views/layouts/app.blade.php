@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace("_", "-", app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,11 +20,8 @@
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
         />
-        <!-- Styles -->
-
-        <link href="{{ mix("css/main.css") }}" rel="stylesheet" />
-        <link href="{{ mix("css/style.css") }}" rel="stylesheet" />
-        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
+        <link href="{{ mix('css/main.css') }}" rel="stylesheet" />
+        <link href="{{ mix('css/style.css') }}" rel="stylesheet" />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css"
@@ -35,17 +32,10 @@
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" />
         <!-- Choices.js CSS -->
         <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
-
-        <!-- for pusher and websocket -->
-        <!-- <link rel="stylesheet" href="{{ asset("css/app.css") }}"> -->
-
         @stack("styles")
         @flasher_render
 
         <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-
-        <!-- for pusher and websocket -->
-        <!-- <script src="{{ asset("js/app.js") }}" defer></script> -->
     </head>
 
     <body class="hold-transition sidebar-mini">
@@ -58,7 +48,7 @@
             </div>
             @include("partials.footer")
         </div>
-        <script src="{{ asset("js/native/jquery-3.7.1.js") }}"></script>
+        <script src="{{ asset('js/native/jquery-3.7.1.js') }}"></script>
 
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"
@@ -82,37 +72,9 @@
             crossorigin="anonymous"
         ></script>
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-        <script type="text/javascript" src="{{ URL::asset("js/custom.js") }}?v={{ time() }}"></script>
+        <script type="text/javascript" src="{{ URL::asset('js/custom.js') }}?v={{ time() }}"></script>
         <script src="https://cdn.ckeditor.com/ckeditor5/41.3.0/classic/ckeditor.js" defer></script>
-        <!-- <script src="{{ asset("js/ckeditor-reuired-function.js") }}" defer></script> -->
-
-        <!-- Scripts -->
-        <!-- <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> -->
-        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
-
-        <!-- <script src="https://code.jquery.com/jquery-migrate-3.5.2.js" integrity="sha256-ThFcNr/v1xKVt5cmolJIauUHvtXFOwwqiTP7IbgP8EU=" crossorigin="anonymous"></script> -->
-
-        <!-- Choices.js JS -->
-
-        <!-- <script src="{{ mix("js/app.js") }}"></script> -->
-
-        <!-- <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script> -->
-        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
-
-        <!-- <script src="https://code.jquery.com/jquery-migrate-3.5.2.js" integrity="sha256-ThFcNr/v1xKVt5cmolJIauUHvtXFOwwqiTP7IbgP8EU=" crossorigin="anonymous"></script> -->
 
         @stack("scripts")
-        @if ($errors)
-            <script>
-                // window.notify = function (type, message) {
-                //     if (!window.flasher) return;
-
-                //     window.flasher.flash({
-                //         type: type,
-                //         message: message
-                //     });
-                // };
-            </script>
-        @endif
     </body>
 </html>

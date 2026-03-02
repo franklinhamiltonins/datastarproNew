@@ -174,10 +174,10 @@ class Controller extends BaseController
 
     public static function getagentListBasedonLogin()
     {
-        $is_admin_user = auth()->user()->can('all-accounts-list-pipedrive');
+        $isAdminUser = auth()->user()->can('all-accounts-list-pipedrive');
         $agentUsers = [];
 
-        if (auth()->user()->role(['Manager'])) {
+        if (auth()->user()->hasRole('Manager')) {
             $user = auth()->user();
             $agentUsers[$user->id] = $user->name.' ('.$user->email.')';
 
@@ -186,7 +186,7 @@ class Controller extends BaseController
                 $agentUsers[$agent->id] = $agent->name.' ('.$agent->email.')';
             }
         } else {
-            if ($is_admin_user) {
+            if ($isAdminUser) {
                 $agents = User::select('users.id', 'users.name', 'users.email')->role(['Agent', 'Service & Agent', 'Manager'])->get();
                 foreach ($agents as $key => $agent) {
                     $agentUsers[$agent->id] = $agent->name.' ('.$agent->email.')';

@@ -18,7 +18,7 @@
 </style>
 <!-- Main content -->
 <section class="content">
-    <input type="hidden" value="{{ $is_admin }}" id="isAdminUser">
+    <input type="hidden" value="{{ $isAdmin }}" id="isAdminUser">
     <input type="hidden" value="{{ auth()->user()->id }}" id="auth_id">
     <input type="hidden" value="{{ auth()->user()->can('template-delete') ? 'true' : 'false' }}" id="delete_permission">
     <div class="container-fluid">
@@ -202,7 +202,6 @@ function draw_table() {
                 "orderable": false,
                 className: "text-left",
                 render: function(data, type, row, meta) {
-                    var is_admin = $("#isAdminUser").val();
                     var auth_id = $("#auth_id").val();
 
                     if(row.created_by == auth_id)
@@ -222,13 +221,6 @@ function draw_table() {
                 data: 'template_name',
                 name: 'template_name'
             },
-            // {
-            //     data: 'template_content',
-            //     render: function(data, type, row, meta) {
-            //         let node = $.parseHTML('<span>' + data + '</span>')[0];
-            //         return node.innerText;
-            //     }
-            // },
             {
                 data: 'template_subject',
                 name: 'template_subject'

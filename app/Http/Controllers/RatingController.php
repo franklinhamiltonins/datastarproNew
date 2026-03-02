@@ -17,12 +17,12 @@ class RatingController extends Controller
     {
         $rating = [];
         if (auth()->user()->can('agent-create')) {
-            $is_admin = 1;
+            $isAdmin = 1;
         } else {
-            $is_admin = 0;
+            $isAdmin = 0;
         }
 
-        return view('rating.index', compact('rating', 'pending', 'is_admin'));
+        return view('rating.index', compact('rating', 'pending', 'isAdmin'));
     }
 
     public function convertToSnakeCase($key, $id)
@@ -207,7 +207,6 @@ class RatingController extends Controller
 
     public function edit($id, $pending = 1)
     {
-        // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $rating = Rating::find($id);
         if (! $rating) {
@@ -225,7 +224,6 @@ class RatingController extends Controller
 
     public function show($id, $pending = 1)
     {
-        // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $rating = Rating::find($id);
         if (! $rating) {

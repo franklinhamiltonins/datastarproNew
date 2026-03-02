@@ -54,7 +54,7 @@ trait DialRelatedTrait
      */
     protected function applyLeadFilters($leadsQuery, $searchFields, $columnsType, $campaignId)
     {
-        $leadsQuery = filter_leads($leadsQuery, $searchFields, $columnsType, $campaignId);
+        $leadsQuery = filterLeads($leadsQuery, $searchFields, $columnsType, $campaignId);
         $leadsQuery->where('is_client', 0);
 
         return $leadsQuery;

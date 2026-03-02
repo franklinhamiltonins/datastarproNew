@@ -52,7 +52,7 @@
                                 {!! $template->template_content !!}
                             </div>
 
-                            @if ($is_admin)
+                            @if ($isAdmin)
                                 <div class="form-group">
                                     <strong>Set For All:</strong>
                                     {{ $template->set_for_all == "yes" ? "Yes" : "No" }}

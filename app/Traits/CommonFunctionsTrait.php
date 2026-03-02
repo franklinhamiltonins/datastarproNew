@@ -244,7 +244,7 @@ trait CommonFunctionsTrait
     /**
      * Check contact slug existence
      */
-    public function checkContactSlugExistence(string $contactSlug, string $id = ''): array
+    public function checkContactSlugExistance(string $contactSlug, string $id = ''): array
     {
         $existanceArr = [];
         $existingContacts = [];

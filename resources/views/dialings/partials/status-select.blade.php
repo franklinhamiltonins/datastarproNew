@@ -1,4 +1,4 @@
-@if ($is_admin)
+@if ($isAdmin)
     <select
         class="form-control selectstatus @if($row->referral_marker) {{ 'disabledClass' }} @endif"
         name="status"

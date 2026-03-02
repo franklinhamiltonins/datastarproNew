@@ -18,12 +18,12 @@ class CarrierController extends Controller
     {
         $carrier = [];
         if (auth()->user()->can('agent-create')) {
-            $is_admin = 1;
+            $isAdmin = 1;
         } else {
-            $is_admin = 0;
+            $isAdmin = 0;
         }
 
-        return view('carrier.index', compact('carrier', 'pending', 'is_admin'));
+        return view('carrier.index', compact('carrier', 'pending', 'isAdmin'));
     }
 
     public function convertToSnakeCase($key, $id)

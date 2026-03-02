@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 class AgentController extends Controller
 {
-    private $is_admin = false;
-
     // dialing index list page start
     public function reports()
     {

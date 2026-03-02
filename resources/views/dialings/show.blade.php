@@ -26,7 +26,7 @@
                                 <div class="left-content d-flex align-items-center">
                                     <a
                                         class="btn btn-info btn-sm px-2 mb-3 mb-md-0"
-                                        href="{{ route("dialings.index") }}"
+                                        href="{{ route('dialings.index') }}"
                                     >
                                         <i class="fas fa-arrow-circle-left"></i>
                                         Back
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mt-3">
                                     <div class="d-flex flex-wrap action-dropdown">
-                                        @if ($is_admin)
+                                        @if ($isAdmin)
                                             <div class="dropdown">
                                                 <button
                                                     class="btn btn-info btn-sm dropdown-toggle"
@@ -110,7 +110,7 @@
                                     <tr>
                                         <th style="min-width: 30px">No</th>
                                         <th></th>
-                                        @if ($is_admin)
+                                        @if ($isAdmin)
                                             <th id="serial_no"></th>
                                         @endif
 
@@ -170,8 +170,8 @@
 @endpush
 
 @push("scripts")
-    @if (! isset($agentlist_id))
-        {{ $agentlist_id = 0 }}
+    @if (! isset($agentListId))
+        {{ $agentListId = 0 }}
     @endif
 
     <script>
@@ -179,10 +179,10 @@
         var selectedCheckboxes = [];
 
         /****  Document Ready ****/
-        var agentlist_id = 0;
+        var agentListId = 0;
 
         jQuery(document).ready(function () {
-            agentlist_id = '{{ $agentlist_id }}';
+            agentListId = '{{ $agentListId }}';
             jQuery.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
@@ -237,7 +237,7 @@
             // console.log(pagination_number + '=>' + previous_clicked_lead_id);
             console.log(savedOrder);
 
-            var isAdmin = @json($is_admin);
+            var isAdmin = @json($isAdmin);
 
             var columns = [
                 {
@@ -320,7 +320,7 @@
                     url: '{{ url("dialings/dialings-leads-custom") }}',
                     type: 'GET',
                     data: function (d) {
-                        d.agentlist_id = agentlist_id;
+                        d.agentListId = agentListId;
                     },
                 },
 
@@ -447,7 +447,7 @@
                 data: {
                     agent_list: agent_list,
                     selectedValues: selectedValues,
-                    dialing_id: agentlist_id,
+                    dialing_id: agentListId,
                 },
                 success: function (data, status, xhr) {
                     console.log(data);

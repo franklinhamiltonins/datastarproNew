@@ -11,8 +11,8 @@
 
     // ESLint auto-fix
     "editor.codeActionsOnSave": {
-        "source.fixAll": true,
-        "source.fixAll.eslint": true
+        "source.fixAll": "explicit",
+        "source.fixAll.eslint": "explicit"
     },
 
     // Ensure consistent wrapping in VS Code

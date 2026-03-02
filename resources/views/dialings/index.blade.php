@@ -61,10 +61,8 @@
                                     <th>No</th>
                                     <th></th>
                                     <th>List Name <span class="arrow"></span></th>
-
                                     <th>Agent <span class="arrow"></span></th>
                                     <th>Status</th>
-
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -222,10 +220,6 @@ function draw_table() {
                 data: 'name',
                 name: 'name'
             },
-            // {
-            // 	data: 'lead_number',
-            // 	name: 'lead_number'
-            // },
             {
                 data: 'agent_name',
                 name: 'agent_name'

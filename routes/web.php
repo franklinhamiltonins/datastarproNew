@@ -103,8 +103,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/smtps', 'SmtpConfigurationController@adminIndex')->name('smtps.index');
     Route::post('/smtp-settings/store', 'SmtpConfigurationController@store')->name('smtp.store');
     // route for leade smtp datatables
-    Route::post('/smtps/smtps-data', 'SmtpConfigurationController@get_smtps')->name('smtps.get_smtps');
-    Route::post('/smtps/delete', 'SmtpConfigurationController@delete_smtps')->name('smtps.delete_smtps');
+    Route::post('/smtps/smtps-data', 'SmtpConfigurationController@getSmtps')->name('smtps.get_smtps');
+    Route::post('/smtps/delete', 'SmtpConfigurationController@deleteSmtps')->name('smtps.delete_smtps');
     Route::delete('/smtps/delete/{id}', 'SmtpConfigurationController@destroy')->name('smtps.destroy');
     Route::get('/smtps/show/{id}', 'SmtpConfigurationController@show')->name('smtps.show');
     Route::get('/smtps/create', 'SmtpConfigurationController@create')->name('smtps.create');
@@ -300,8 +300,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/dialings/ownedleads', 'DialingController@ownedleads')->name('dialings.ownedleads');
     Route::get('/dialings/ownedleadsdaywise', 'DialingController@ownedleadsdaywise')->name('dialings.ownedleadsdaywise');
     Route::get('/dialings/dialingsOwnedLeads', 'DialingController@dialingsOwnedLeads')->name('dialings.dialingsOwnedLeads');
-    Route::get('/dialings/dialingsOwnedLeads_daywise', 'DialingController@dialingsOwnedLeads_daywise')->name('dialings.dialingsOwnedLeads_daywise');
-    Route::post('/dialings/dialingsOwnedLeads_daywise_export', 'DialingController@dialingsOwnedLeads_daywise_export')->name('dialings.dialingsOwnedLeads_daywise_export');
+    Route::get('/dialings/dialingsOwnedLeads_daywise', 'DialingController@dialingsOwnedLeadsDaywise')->name('dialings.dialingsOwnedLeads_daywise');
+    Route::post('/dialings/dialingsOwnedLeads_daywise_export', 'DialingController@dialingsOwnedLeadsDaywiseExport')->name('dialings.dialingsOwnedLeads_daywise_export');
     Route::post('/dialings/updatecontactleads', 'DialingController@updatecontactleads')->name('dialings.updatecontactleads');
 
     Route::get('/agents/reports', 'AgentController@reports')->name('agents.reports');

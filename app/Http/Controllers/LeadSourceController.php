@@ -57,7 +57,6 @@ class LeadSourceController extends Controller
 
     public function edit($id)
     {
-        // $is_admin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $leadsource = LeadSource::find($id);
         if (! $leadsource) {

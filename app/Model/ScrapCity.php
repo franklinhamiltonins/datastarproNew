@@ -23,15 +23,11 @@ class ScrapCity extends Model
 
     public function scrapCounty()
     {
-        // return $this->belongsTo(ScrapCounty::class, 'scrap_county');
         return $this->belongsTo(ScrapCounty::class, 'county_id');
     }
 
     public static function storeCountyAndCity($data)
     {
-        // dd($data);
-        // return;
-
         // store into scrap county
         if ($data['County']) {
             $scrapCounty = ScrapCounty::updateOrCreate(
@@ -43,11 +39,9 @@ class ScrapCity extends Model
                     'status' => 1,
                 ]
             );
-            // dd($scrapCounty->id);
-
             if ($scrapCounty) {
                 // store into scrap city
-                $scrapCity = ScrapCity::updateOrCreate([
+                ScrapCity::updateOrCreate([
                     'search_keyword' => $data['Search Keyword'],
                     'city' => $data['City'],
                     'state' => $data['State'],

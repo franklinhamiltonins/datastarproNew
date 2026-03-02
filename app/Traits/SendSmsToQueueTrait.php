@@ -154,7 +154,7 @@ trait SendSmsToQueueTrait
 
     public function sendvontagemessageinsidefirst($minSmsproviderId, $contact)
     {
-        $requestData = $this->Vontage_queue_request_data($minSmsproviderId, $contact->c_phone, $contact->id);
+        $requestData = $this->VontageQueueRequestData($minSmsproviderId, $contact->c_phone, $contact->id);
 
         SendSmsVontageThroughQueue::dispatch($requestData);
     }

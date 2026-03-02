@@ -1,6 +1,6 @@
-@if (count($business_contacts) > 0)
+@if (count($businessContacts) > 0)
     <div class="d-flex flex-column prospect-container">
-        @foreach ($business_contacts as $key => $value)
+        @foreach ($businessContacts as $value)
             @php
                 $disableButton = \Carbon\Carbon::parse($value["calling_disable_time_in_dialing"])->gt(\Carbon\Carbon::now());
             @endphp
@@ -16,7 +16,7 @@
                                 contact_id: {{ $value["id"] }},
                                 lead_url: '/leads/edit/{{ base64_encode($row->id) }}',
                                 backpage_url: window.location.href,
-                                page_type: '{{ $page_type }}',
+                                page_type: '{{ $pageType }}',
                             })
                         "
                     >
@@ -37,17 +37,17 @@
                                 contact_id: {{ $value["id"] }},
                                 lead_url: '/leads/edit/{{ base64_encode($row->id) }}',
                                 backpage_url: window.location.href,
-                                page_type: '{{ $page_type }}',
-                                dialing_id: {{ $agentlist_id }},
+                                page_type: '{{ $pageType }}',
+                                dialing_id: {{ $dialingId }},
                             })
                         "
                     >
                         <button
                             {{ $disableButton ? "disabled" : "" }}
                             class="btn p-1 btn-success btn-sm w-100 flex align-items-center justify-content-center contact-info-list-btn"
-                            data-agent-id="{{ $agent_id }}"
+                            data-agent-id="{{ $agentId }}"
                             data-lead-id="{{ $row->id }}"
-                            data-dialing-id="{{ $agentlist_id }}"
+                            data-dialing-id="{{ $dialingId }}"
                             data-contact-id="{{ $value["id"] }}"
                         >
                             <div class="small d-flex align-items-center justify-content-center">

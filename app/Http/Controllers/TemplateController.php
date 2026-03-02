@@ -15,7 +15,7 @@ class TemplateController extends Controller
 {
     use CommonFunctionsTrait;
 
-    private $is_admin = false;
+    private $isAdmin = false;
 
     public $hideColumns = ['created_at', 'updated_at', 'deleted_at'];
 
@@ -56,9 +56,9 @@ class TemplateController extends Controller
         $type = $request->input('type') ?? 'sms';
         $user_id = auth()->user()->id;
 
-        $is_admin = auth()->user()->can('agent-create');
+        $isAdmin = auth()->user()->can('agent-create');
 
-        if ($is_admin) {
+        if ($isAdmin) {
             $templateData = Template::where('template_type', $type)->get();
         } else {
             $templateData = Template::where('template_type', $type)
@@ -72,8 +72,8 @@ class TemplateController extends Controller
 
         foreach ($templateData as $template) {
             $template->delete_permission = false;
-            $is_admin = auth()->user()->can('agent-create');
-            if ($is_admin || ($template->set_for_all == 'no' && $template->created_by == $user_id)) {
+            $isAdmin = auth()->user()->can('agent-create');
+            if ($isAdmin || ($template->set_for_all == 'no' && $template->created_by == $user_id)) {
                 $template->delete_permission = true;
             }
         }
@@ -230,9 +230,9 @@ class TemplateController extends Controller
 
     public function index(Request $request)
     {
-        $is_admin = auth()->user()->can('agent-create');
+        $isAdmin = auth()->user()->can('agent-create');
 
-        return view('templates.index', compact('is_admin'));
+        return view('templates.index', compact('isAdmin'));
     }
 
     public function get_templates(Request $request)
@@ -244,11 +244,11 @@ class TemplateController extends Controller
         $order_by = $request->input('order')[0]['dir'] ?? 'desc';
         $search_value = $request->input('search')['value'] ?? null;
 
-        $is_admin = auth()->user()->can('agent-create');
+        $isAdmin = auth()->user()->can('agent-create');
 
-        if ($is_admin) {
+        if ($isAdmin) {
             $searchQuery = Template::with('user');
-        } elseif (! $is_admin && empty($search_value)) {
+        } elseif (! $isAdmin && empty($search_value)) {
             $searchQuery = Template::where(function ($query) {
                 $query->where('set_for_all', 'yes');
             })
@@ -264,7 +264,7 @@ class TemplateController extends Controller
 
         // Apply search filter
         if (! empty($search_value)) {
-            if ($is_admin) {
+            if ($isAdmin) {
                 $searchQuery = $this->search($searchQuery, $search_value, ['template_name', 'template_type', 'template_subject', 'set_for_all', 'user.name']);
             } else {
                 $searchQuery = $this->search($searchQuery, $search_value, ['template_name', 'template_type', 'template_subject']);
@@ -295,8 +295,8 @@ class TemplateController extends Controller
 
                 return rtrim($agent_name, ', ');
             })
-            ->addColumn('action', function ($row) use ($is_admin) {
-                return view('templates.partials.buttons-actions', compact('row', 'is_admin'));
+            ->addColumn('action', function ($row) use ($isAdmin) {
+                return view('templates.partials.buttons-actions', compact('row', 'isAdmin'));
             })
             ->rawColumns(['action'])
             ->setTotalRecords($totalRecords)
@@ -326,7 +326,7 @@ class TemplateController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $is_admin = auth()->user()->can('agent-create');
+        $isAdmin = auth()->user()->can('agent-create');
         $id = base64_decode($id);
         $template = Template::findOrFail($id);
         if (! $template) {
@@ -342,7 +342,7 @@ class TemplateController extends Controller
             }
         }
 
-        return view('templates.show', compact('template', 'is_admin', 'agent_name'));
+        return view('templates.show', compact('template', 'isAdmin', 'agent_name'));
     }
 
     /**
@@ -354,8 +354,8 @@ class TemplateController extends Controller
     public function edit($id)
     {
         $id = base64_decode($id);
-        $is_admin = auth()->user()->can('agent-create');
-        if ($is_admin) {
+        $isAdmin = auth()->user()->can('agent-create');
+        if ($isAdmin) {
             $template = Template::with('userTemplates')->find($id);
         } else {
             $template = Template::whereHas('userTemplates', function ($q) {
@@ -373,7 +373,7 @@ class TemplateController extends Controller
             $agents = User::role(['Agent', 'Service & Agent', 'Admin', 'Super Admin'])->orderBy('name', 'asc')->get();
             $agentUsers = [];
             $selected_agents = [];
-            if ($is_admin) {
+            if ($isAdmin) {
                 foreach ($agents as $agent) {
                     $agentUsers[$agent->id] = $agent->name.' ('.$agent->email.')';
                 }
@@ -383,7 +383,7 @@ class TemplateController extends Controller
                 }
             }
 
-            return view('templates.edit', compact('template', 'is_admin', 'agentUsers', 'selected_agents'));
+            return view('templates.edit', compact('template', 'isAdmin', 'agentUsers', 'selected_agents'));
         } else {
             toastr()->error("You don't have permission to edit the template.");
 
@@ -398,7 +398,7 @@ class TemplateController extends Controller
      */
     public function create()
     {
-        $is_admin = auth()->user()->can('agent-create');
+        $isAdmin = auth()->user()->can('agent-create');
         $agents = User::role(['Agent', 'Service & Agent', 'Admin', 'Super Admin'])->orderBy('name', 'asc')->get();
         $agentUsers = [];
 
@@ -406,7 +406,7 @@ class TemplateController extends Controller
             $agentUsers[$agent->id] = $agent->name.' ('.$agent->email.')';
         }
 
-        return view('templates.create', compact('is_admin', 'agentUsers'));
+        return view('templates.create', compact('isAdmin', 'agentUsers'));
     }
 
     /**

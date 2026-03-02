@@ -1,4 +1,4 @@
-@if ($is_admin)
+@if ($isAdmin)
     <a
         class="btn btn-sm btn-info action-btn assign_lead_to_agent"
         data-bs-toggle="modal"
@@ -6,7 +6,7 @@
         data-current="{{ $row->id }}"
         data-assigned_agents="{{ $row->agent_ids }}"
         title="Assign Lead to Agent"
-        href="{{ route("dialings.show", base64_encode($row->id)) }}"
+        href="{{ route('dialings.show', base64_encode($row->id)) }}"
     >
         <i class="fa fa-tags"></i>
     </a>

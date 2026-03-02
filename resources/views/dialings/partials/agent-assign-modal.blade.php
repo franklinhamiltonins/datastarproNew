@@ -28,13 +28,13 @@
 </div>
 
 <script>
-    let agent_choices;
+    let agentChoices;
 
     document.addEventListener('DOMContentLoaded', function () {
-        const agent_list = document.getElementById('agent_list');
+        const agentList = document.getElementById('agent_list');
         const agentModal = document.getElementById('agentassignmodal');
 
-        agent_choices = new Choices(agent_list, {
+        agentChoices = new Choices(agentList, {
             removeItemButton: true,
             placeholder: true,
             placeholderValue: 'Select Agent',
@@ -42,7 +42,7 @@
 
         // Clear selections when modal is closed
         agentModal.addEventListener('hidden.bs.modal', function () {
-            agent_choices.removeActiveItems();
+            agentChoices.removeActiveItems();
         });
 
         // Delegate click event for assign_agent buttons
@@ -51,18 +51,15 @@
             if (!btn) return;
 
             const id = btn.getAttribute('data-current');
-            const currently_assigned_to = btn.getAttribute('data-assigned_agents');
-
-            // console.log(id);
-            // console.log(currently_assigned_to);
+            const currentlyAssignedTo = btn.getAttribute('data-assigned_agents');
 
             // Clear previous selections
-            agent_choices.removeActiveItems();
+            agentChoices.removeActiveItems();
 
-            const agents_id_arr = currently_assigned_to.split(',').map((v) => v.trim());
+            const agentsIdArr = currentlyAssignedTo.split(',').map((v) => v.trim());
 
-            const validValues = agents_id_arr.filter((v) => agent_choices._store.choices.some((c) => c.value === v));
-            agent_choices.setChoiceByValue(validValues);
+            const validValues = agentsIdArr.filter((v) => agentChoices._store.choices.some((c) => c.value === v));
+            agentChoices.setChoiceByValue(validValues);
 
             // Session storage logic (unchanged)
             let selectedCheckboxes = sessionStorage.getItem('selectedAgentIds');

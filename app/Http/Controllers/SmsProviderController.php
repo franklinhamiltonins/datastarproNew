@@ -13,8 +13,8 @@ class SmsProviderController extends Controller
 {
     public function index()
     {
-        $is_admin = auth()->user()->can('agent-create');
-        if ($is_admin) {
+        $isAdmin = auth()->user()->can('agent-create');
+        if ($isAdmin) {
             $smsproviders = [];
 
             return view('smsprovider.index', compact('smsproviders'));
@@ -31,9 +31,9 @@ class SmsProviderController extends Controller
     public function listIndex($type = 0, $id = 0)
     {
         $can_access = false;
-        $is_admin = auth()->user()->can('agent-create');
-        if ($is_admin) {
-            $can_access = true;
+        $isAdmin = auth()->user()->can('agent-create');
+        if ($isAdmin) {
+            $isAdmin = true;
         } else {
             if (auth()->user()->id == 26) {
                 $can_access = true;
@@ -201,8 +201,8 @@ class SmsProviderController extends Controller
 
     public function create()
     {
-        $is_admin = auth()->user()->can('agent-create');
-        if ($is_admin) {
+        $isAdmin = auth()->user()->can('agent-create');
+        if ($isAdmin) {
             return view('smsprovider.create');
         }
 
@@ -264,8 +264,8 @@ class SmsProviderController extends Controller
 
     public function edit($id)
     {
-        $is_admin = auth()->user()->can('agent-create');
-        if ($is_admin) {
+        $isAdmin = auth()->user()->can('agent-create');
+        if ($isAdmin) {
             $id = base64_decode($id);
             $smsprovider = SmsProvider::find($id);
             if (! $smsprovider) {

@@ -189,7 +189,7 @@ class GetSunBizDetailsBasic
         return trim($string);
     }
 
-    public function scrap_sunbiz($lead_name = 'Ocean 14')
+    public function scrapSunbiz($lead_name = 'Ocean 14')
     {
 
         $lead_name = strtoupper($lead_name);

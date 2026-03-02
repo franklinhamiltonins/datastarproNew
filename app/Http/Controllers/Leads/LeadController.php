@@ -355,7 +355,7 @@ class LeadController extends Controller
         );
 
         // Apply custom lead filters
-        $leadsQuery = filter_leads($leadsQuery, $filters, $columnsType, $campaignId);
+        $leadsQuery = filterLeads($leadsQuery, $filters, $columnsType, $campaignId);
 
         // Handle dialing screen or normal listing
         if ($dialingFiltersClicked) {

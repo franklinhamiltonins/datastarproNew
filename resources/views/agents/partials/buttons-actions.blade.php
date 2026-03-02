@@ -1,6 +1,5 @@
 @can($deleteLead)
     {!! Form::open(["method" => "DELETE", "route" => ["dialings.destroy", $row->id], "style" => "display:inline", "class" => ["leadForm-" . $row->id]]) !!}
-    {{-- trigger confirmation modal --}}
     <a
         href="#"
         title="Delete Dialing List"

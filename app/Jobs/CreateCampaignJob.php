@@ -66,7 +66,7 @@ class CreateCampaignJob implements ShouldQueue
     private function getFilteredLeads($columnsType)
     {
         $table = Lead::query();
-        $leadsQuery = filter_leads($table, $this->filters, $columnsType, $this->campaignId);
+        $leadsQuery = filterLeads($table, $this->filters, $columnsType, $this->campaignId);
 
         return $this->locationSId
             ? $leadsQuery->select('*')->whereIn('id', $this->locationId)->orderBy('id', 'DESC')

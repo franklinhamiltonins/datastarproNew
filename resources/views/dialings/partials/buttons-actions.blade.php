@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-center action-btns">
-    @if ($is_admin)
+    @if ($isAdmin)
         <a
             class="btn btn-sm btn-primary action-btn assign_agent m-0 d-flex justify-content-center align-items-center @if($row->referral_marker) {{ 'disabledClass' }} @endif"
             data-bs-toggle="modal"
@@ -7,7 +7,7 @@
             data-current="{{ $row->id }}"
             data-assigned_agents="{{ $row->agent_ids }}"
             title="Assign Agent"
-            data-hid="{{ route("dialings.show", base64_encode($row->id)) }}"
+            data-hid="{{ route('dialings.show', base64_encode($row->id)) }}"
             href="#"
         >
             <i class="fa fa-tags"></i>

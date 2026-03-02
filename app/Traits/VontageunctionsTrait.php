@@ -14,7 +14,7 @@ use Vonage\Client;
 
 trait VontageunctionsTrait
 {
-    public function sendvonagesms_fromqueue($valuentry, $keyentry)
+    public function sendVonageSmsFromQueue($valuentry, $keyentry)
     {
         $contact = Contact::select('id', 'c_first_name', 'c_last_name', 'c_email', 'c_zip', 'c_phone')
             ->where('id', $valuentry->contact_id)->first();
@@ -22,16 +22,7 @@ trait VontageunctionsTrait
             if (! empty($contact->c_phone)) {
                 $delay = $this->delaytimecalculation($keyentry);
 
-                // $request_data = [
-                //     'sms_provider_id' => $valuentry->sms_provider_id,
-                //     // 'sms_content' => SmsProvider::where('id',$valuentry->sms_provider_id)->value('text'),
-                //     'sms_content' => SmsProvider::where('id',$valuentry->sms_provider_id)->value('text')." - ".$contact->c_phone,
-                //     'contact_id' => $contact->id,
-                //     // 'c_phone' => $contact->c_phone,
-                //     'c_phone' => '9546109418',
-                // ];
-
-                $request_data = $this->Vontage_queue_request_data($valuentry->sms_provider_id, $contact->c_phone, $contact->id);
+                $request_data = $this->VontageQueueRequestData($valuentry->sms_provider_id, $contact->c_phone, $contact->id);
 
                 SendSmsVontageThroughQueue::dispatch($request_data)
                     ->delay(now()->addSeconds($delay));
@@ -42,23 +33,20 @@ trait VontageunctionsTrait
         } else {
             $status_update = 3;
         }
-        $this->updatesmssentflag_insmsproviderqueue($valuentry->id, $status_update);
+        $this->updateSmsSentFlagInSmsproviderQueue($valuentry->id, $status_update);
 
         return 0;
     }
 
-    public function Vontage_queue_request_data($sms_provider_id, $c_phone, $contact_id)
+    public function VontageQueueRequestData($sms_provider_id, $c_phone, $contact_id)
     {
-        $sms_content = $this->vontagesms_content($sms_provider_id, $contact_id);
+        $sms_content = $this->vontageSmsContent($sms_provider_id, $contact_id);
 
         return [
             'sms_provider_id' => $sms_provider_id,
-            // 'sms_content' => SmsProvider::where('id',$sms_provider_id)->value('text'),
-            // 'sms_content' => $sms_content." - ".$c_phone,
             'sms_content' => $sms_content,
             'contact_id' => $contact_id,
             'c_phone' => $c_phone,
-            // 'c_phone' => '9546109418',
         ];
     }
 
@@ -86,7 +74,7 @@ trait VontageunctionsTrait
         ];
     }
 
-    public function vontagesms_content($sms_provider_id, $contact_id)
+    public function vontageSmsContent($sms_provider_id, $contact_id)
     {
         $precontent = $this->getSmsContent($sms_provider_id);
 
@@ -145,7 +133,7 @@ trait VontageunctionsTrait
         ];
     }
 
-    public function updatesmssentflag_insmsproviderqueue($valuentry_id, $status_update)
+    public function updateSmsSentFlagInSmsproviderQueue($valuentry_id, $status_update)
     {
         SmsProviderQueue::where('id', $valuentry_id)
             ->where('sms_sent_flag', 0)

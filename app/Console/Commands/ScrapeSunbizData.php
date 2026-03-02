@@ -45,7 +45,7 @@ class ScrapeSunbizData extends Command
             foreach ($pendingBusinesses as $business) {
                 echo 'Business Id = '.$business->id;
                 $lead_name = $getSunBiz->replaceSubstrings(strtoupper($business->name));
-                $scrap_response = $this->scrap_sunbiz($lead_name, $business->id);
+                $scrap_response = $this->scrapSunbiz($lead_name, $business->id);
                 $count++;
                 // $bar->advance();
                 Log::channel('scrap_sunbiz')->info(' updated successfully.');
@@ -79,7 +79,7 @@ class ScrapeSunbizData extends Command
         return ['similarity' => $similarity, 'business_name' => $original_business_name];
     }
 
-    public function scrap_sunbiz($lead_name, $lead_id)
+    public function scrapSunbiz($lead_name, $lead_id)
     {
 
         $lead_name = strtoupper($lead_name);
