@@ -958,7 +958,7 @@ function nextbuttonClicked(type) {
 function removeExcessChatPersons() {
     const maxDivs = 3;
     if ($("#chat-wrapper .chat-person").length === maxDivs) {
-        // let removableContactId = $("#chat-wrapper .chat-person:last-child").attr('id').replace("chat_person_", "");
+
         prevChatContactIds.shift();
 
         $("#chat-wrapper .chat-person:last-child").remove();
@@ -999,7 +999,7 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus) 
                 hour12: true
             });
 
-            // let formattedDateTime = msgDate + ' ' + timeString;
+
 
             if (formattedDateTime !== prevDate) {
                 html += `<div class="message-date"><span>${formattedDateTime}</span></div>`;
@@ -1085,7 +1085,7 @@ $(document).on('click', '#chat-wrapper .close_chatbox', function(e) {
     closeDiv.remove();
 
 
-    // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
+
     // closeDiv.remove();
 
     // if (indexToRemove !== -1) {
@@ -1476,11 +1476,11 @@ $(document).on('click', '#chat-wrapper .fas.fa-chevron-down', function(e) {
 });
 
 // template coding
-// let templateContentAppended = false;
+
 $(document).on('change', '#templateSelect', function() {
     $(".noDataInSavedTemplate").remove();
     let self = this;
-    // let chatContactId = '';
+
     let chatContactId = $(self).siblings('.chat-send').attr('id').replace(
         "chat_send_", "");
     localStorage.setItem("current_selected_contact_id", chatContactId);

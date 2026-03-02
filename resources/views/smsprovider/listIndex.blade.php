@@ -518,7 +518,7 @@ let templateContentAppendedsms = false;
 $(document).on('change', '#templateSelect', function() {
     $(".noDataInSavedTemplate").remove();
     let self = this;
-    // let chatContactId = '';
+
     let chatContactId = $(self).siblings('.chat-send').attr('id').replace(
         "chat_send_", "");
     let isNewsletterContact = $(self).siblings('.chat-send').attr('data-is_newsletter_contact');

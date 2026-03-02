@@ -6,12 +6,12 @@
     function removeExcessChatPersons() {
         const maxDivs = 3;
         if ($('#chat-wrapper .chat-person').length === maxDivs) {
-            // let removableContactId = $("#chat-wrapper .chat-person:last-child").attr('id').replace("chat_person_", "");
+
             prevChatContactIds.shift();
 
             $('#chat-wrapper .chat-person:last-child').remove();
 
-            // const indexToRemove = prevChatContactIds.indexOf(removableContactId);
+
 
 
             // if (indexToRemove !== -1) {
@@ -57,7 +57,7 @@
                     hour12: true,
                 });
 
-                // let formattedDateTime = msgDate + ' ' + timeString;
+
 
                 if (formattedDateTime !== prevDate) {
                     html += `<div class="message-date"><span>${formattedDateTime}</span></div>`;
@@ -211,7 +211,7 @@
         closeDiv.remove();
 
 
-        // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
+
         // closeDiv.remove();
 
         // if (indexToRemove !== -1) {

@@ -746,7 +746,7 @@ function draw_table() {
     // jQuery('#bulk_lead_remove').on('click', function() {
     //     jQuery('#bulk_lead_remove').prop('disabled', true);
     //     jQuery('#leads_datatable_processing').show();
-    //     var selectedValues = jQuery('.select-row:checked').map(function() {
+
     //         return this.value;
     //     }).get();
 
@@ -964,7 +964,7 @@ function filter_table(dialing_status) {
         remove_params('campaign');
         remove_filtered_section('filteredTable', '');
         //set new filters
-        // var searchFilters = get_filters();
+
 
         sessionStorage.setItem("filters", JSON.stringify(searchFilters));
 
@@ -1396,7 +1396,7 @@ function phoneFormat(input) {
     // input = input.substring(0,10);
 
     // // Based upon the length of the string, we add formatting as necessary
-    // var size = input.length;
+
     // if(size == 0){
     //         input = input;
     // }else if(size < 4){

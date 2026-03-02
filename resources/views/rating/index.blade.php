@@ -346,16 +346,16 @@ function draw_table() {
         initComplete: function() {
             // After the table is initialized, set the visibility of columns based on sessionStorage
             // $('.form-check-input').each(function() {
-            //     let columnValue = $(this).val();
-            //     let isChecked = sessionStorage.getItem(columnValue);
+
+
 
             //     if (isChecked === 'true') {
             //         $(this).prop('checked', true);
-            //         let columnIndex = table.column(columnValue + ':name').index();
+
             //         table.column(columnIndex).visible(true);
             //     } else if (isChecked === 'false') {
             //         $(this).prop('checked', false);
-            //         let columnIndex = table.column(columnValue + ':name').index();
+
             //         table.column(columnIndex).visible(false);
             //     }
             // });

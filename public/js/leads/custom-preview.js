@@ -375,7 +375,7 @@ function formatDateToDMY(date) {
 
     function loadAdditionalPolicyData() {
         $(".appended_area_policy").remove();
-        // let count_loop = $('.additional_policy').length;
+
 
 
         let appended_data = '';
@@ -449,7 +449,7 @@ function formatDateToDMY(date) {
     }
     // loadPreviewData();
     document.getElementById('downloadBtn').addEventListener('click', () => {
-        // const modal = document.getElementById('previewLeadModal');
+
         const printSection = document.getElementById('printSection');
 
         printSection.classList.add('a4-style');
@@ -497,7 +497,7 @@ function formatDateToDMY(date) {
                 // modal.classList.remove('show');
                 // document.body.classlist.remove('modal-open')
                 // Remove any modal-backdrop elements (if manually added by Bootstrap styles)
-                // const backdrops = document.querySelectorAll('.modal-backdrop');
+
                 // backdrops.forEach((backdrop) => backdrop.remove());
             });
         }, 500);

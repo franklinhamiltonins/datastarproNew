@@ -323,7 +323,7 @@
             }
 
             // function generateActionLinks(item) {
-            // 	var actionsHtml = '';
+
 
             // 	actionsHtml += '<a class="btn btn-sm btn-info action-btn p-1 white-img" title="View ' + moduleName + '" href="' + generateActionUrl('view', item.id) + '"><img src="{{ asset(" / images / module / eye - slick.png ") }}" alt="View" style="width: 18px;"></a>';
 

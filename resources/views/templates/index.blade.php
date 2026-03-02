@@ -417,7 +417,7 @@ function draw_table() {
     // jQuery('#bulk_templates_remove').on('click', function() {
     //     jQuery('#bulk_templates_remove').prop('disabled', true);
     //     jQuery('#templates_datatable_processing').show();
-    //     var selectedValues = jQuery('.select-row:checked').map(function() {
+
     //         return this.value;
     //     }).get();
 
