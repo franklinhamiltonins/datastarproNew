@@ -253,7 +253,7 @@ class SmtpConfigurationController extends Controller
         $agentCount = $agentData['agentCount'];
         $agentMsg = $agentData['agentMsg'];
 
-        return view('smtps.index', compact('agent_count', 'agent_msg'));
+        return view('smtps.index', compact('agentCount', 'agentMsg'));
     }
 
     /**
@@ -440,14 +440,13 @@ class SmtpConfigurationController extends Controller
         // Get email providers
         $emailProviders = $this->getEmailProviders();
 
-        // Check if any agents available
-        $agentCount = count($agentUsers);
-        if ($agentCount <= 0) {
+        
+        if (empty($agentUsers)) {
             toastr()->success('No user left - SMTP has been configured for all');
             return redirect('/smtps');
         }
 
-        return view('smtps.create', compact('agentUsers', 'email_providers'));
+        return view('smtps.create', compact('agentUsers', 'emailProviders'));
     }
 
     /**
@@ -527,7 +526,7 @@ class SmtpConfigurationController extends Controller
 
         toastr()->success('SMTP configuration added successfully');
 
-        return redirect()->route('smtps.update', compact('encodedId'));
+        return redirect()->route('smtps.update', ['id' => $encodedId]);
     }
 
     /**
@@ -603,8 +602,9 @@ class SmtpConfigurationController extends Controller
      * @param string $id Encoded SMTP ID
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
+        $id = $request->route('id'); 
         $decodedId = base64_decode($id);
         $smtpConfiguration = SmtpConfiguration::where('id', $decodedId)->with('user')->first();
 
@@ -624,7 +624,7 @@ class SmtpConfigurationController extends Controller
         // Handle signature image
         $smtpConfiguration = $this->handleSignatureImage($smtpConfiguration);
 
-        return view('smtps.edit', compact('smtpConfiguration', 'email_providers'));
+        return view('smtps.edit', compact('smtpConfiguration', 'emailProviders'));
     }
 
     /**

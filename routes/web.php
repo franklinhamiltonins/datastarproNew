@@ -177,7 +177,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/contactstatus/destroy/{id}', 'ContactStatusController@destroy')->name('contactstatus.destroy');
     Route::get('/contactstatus/edit/{id}', 'ContactStatusController@edit')->name('contactstatus.edit');
     Route::get('/contactstatus/show/{id}', 'ContactStatusController@show')->name('contactstatus.show');
-    Route::post('/contactstatus/deletebulk', 'ContactStatusController@deletebulk')->name('contactstatus.deletebulk');
+    Route::post('/contactstatus/deletebulk', 'ContactStatusController@deleteBulk')->name('contactstatus.deletebulk');
 
     Route::post('/carrier/data', 'CarrierController@data')->name('carrier.data');
     Route::post('/carrier/countLeadAssociation', 'CarrierController@countLeadAssociation')->name('carrier.countLeadAssociation');
@@ -218,15 +218,15 @@ Route::group(['middleware' => ['auth']], function () {
     // route to export
     Route::get('/leads/export', 'Leads\ImportController@exportCsv')->name('leads.export');
     // route to import page
-    Route::get('/leads/import', 'Leads\ImportController@import_leads')->name('leads.import');
+Route::get('/leads/import', 'Leads\ImportController@importLeads')->name('leads.import');
     Route::post('/leads/import', 'Leads\ImportController@import')->name('leads.imports');
 
-    Route::get('/leads/business', 'Leads\ImportController@import_businesses')->name('leads.business');
-    Route::post('/leads/business/upload', 'Leads\ImportController@process_business')->name('leads.processBusiness');
+    Route::get('/leads/business', 'Leads\ImportController@importBusinesses')->name('leads.business');
+    Route::post('/leads/business/upload', 'Leads\ImportController@processBusiness')->name('leads.processBusiness');
 
     // route to import contracts update csv
-    Route::get('/leads/contacts', 'Leads\ImportController@import_contacts')->name('leads.importContacts');
-    Route::post('/leads/contacts/upload', 'Leads\ImportController@process_contacts')->name('leads.processContacts');
+    Route::get('/leads/contacts', 'Leads\ImportController@importContacts')->name('leads.importContacts');
+    Route::post('/leads/contacts/upload', 'Leads\ImportController@processContacts')->name('leads.processContacts');
     // save as campaign
     Route::POST('/leads/save-campaign', 'Leads\LeadController@save_campaign')->name('leads.save_campaign');
     // bulk remove leads

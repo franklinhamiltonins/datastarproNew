@@ -31,7 +31,7 @@
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <strong>Email Providers:</strong>
-                                    {!! Form::select('provider_id', $email_providers,[],
+                                    {!! Form::select('provider_id', $emailProviders,[],
                                     array('class' => 'form-control', 'id' => 'changeEmailProvider')) !!}
                                 </div>
                             </div>

@@ -64,12 +64,12 @@
                                     </label>
                                 </div>
                                 <div class="ml-1">
-                                    @if($agent_count > 0)
+                                    @if($agentCount > 0)
                                         <a class="btn btn-success btn-sm d-flex align-items-center justify-content-center create-btn" href="{{route('smtps.create')}}" title="Add new SMTP" style="width: 42px;height: 42px;">
                                             <i class="fas fa-plus-circle"></i>
                                         </a>
                                     @else
-                                        <a title="{{ $agent_msg }}" style="opacity:0.7" class="btn btn-success btn-sm d-flex align-items-center justify-content-center create-btn" href="javascript:void(0)" style="width: 42px;height: 42px;">
+                                        <a title="{{ $agentMsg }}" style="opacity:0.7" class="btn btn-success btn-sm d-flex align-items-center justify-content-center create-btn" href="javascript:void(0)" style="width: 42px;height: 42px;">
                                             <i class="fas fa-plus-circle"></i>
                                         </a>
                                     @endif
