@@ -1,5 +1,26 @@
 {
     "snyk.advanced.organization": "8f42c3dd-70e5-4b27-a47a-7f342db6bb11",
     "snyk.advanced.autoSelectOrganization": true,
-    "workbench.settings.useSplitJSON": true
+    "workbench.settings.useSplitJSON": true,
+    // Enable Prettier as default formatter
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+
+    // Prettier line length
+    "prettier.printWidth": 120,
+
+    // ESLint auto-fix
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.fixAll.eslint": true
+    },
+
+    // Ensure consistent wrapping in VS Code
+    "editor.rulers": [120],
+
+    // Optional: soft wrapping for viewing only
+    "editor.wordWrap": "off",
+    "[blade]": {
+        "editor.defaultFormatter": "shufo.vscode-blade-formatter"
+    }
 }
