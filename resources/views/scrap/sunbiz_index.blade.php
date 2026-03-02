@@ -200,7 +200,7 @@
                     .trim();
                 let encryptedId = btoa(lead_id); // base64 encode
                 let prev_lead_anchor_name = `<a href="${window.location.origin}/leads/edit/${encryptedId}" target="_blank">${prev_lead_name}</a>`;
-                console.log('prev_lead_name    ---', prev_lead_anchor_name);
+
 
                 jQuery.ajax({
                     url: '/updateSingleBusinessName', // Replace with your actual endpoint
@@ -271,7 +271,7 @@
                             toastr.success(response.message);
                         }
                         // Handle success response
-                        console.log(response);
+
                     },
                     error: function (xhr) {
                         // Handle error response
@@ -425,7 +425,7 @@
                 'input',
                 debounce(function (event) {
                     if (!event.target.value) {
-                        console.log('contact search cross clicked');
+
                         $(event.target).blur(); // to remove cursiour from search field.
 
                         $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
@@ -467,7 +467,7 @@
             });
 
             jQuery('#' + dataTableId).on('click', '.edit_business_lead', function (event) {
-                // console.log(event.currentTarget);
+
                 const leadId = event.target.parentNode.getAttribute('data-id');
                 const leadName = jQuery('#businessName_' + leadId)
                     .text()
@@ -494,7 +494,7 @@
                         return this.value;
                     })
                     .get();
-                console.log('Selected values:', selectedValues);
+
                 if (selectedValues.length <= 0) {
                     toastr.error('Please check at least one checkbox to continue');
                     return false;
@@ -535,7 +535,7 @@
 
             localStorage.setItem('idarray', idarray);
 
-            // console.log(idarray);
+
         });
 
         $(document).on('click', '#confirm', function () {
@@ -557,7 +557,7 @@
                 // Open the modal
                 $('#deleteModal').modal('show');
 
-                // console.log(selectedValues);
+
 
                 localStorage.setItem('idarray', selectedValues);
             } else {

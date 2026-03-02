@@ -45,7 +45,7 @@ function formatDateToDMY(date) {
             }
         }
         else if(type == 4){
-            // console.log(value,type,comp);
+
             var exclusions = document.getElementById(comp);
             var exclusions_value = '';
             if (exclusions) {
@@ -100,7 +100,7 @@ function formatDateToDMY(date) {
         }
     }
     const checkifNAthenNotAddpercantage = (value) => {
-        // console.log(value);
+
         if(value == "N/A"){
             return value;
         }
@@ -169,7 +169,7 @@ function formatDateToDMY(date) {
         let propertySelectedText = "";
         if(properyselectElem.selectedIndex !== -1 && properyselectElem.value !== "") {
             propertySelectedText = properyselectElem.options[properyselectElem.selectedIndex].text;
-        } 
+        }
 
         document.getElementById('ins_prop_carrier_preview').textContent = assign_value_inputbased(propertySelectedText, 3, "ins_prop_carrier-other");
 
@@ -178,7 +178,7 @@ function formatDateToDMY(date) {
         document.getElementById('hurricane_deductible_preview').textContent = checkifNAthenNotAddpercantage(assign_value_inputbased(document.getElementById('hurricane_deductible').value,1));
         document.getElementById('hurricane_deductible_occurrence_preview').textContent = assign_value_inputbased(document.getElementById('hurricane_deductible_occurrence').value,1);
         document.getElementById('property_insurance_coverage_preview').textContent = assign_value_inputbased(document.getElementById('property_insurance_coverage').value,1);
- 
+
         const glselectElem = document.getElementById('general_liability');
         let glselectedText = "";
         if(glselectElem.selectedIndex !== -1 && glselectElem.value !== "") {
@@ -198,7 +198,7 @@ function formatDateToDMY(date) {
         document.getElementById('gl_other_exclusions_preview').textContent = assign_value_inputbased(document.getElementById('gl_other_exclusions').value,1);
         document.getElementById('gl_insurance_coverage_preview').textContent = assign_value_inputbased(document.getElementById('gl_insurance_coverage').value,1);
 
-        // console.log(assign_value_inputbased(document.getElementById('gl_insurance_coverage').value,1));
+.value,1));
 
         const ciselectElem = document.getElementById('crime_insurance');
         let ciselectedText = "";
@@ -321,7 +321,7 @@ function formatDateToDMY(date) {
         if(xwselectElem.selectedIndex !== -1 && xwselectElem.value !== "") {
             xwselectedText = xwselectElem.options[xwselectElem.selectedIndex].text;
         }
-        // console.log(xwselectedText);
+
         document.getElementById('x_wind_preview').textContent = assign_value_inputbased(xwselectedText,3,"x_wind-other");
         document.getElementById('xw_ren_month_preview').textContent = assign_value_inputbased(document.getElementById('xw_ren_month').value,1);
         document.getElementById('xw_expiry_premium_preview').textContent = assign_value_inputbased(document.getElementById('xw_expiry_premium').value,5);
@@ -375,8 +375,8 @@ function formatDateToDMY(date) {
 
     function loadAdditionalPolicyData() {
         $(".appended_area_policy").remove();
-        // let count_loop = $('.additional_policy').length;
-        // console.log(count_loop);
+
+
 
         let appended_data = '';
 
@@ -445,11 +445,11 @@ function formatDateToDMY(date) {
         loadCommunicationInfoData();
         loadPropertyInfoData();
         loadAdditionalPolicyData();
-        // console.log("function called");
+
     }
     // loadPreviewData();
     document.getElementById('downloadBtn').addEventListener('click', () => {
-        // const modal = document.getElementById('previewLeadModal');
+
         const printSection = document.getElementById('printSection');
 
         printSection.classList.add('a4-style');
@@ -462,7 +462,7 @@ function formatDateToDMY(date) {
 
         // // Disable body scrolling
         // document.body.style.overflow = 'hidden';
-        
+
         // Configure html2pdf options
         const options = {
             margin: 0.5,
@@ -497,7 +497,7 @@ function formatDateToDMY(date) {
                 // modal.classList.remove('show');
                 // document.body.classlist.remove('modal-open')
                 // Remove any modal-backdrop elements (if manually added by Bootstrap styles)
-                // const backdrops = document.querySelectorAll('.modal-backdrop');
+
                 // backdrops.forEach((backdrop) => backdrop.remove());
             });
         }, 500);

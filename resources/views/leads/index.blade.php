@@ -268,7 +268,7 @@ var imagegreen = base_url + '/images/green.png';
 /****  Document Ready ****/
 const all_account_permission = @json($allAccountListPermission);
 jQuery(document).ready(function() {
-    // console.log("hi");
+
     var localCustomSearchVal = localStorage.getItem('DataTables_leads_datatable_/leads');
     if (localCustomSearchVal) {
         let parsedLocalLeadData = JSON.parse(localCustomSearchVal);
@@ -360,7 +360,7 @@ jQuery(document).ready(function() {
     var campaignSession = sessionStorage.getItem("campaign"); //set campaign session
     //if  filters but no campaign
     var searchFilters = sessionStorage.getItem('filters');
-    // console.log(searchFilters);
+
 
     if (isEmpty(campaignParam) && !isEmpty(searchFilters) && all_account_permission) {
         repop_filters();
@@ -388,7 +388,7 @@ function checkSunBizSessionDataApplyFilter() {
     const sunbizName = sessionStorage.getItem("sunbiz_registered_name");
     const sunbizAddress = sessionStorage.getItem("sunbiz_registered_address");
 
-    // console.log(sunbizName,sunbizAddress);
+
 
     if (!sunbizName && !sunbizAddress) return;
 
@@ -462,7 +462,7 @@ function draw_table() {
                 }
             },
             dataSrc: function (json) {
-                // console.log("Response:", json);
+
 
                 //  CASE 1: When backend sends custom error
                 if (json.status === false) {
@@ -678,7 +678,7 @@ function draw_table() {
     var $thead = jQuery('#leads_datatable thead #serial_no');
     $thead.prepend('<input type="checkbox" class="select-all">');
 
-    // Select all checkboxes 
+    // Select all checkboxes
     jQuery('#leads_datatable').on('change', '.select-all', function() {
         var checked = this.checked;
         jQuery('.select-row').prop('checked', checked);
@@ -734,7 +734,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            // console.log("Selected values:", selectedValues);
+
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }
@@ -746,10 +746,10 @@ function draw_table() {
     // jQuery('#bulk_lead_remove').on('click', function() {
     //     jQuery('#bulk_lead_remove').prop('disabled', true);
     //     jQuery('#leads_datatable_processing').show();
-    //     var selectedValues = jQuery('.select-row:checked').map(function() {
+
     //         return this.value;
     //     }).get();
-    //     console.log("Selected values:", selectedValues);
+
     //     if (selectedValues.length <= 0) {
     //         toastr.error('Please check at least one checkbox to continue');
     //         jQuery('#bulk_lead_remove').prop('disabled', false);
@@ -845,7 +845,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            // console.log('cross clicked');
+
             let localCustomSearchVal = localStorage.getItem('DataTables_leads_datatable_/leads');
             let updatedLocalCustomSearchVal = JSON.parse(localCustomSearchVal);
             updatedLocalCustomSearchVal.search.search = '';
@@ -950,8 +950,8 @@ function get_filters() {
 function filter_table(dialing_status) {
     //get new selected filters
     var searchFilters = get_filters();
-    // console.log(searchFilters);
-    // console.log(dialing_status);
+
+
     sessionStorage.setItem("dialing_filters_clicked", 0);
     if (dialing_status) {
         sessionStorage.setItem("dialing_filters_clicked", 1);
@@ -964,10 +964,10 @@ function filter_table(dialing_status) {
         remove_params('campaign');
         remove_filtered_section('filteredTable', '');
         //set new filters
-        // var searchFilters = get_filters();
-        // console.log(searchFilters);
+
+
         sessionStorage.setItem("filters", JSON.stringify(searchFilters));
-        // console.log("here");
+
         if(all_account_permission){
             set_filtered_section('filteredTable', 'text-success', 'Filtered by Search Filters');
         }
@@ -1250,7 +1250,7 @@ function closeFields(element) {
 function changeInput(elem) {
     var switchType;
     // inputs to select or write value in order to search
-    // console.log(elem);
+
     //text
     var inputText =
         `{!! Form::text("text", null, array("placeholder" => "Is Empty","class" => "form-control input","id"=>"name_1")) !!}`;
@@ -1396,7 +1396,7 @@ function phoneFormat(input) {
     // input = input.substring(0,10);
 
     // // Based upon the length of the string, we add formatting as necessary
-    // var size = input.length;
+
     // if(size == 0){
     //         input = input;
     // }else if(size < 4){
@@ -1462,7 +1462,7 @@ function save_campaign(elem) {
                 location_leads_id_search: location_leads_id_search
             },
             success: function(data, status, xhr) {
-                // console.log(data);
+
                 if(data.status == true){
                     $('#close_saveCampaign').click();
                     /**** Export Table leads ****/
@@ -1471,7 +1471,7 @@ function save_campaign(elem) {
                 else{
                     toastr.error(data.message);
                 }
-                
+
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $('#close_saveCampaign').click(); //show modal
@@ -1634,7 +1634,7 @@ function applySavedFilterConfirm(id, name, conditions) {
                 }
             },
             cancel: function() {
-                // console.log('the user clicked cancel');
+
             }
         }
     });
@@ -1675,7 +1675,7 @@ function deleteSavedFilterConfirm(id, name) {
                 }
             },
             cancel: function() {
-                // console.log('the user clicked cancel');
+
             }
         }
     });
@@ -1772,7 +1772,7 @@ $('#clientSearch').click(function(e) {
 $('#mapsearch').on('shown.bs.modal', function(e) {
     var sessionMapSearch = sessionStorage.getItem('map_search');
     location_leads_id = [];
-    // console.log('sessionMapSearch -> ', sessionMapSearch);
+
     $.ajax({
         type: 'POST',
         url: "/leads/all-leads-location",
@@ -1911,7 +1911,7 @@ $(document).on('click', '#save_agent_list_button', function() {
             location_leads_id_search: location_leads_id_search
         },
         success: function(data, status, xhr) {
-            // console.log(data);
+
             if (data.status) {
                 toastr.success(data.message);
             } else {

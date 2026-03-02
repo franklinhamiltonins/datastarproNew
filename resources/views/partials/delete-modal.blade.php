@@ -28,7 +28,7 @@
         // set the confirmation modal
         function setModal(elem, $id) {
             $('#deleteModal').attr('data-source', '#ordr_' + $id);
-            // console.log("show");
+
             // $('#deleteModal').modal('show');
             setTimeout(function () {
                 $('.modal-backdrop').removeClass('in').addClass('show'); // Ensure correct class is added

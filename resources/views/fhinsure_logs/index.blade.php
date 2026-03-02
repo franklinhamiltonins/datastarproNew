@@ -381,7 +381,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
@@ -450,7 +450,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            console.log("Selected values:", selectedValues);
+
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }
@@ -519,13 +519,13 @@ function applySavedTemplate(templateId, singleContactId) {
                 let c_first_name  = responseData.response.first_name || '';
                 let c_last_name   = responseData.response.last_name || '';
 
-                // console.log(c_first_name);
+
 
                 // txtToElem(template_content);
                 template_content = template_content.replace(/{CANDIDATE_FIRST_NAME}/g, c_first_name);
                 template_content = template_content.replace(/{CANDIDATE_LAST_NAME}/g, c_last_name);
                 template_content = template_content.replace(/{BUSINESS_NAME}/g, "");
-                // console.log(template_content);
+
 
                 // Create a temporary div element
                 let tempDiv = document.createElement('div');
@@ -542,7 +542,7 @@ function applySavedTemplate(templateId, singleContactId) {
                     $(`#message_content`).val(renderedContent);
                 }
             } catch (error) {
-                console.log(error);
+
                 toastr.error('Invalid server response');
                 return;
             }

@@ -308,7 +308,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
@@ -377,7 +377,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            console.log("Selected values:", selectedValues);
+
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }
@@ -417,10 +417,10 @@ function draw_table() {
     // jQuery('#bulk_templates_remove').on('click', function() {
     //     jQuery('#bulk_templates_remove').prop('disabled', true);
     //     jQuery('#templates_datatable_processing').show();
-    //     var selectedValues = jQuery('.select-row:checked').map(function() {
+
     //         return this.value;
     //     }).get();
-    //     console.log("Selected values:", selectedValues);
+
     //     if (selectedValues.length <= 0) {
     //         toastr.error('Please check at least one checkbox to continue');
     //         return false;

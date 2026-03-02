@@ -264,7 +264,7 @@
 
         $('#customSearchBox').on('input', debounce(function(event) {
             if (!event.target.value) {
-                console.log('contact search cross clicked');
+
                 $(event.target).blur(); // to remove cursor from search field
 
                 $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and then append
@@ -290,14 +290,14 @@
         const key = $(this).data('key');
         const value = $(this).data('value');
         sessionStorage.setItem(key, value);
-        // console.log(`Stored: ${key} = ${value}`);
+
 
         window.location.href = '{{ route("leads.index") }}';
     });
 
     async function clearSessionStorage() {
         const sessionList = ["sunbiz_registered_name", "sunbiz_registered_address"];
-        // console.log("ceared called");
+
 
         sessionList.forEach(key => {
             sessionStorage.removeItem(key);
@@ -325,7 +325,7 @@
         });
 
         if ($this.val()) {
-            console.log($val, $colIndex, $result);
+
             $result = '^' + $this.val();
             setInSessionStorage('search_field', $colIndex);
             setInSessionStorage('search_field_value', $val);
@@ -338,7 +338,7 @@
             $table.draw();
         }
 
-        console.log($val, $colIndex, $result);
+
 
     });
 </script>

@@ -187,7 +187,7 @@ jQuery(document).ready(function() {
     });
 
     $('#templateForAll').change(function() {
-        // console.log("this.checked = "+this.checked);
+
         if(this.checked) {
             $(this).val(1);
             $("#show_user_option").css("display","none");
@@ -251,7 +251,7 @@ jQuery(document).ready(function() {
     function updateCharCount() {
         let content = theEditor.getData().trim();
         let textContent = getTextContentWithoutTags(content);
-        // console.log(textContent);
+
         let currentLength = getContentLength(textContent);
         $('#charCount').text(currentLength);
 

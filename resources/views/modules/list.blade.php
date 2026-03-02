@@ -162,7 +162,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var moduleName = '{{ $moduleName }}';
-            // var showActionLink = '{{ $showActionLink }}';
+
             var showActionLink = document.getElementById('showActionLinkId').value;
             var currentPage = '{{ $currentPage }}';
             var perPage = '{{ $perPage }}';
@@ -251,14 +251,14 @@
                             let response = JSON.parse(xhr.responseText);
 
                             // // work on the hidden column- START
-                            // let hideColumns = [];
+
                             // for (let i = 0; i < document.getElementById('totalLengthHideColumn').value; i++) {
-                            //     let dataInHidden = document.getElementById(`hideColumn_${i}`).value;
+
                             //     hideColumns.push(dataInHidden);
                             // }
 
-                            // let data = response.response.data.map(row => {
-                            //     let filteredRow = {};
+
+
                             //     for (const column of Object.keys(row)) {
                             //         if (!hideColumns.includes(column)) {
                             //             filteredRow[column] = row[column];

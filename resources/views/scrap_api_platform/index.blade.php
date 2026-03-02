@@ -158,7 +158,7 @@
 @endsection
 
 @push("styles")
-    
+
 @endpush
 '
 @push("scripts")
@@ -187,7 +187,7 @@
                     },
                     rowCallback: function (row, data) {
                         // if the lead id from param is the same with the row id, select it
-                        // console.log('data', data)
+
                     },
                     columns: [
                         {
@@ -274,7 +274,7 @@
                     'input',
                     debounce(function (event) {
                         if (!event.target.value) {
-                            console.log('contact search cross clicked');
+
                             $(event.target).blur(); // to remove cursiour from search field.
 
                             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append

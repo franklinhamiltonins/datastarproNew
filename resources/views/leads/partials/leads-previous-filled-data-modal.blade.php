@@ -1567,7 +1567,7 @@
     function convertDateFormatYmd(dateStr) {
         const cleaned = dateStr.trim(); // remove all leading/trailing spaces
         const [m, d, y] = cleaned.split('/').map(v => v.padStart(2, '0'));
-        
+
         return `${y}-${m}-${d}`;
     }
 
@@ -1610,7 +1610,7 @@
         });
     });
     const checkifNAthenNotAddpercantage_pre = (value) => {
-        // console.log(value);
+
         if(value == "N/A"){
             return value;
         }
@@ -1759,7 +1759,7 @@
             }
         }
         else if(type == 4){
-            // console.log(value,type,comp);
+
             var exclusions = document.getElementById(comp);
             var exclusions_value = '';
             if (exclusions) {
@@ -1925,7 +1925,7 @@
         document.getElementById('gl_other_exclusions_previousvalue').textContent = assign_value_inputbased_previous(lead.gl_other_exclusions,1);
         document.getElementById('gl_insurance_coverage_previousvalue').textContent = assign_value_inputbased_previous(lead.gl_insurance_coverage,1);
 
-        // console.log(assign_value_inputbased_previous('',4,"gl_exclusions"));
+);
 
         document.getElementById('crime_insurance_previousvalue').textContent = assign_value_inputbased_previous(lead.crime_insurance,1);
         document.getElementById('CI_ren_month_previousvalue').textContent = assign_value_inputbased_previous(lead.CI_ren_month,1);

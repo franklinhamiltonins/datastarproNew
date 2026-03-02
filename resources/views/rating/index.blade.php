@@ -161,7 +161,7 @@ jQuery(document).ready(function() {
 
             },
             success: function(response) {
-                // console.log(response);
+
                 if(response.status){
                     const modalElement = document.getElementById('newdeleteModal');
                     const modal = new bootstrap.Modal(modalElement);
@@ -346,16 +346,16 @@ function draw_table() {
         initComplete: function() {
             // After the table is initialized, set the visibility of columns based on sessionStorage
             // $('.form-check-input').each(function() {
-            //     let columnValue = $(this).val();
-            //     let isChecked = sessionStorage.getItem(columnValue);
+
+
 
             //     if (isChecked === 'true') {
             //         $(this).prop('checked', true);
-            //         let columnIndex = table.column(columnValue + ':name').index();
+
             //         table.column(columnIndex).visible(true);
             //     } else if (isChecked === 'false') {
             //         $(this).prop('checked', false);
-            //         let columnIndex = table.column(columnValue + ':name').index();
+
             //         table.column(columnIndex).visible(false);
             //     }
             // });
@@ -395,7 +395,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute')
@@ -465,7 +465,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            // console.log("Selected values:", selectedValues);
+
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }

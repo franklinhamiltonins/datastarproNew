@@ -325,7 +325,7 @@
 
         $('#customSearchBox').on('input', debounce(function(event) {
             if (!event.target.value) {
-                console.log('contact search cross clicked');
+
                 $(event.target).blur(); // to remove cursor from search field
 
                 $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and then append
@@ -396,7 +396,7 @@
             }).get();
 
             if (selectedValues.length > 0) {
-                console.log("Selected values:", selectedValues);
+
                 // function to delete bulk ajax
                 deleteSelectedRecords(selectedValues);
             }
@@ -483,7 +483,7 @@
         });
 
         if ($this.val()) {
-            console.log($val, $colIndex, $result);
+
             $result = '^' + $this.val();
             setInSessionStorage('search_field', $colIndex);
             setInSessionStorage('search_field_value', $val);
@@ -496,7 +496,7 @@
             $table.draw();
         }
 
-        console.log($val, $colIndex, $result);
+
 
     });
 
@@ -516,7 +516,7 @@
             type: 'DELETE',
             data: { id: id },
             success: function (response) {
-                console.log('Delete successful', response);
+
 
                 if (response.contactsCount) {
                     toastr.success(response.message);
@@ -547,7 +547,7 @@
 
     function handleDelete($url) {
         event.preventDefault();
-        console.log($url);
+
         Swal.fire({
             icon: 'question',
             title: 'Are you sure?',
@@ -563,7 +563,7 @@
                         $table.ajax.reload(null, false);
                     },
                     error: (res) => {
-                        console.log(res);
+
                         toastr.error('There was an error with deleting this record!', 'Error...');
                     }
                 })

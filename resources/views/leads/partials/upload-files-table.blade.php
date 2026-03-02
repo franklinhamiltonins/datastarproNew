@@ -165,7 +165,7 @@
                 'input',
                 debounce(function (event) {
                     if (!event.target.value) {
-                        console.log('contact search cross clicked');
+
                         $(event.target).blur(); // to remove cursiour from search field.
 
                         $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append

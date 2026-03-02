@@ -210,7 +210,7 @@ function draw_table() {
                 name: 'text',
                 render: function(data, type, row) {
                     // Return the HTML content for the text column
-                    // console.log(data);
+
                     return data ? decodeHtmlEntities(data) : '';
                 }
             },
@@ -277,7 +277,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute')
@@ -347,7 +347,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            console.log("Selected values:", selectedValues);
+
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }

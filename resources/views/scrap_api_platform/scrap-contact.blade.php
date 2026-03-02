@@ -153,7 +153,7 @@
                 success: function(response) {
                     $('#spinner-div').hide();
                     $('#scrap_contact_submit').show();
-                    console.log(response);
+
                     if (response.status) {
                         toastr.success(response.message + ' Contacts Updated : ' + response.data.contacts_updated_count + ', Contacts Skipped : ' + response.data.contacts_skipped_count);
                     }
@@ -165,7 +165,7 @@
                 error: function(response) {
                     $('#spinner-div').hide();
                     $('#scrap_contact_submit').show();
-                    console.log(response);
+
                     // window.location.reload();
                     // reload in order to see toaster
                 }
