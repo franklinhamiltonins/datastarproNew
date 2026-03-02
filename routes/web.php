@@ -188,7 +188,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/carrier/update', 'CarrierController@update')->name('carrier.update');
     Route::get('/carrier/destroy/{id}', 'CarrierController@destroy')->name('carrier.destroy');
     Route::get('/carrier/show/{id}/{type?}', 'CarrierController@show')->name('carrier.show');
-    Route::post('/carrier/deletebulk', 'CarrierController@deletebulk')->name('carrier.deletebulk');
+    Route::post('/carrier/deletebulk', 'CarrierController@deleteBulk')->name('carrier.deletebulk');
     Route::get('/carrier/{type?}', 'CarrierController@index')->name('carrier.index');
     Route::get('/carrier/edit/{id}/{type?}', 'CarrierController@edit')->name('carrier.edit');
 
@@ -201,7 +201,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/rating/update', 'RatingController@update')->name('rating.update');
     Route::get('/rating/destroy/{id}', 'RatingController@destroy')->name('rating.destroy');
     Route::get('/rating/show/{id}/{type?}', 'RatingController@show')->name('rating.show');
-    Route::post('/rating/deletebulk', 'RatingController@deletebulk')->name('rating.deletebulk');
+    Route::post('/rating/deletebulk', 'RatingController@deleteBulk')->name('rating.deletebulk');
     Route::get('/rating/{type?}', 'RatingController@index')->name('rating.index');
     Route::get('/rating/edit/{id}/{type?}', 'RatingController@edit')->name('rating.edit');
 
@@ -213,7 +213,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/leadsource/store', 'LeadSourceController@store')->name('leadsource.store');
     Route::post('/leadsource/update', 'LeadSourceController@update')->name('leadsource.update');
     Route::get('/leadsource/destroy/{id}', 'LeadSourceController@destroy')->name('leadsource.destroy');
-    Route::post('/leadsource/deletebulk', 'LeadSourceController@deletebulk')->name('leadsource.deletebulk');
+    Route::post('/leadsource/deletebulk', 'LeadSourceController@deleteBulk')->name('leadsource.deletebulk');
 
     // route to export
     Route::get('/leads/export', 'Leads\ImportController@exportCsv')->name('leads.export');

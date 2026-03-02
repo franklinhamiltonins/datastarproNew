@@ -1,4 +1,3 @@
-{{-- Delete Modal --}}
 <div class="modal" id="deleteModal" data-source="" style="display: none">
     <div class="modal-dialog">
         <div class="modal-content border border-danger p-0">
@@ -16,9 +15,7 @@
                 <button type="button" id="confirm" class="btn btn-danger">Yes, Delete</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 @push("scripts")
     <script>
@@ -29,7 +26,6 @@
         function setModal(elem, $id) {
             $('#deleteModal').attr('data-source', '#ordr_' + $id);
 
-            // $('#deleteModal').modal('show');
             setTimeout(function () {
                 $('.modal-backdrop').removeClass('in').addClass('show'); // Ensure correct class is added
             }, 0);

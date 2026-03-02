@@ -107,12 +107,11 @@
             +
             <b>OR</b>
         </button>
-        <!-- <div class="btn btn-outline-info btn-sm mt-2 btn_add_or" onclick="add_or_condition(this)">+ <b>OR</b></div> -->
     </div>
 </div>
 <div class="dropdown-divider mb-2 mt-2"></div>
-<div class="row flex-wrap align-items-center justify-content-center justify-content-md-between">
-    <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
+<div class="row align-items-center justify-content-center justify-content-md-between">
+    <div class="col-lg-6 d-flex justify-content-center justify-content-md-start">
         <button
             type="button"
             class="d-inline-flex align-items-center btn btn-outline-info btn-sm mr-3"
@@ -121,7 +120,6 @@
             <i class="fa fa-plus d-inline-block mr-2"></i>
             <b>AND</b>
         </button>
-        <!-- <div class="btn btn-outline-info btn-sm btn_add_and mr-3" onclick="add_and_condition()">+ <b>AND</b></div> -->
         <button
             type="submit"
             class="btn btn-outline-primary btn-sm mr-3"
@@ -156,30 +154,27 @@
         </button>
 
         <button
-            type="button"
+            type="submit"
             class="btn btn-outline-primary text-nowrap btn-sm mr-3"
             id="btn_dailing_list"
             data-bs-toggle="modal"
             data-bs-target="#saveagentlist"
-            onclick="event.stopPropagation()"
         >
             Create Dialing List
         </button>
         <button
-            type="button"
+            type="submit"
             class="btn btn-outline-primary text-nowrap btn-sm mr-3"
             id="btn_mailing_list"
             data-bs-toggle="modal"
             data-bs-target="#saveCampaign"
-            onclick="event.stopPropagation()"
         >
             Create Mailing List
         </button>
     </div>
-    <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end align-items-md-center">
+    <div class="col-lg-6 d-flex justify-content-center justify-content-md-end align-items-md-center">
         <button type="button" class="btn btn-outline-danger btn-sm andClose" onclick="resetCloseFiltersTab(this)">
             Reset
         </button>
-        <!-- <div class="btn btn-outline-danger andClose" onclick="resetCloseFiltersTab(this)">Reset Filters and Close</div> -->
     </div>
 </div>

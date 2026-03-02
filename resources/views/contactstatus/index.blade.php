@@ -109,7 +109,6 @@
 @push('scripts')
 
 <script>
-/****  Document Ready ****/
 jQuery(document).ready(function() {
 
     draw_table();
@@ -127,292 +126,281 @@ jQuery(document).ready(function() {
         $('body').find('#customPageLength').val('25');
     });
 
-});
+    /**** Draw dataTable Ajax ****/
+    function draw_table() {
 
-/**** Draw dataTable Ajax ****/
-function draw_table() {
-
-    // ajax setup for table ajax
-    jQuery.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    // stateSave- when there are no filters
-    var table = jQuery('#contact_status_datatable').DataTable({
-        // dom: 'lBfrtip',
-        processing: true,
-        oLanguage: {
-            sProcessing: `{!! trim(preg_replace('/\s+/', ' ', view('partials.datatable_loader')->render())) !!}`
-        },
-        serverSide: true,
-        responsive: true,
-        autoWidth: false,
-        searchHighlight: true,
-        // stateSave: !isEmpty(sessionStorage.getItem("filters")) || !isEmpty(sessionStorage.getItem("campaign")) ? false : true,
-        pageLength: 25,
-        ajax: {
-            url: "{{ url('contactstatus/data') }}",
-            type: 'POST',
-            data: function(d) {
-
-                // if (!isEmpty(sessionStorage.getItem("filters"))) {
-                // 	d.searchFields = JSON.parse(sessionStorage.getItem("filters"));
-                // }
+        // ajax setup for table ajax
+        jQuery.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
             }
-        },
-        rowCallback: function(row, data) {
-
-        },
-        columns: [
-            //set table columns
-            {
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-                "targets": [0],
-                "searchable": false,
-                "orderable": false,
-                className: "",
-                render: function(data, type, row, meta) {
-                    return '<input type="checkbox" class="select-row" value="' + row.id + '">';
+        });
+        // stateSave- when there are no filters
+        const table = jQuery('#contact_status_datatable').DataTable({
+            // dom: 'lBfrtip',
+            processing: true,
+            oLanguage: {
+                sProcessing: `{!! trim(preg_replace('/\s+/', ' ', view('partials.datatable_loader')->render())) !!}`
+            },
+            serverSide: true,
+            responsive: true,
+            autoWidth: false,
+            searchHighlight: true,
+            pageLength: 25,
+            ajax: {
+                url: "{{ url('contactstatus/data') }}",
+                type: 'POST',
+                data: function(d) {
                 }
             },
-            {
-                data: 'id',
-                name: 'id',
-                'visible': false
-            },
+            rowCallback: function(row, data) {
 
-            {
-                data: 'name',
-                name: 'name'
             },
-            {
-                data: 'priority',
-                name: 'priority'
-            },
-            {
-                data: 'false_status',
-                name: 'false_status',
-                render: function(data, type, row) {
-                    return data == 1 ? 'Yes' : 'No';
-                }
-            },
-            {
-                data: 'display_in_pipedrive',
-                name: 'display_in_pipedrive',
-                render: function(data, type, row) {
-                    return data == 1 ? 'Yes' : 'No';
-                }
-            },
-            {
-                data: 'id',
-                name: 'action',
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row) {
-                    let encryptedId = btoa(data);  // base64 encode
-                    return `<div class="d-flex justify-content-center action-btns">
-                            <a class="btn btn-sm  btn-info action-btn m-0 d-flex justify-content-center align-items-center" href="{{url('contactstatus/show')}}/`+encryptedId+`"  >
-                                <i class="fa fa-eye"></i>
-                            </a>
-                            <a class="btn btn-sm  btn-success action-btn m-0 d-flex justify-content-center align-items-center" href="{{url('contactstatus/edit')}}/`+encryptedId+`">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                            <form method="get" action="{{url('contactstatus/destroy')}}/`+data+`" accept-charset="UTF-8" style="display:inline" class="leadForm-3"><input name="_method" type="hidden" value="DELETE"><input name="_token" type="hidden" value="{{ csrf_token() }}">
+            columns: [
+                //set table columns
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    "targets": [0],
+                    "searchable": false,
+                    "orderable": false,
+                    className: "",
+                    render: function(data, type, row, meta) {
+                        return '<input type="checkbox" class="select-row" value="' + row.id + '">';
+                    }
+                },
+                {
+                    data: 'id',
+                    name: 'id',
+                    'visible': false
+                },
 
-                                <a href="#" title="Delete Sms Provider" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'3')" class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
-                                    <i class="fa fa-trash"></i>
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'priority',
+                    name: 'priority'
+                },
+                {
+                    data: 'false_status',
+                    name: 'false_status',
+                    render: function(data, type, row) {
+                        return data == 1 ? 'Yes' : 'No';
+                    }
+                },
+                {
+                    data: 'display_in_pipedrive',
+                    name: 'display_in_pipedrive',
+                    render: function(data, type, row) {
+                        return data == 1 ? 'Yes' : 'No';
+                    }
+                },
+                {
+                    data: 'id',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        let encryptedId = btoa(data);  // base64 encode
+                        return `<div class="d-flex justify-content-center action-btns">
+                                <a class="btn btn-sm  btn-info action-btn m-0 d-flex justify-content-center align-items-center" href="{{url('contactstatus/show')}}/`+encryptedId+`"  >
+                                    <i class="fa fa-eye"></i>
                                 </a>
-                            </form>
-                        </div>`;
-                }
-            },
-        ],
-        order: [
-            [1, 'asc']
-        ],
-        dom: 'rt<"bottom"ip><"clear">',
-        initComplete: function() {
-            // After the table is initialized, set the visibility of columns based on sessionStorage
-            $('.form-check-input').each(function() {
-                let columnValue = $(this).val();
-                let isChecked = sessionStorage.getItem(columnValue);
+                                <a class="btn btn-sm  btn-success action-btn m-0 d-flex justify-content-center align-items-center" href="{{url('contactstatus/edit')}}/`+encryptedId+`">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <form method="get" action="{{url('contactstatus/destroy')}}/`+data+`" accept-charset="UTF-8" style="display:inline" class="leadForm-3"><input name="_method" type="hidden" value="DELETE"><input name="_token" type="hidden" value="{{ csrf_token() }}">
 
-                if (isChecked === 'true') {
-                    $(this).prop('checked', true);
-                    let columnIndex = table.column(columnValue + ':name').index();
-                    table.column(columnIndex).visible(true);
-                } else if (isChecked === 'false') {
-                    $(this).prop('checked', false);
-                    let columnIndex = table.column(columnValue + ':name').index();
-                    table.column(columnIndex).visible(false);
-                }
-            });
+                                    <a href="#" title="Delete Sms Provider" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setModal(this,'3')" class="btn btn-sm btn-danger deletebtn action-btn m-0 d-flex justify-content-center align-items-center">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </form>
+                            </div>`;
+                    }
+                },
+            ],
+            order: [
+                [1, 'asc']
+            ],
+            dom: 'rt<"bottom"ip><"clear">',
+            initComplete: function() {
+                // After the table is initialized, set the visibility of columns based on sessionStorage
+                $('.form-check-input').each(function() {
+                    let columnValue = $(this).val();
+                    let isChecked = sessionStorage.getItem(columnValue);
+
+                    if (isChecked === 'true') {
+                        $(this).prop('checked', true);
+                        let columnIndex = table.column(columnValue + ':name').index();
+                        table.column(columnIndex).visible(true);
+                    } else if (isChecked === 'false') {
+                        $(this).prop('checked', false);
+                        let columnIndex = table.column(columnValue + ':name').index();
+                        table.column(columnIndex).visible(false);
+                    }
+                });
+            }
+
+        });
+
+        function debounce(func, wait) {
+            var timeout;
+            return function() {
+                const context = this,
+                    args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    timeout = null;
+                    func.apply(context, args);
+                }, wait);
+            };
         }
 
-    });
+        $('#customPageLength').on('change', function() {
+            const length = $(this).val();
+            table.page.len(length).draw();
+        });
 
-    function debounce(func, wait) {
-        var timeout;
-        return function() {
-            var context = this,
-                args = arguments;
-            clearTimeout(timeout);
-            timeout = setTimeout(function() {
-                timeout = null;
-                func.apply(context, args);
-            }, wait);
-        };
-    }
+        $('#customSearchBox').on('keyup', debounce(function(event) {
+            $(event.target).siblings('i.fas.fa-search.position-absolute').remove();
+            if (!event.target.value) {
+                $(event.target).after('<i class="fas fa-search position-absolute"></i>');
+            }
+            if (event.key === "Enter") {
+                table.search(this.value).draw();
+            } else {
+                table.search(this.value).draw();
+            }
+        }, 500)); // 500ms debounce interval
 
-    $('#customPageLength').on('change', function() {
-        var length = $(this).val();
-        table.page.len(length).draw();
-    });
+        $('#customSearchBox').on('input', debounce(function(event) {
+            if (!event.target.value) {
 
-    $('#customSearchBox').on('keyup', debounce(function(event) {
-        $(event.target).siblings('i.fas.fa-search.position-absolute').remove();
-        if (!event.target.value) {
-            $(event.target).after('<i class="fas fa-search position-absolute"></i>');
-        }
-        if (event.key === "Enter") {
-            table.search(this.value).draw();
-        } else {
-            table.search(this.value).draw();
-        }
-    }, 500)); // 500ms debounce interval
+                $(event.target).blur(); // to remove cursiour from search field.
 
-    $('#customSearchBox').on('input', debounce(function(event) {
-        if (!event.target.value) {
+                $(event.target).siblings('i.fas.fa-search.position-absolute')
+                    .remove(); // remove search icon and the append
+                $(event.target).after('<i class="fas fa-search position-absolute"></i>');
+                table.search(event.target.value).draw(); // drow the table
+            }
+        }, 500));
 
-            $(event.target).blur(); // to remove cursiour from search field.
+        // Add select all checkbox to table header
+        const $thead = jQuery('#contact_status_datatable thead #serial_no');
+        $thead.prepend('<input type="checkbox" class="select-all">');
 
-            $(event.target).siblings('i.fas.fa-search.position-absolute')
-                .remove(); // remove search icon and the append
-            $(event.target).after('<i class="fas fa-search position-absolute"></i>');
-            table.search(event.target.value).draw(); // drow the table
-        }
-    }, 500));
+        // Select all checkboxes
+        jQuery('#contact_status_datatable').on('change', '.select-all', function() {
+            const checked = this.checked;
+            jQuery('.select-row').prop('checked', checked);
+            // Log selected checkboxes
+            if (checked) {
+                const selectedValues = jQuery('.select-row:checked').map(function() {
+                    return this.value;
+                }).get();
 
-    // Add select all checkbox to table header
-    var $thead = jQuery('#contact_status_datatable thead #serial_no');
-    $thead.prepend('<input type="checkbox" class="select-all">');
+            } else {
 
-    // Select all checkboxes
-    jQuery('#contact_status_datatable').on('change', '.select-all', function() {
-        var checked = this.checked;
-        jQuery('.select-row').prop('checked', checked);
-        // Log selected checkboxes
-        if (checked) {
-            var selectedValues = jQuery('.select-row:checked').map(function() {
+            }
+        });
+
+        // Handle individual row selections
+        jQuery('#contact_status_datatable').on('change', '.select-row', function() {
+            const $checkboxes = jQuery('.select-row');
+            jQuery('.select-all').prop('checked', $checkboxes.length === $checkboxes.filter(':checked').length);
+            // Log selected checkboxes
+            const selectedValues = jQuery('.select-row:checked').map(function() {
                 return this.value;
             }).get();
 
-        } else {
+        });
 
-        }
-    });
+        $('#bulk_smsprovider_remove').on('click', function() {
+            jQuery('#bulk_smsprovider_remove').prop('disabled', true);
+            jQuery('#contact_status_datatable_processing').show();
+            const selectedValues = $('.select-row:checked').map(function() {
+                return this.value;
+            }).get();
 
-    // Handle individual row selections
-    jQuery('#contact_status_datatable').on('change', '.select-row', function() {
-        var $checkboxes = jQuery('.select-row');
-        jQuery('.select-all').prop('checked', $checkboxes.length === $checkboxes.filter(':checked').length);
-        // Log selected checkboxes
-        var selectedValues = jQuery('.select-row:checked').map(function() {
-            return this.value;
-        }).get();
-
-    });
-
-    $('#bulk_smsprovider_remove').on('click', function() {
-        jQuery('#bulk_smsprovider_remove').prop('disabled', true);
-        jQuery('#contact_status_datatable_processing').show();
-        var selectedValues = $('.select-row:checked').map(function() {
-            return this.value;
-        }).get();
-
-        if (selectedValues.length > 0) {
-            // Open the modal
-            $('#deleteModal').modal('show');
-        } else {
-            toastr.error('Please check at least one checkbox to continue');
-            jQuery('#bulk_smsprovider_remove').prop('disabled', false);
-            jQuery('#contact_status_datatable_processing').hide();
-            return false;
-        }
-    });
-    $('#deleteModal').on('hide.bs.modal', function() {
-        // Clear the selected values when modal is closed
-        $('#deleteModal').removeData('selectedValues');
-        jQuery('.select-all, .select-row').prop('checked', false);
-        jQuery('#bulk_smsprovider_remove').prop('disabled', false);
-        jQuery('#contact_status_datatable_processing').hide();
-    });
-    $('#confirm').on('click', function() {
-        var selectedValues = $('.select-row:checked').map(function() {
-            return this.value;
-        }).get();
-
-        if (selectedValues.length > 0) {
-
-            // function to delete bulk ajax
-            deleteSelectedRecords(selectedValues);
-        }
-        // Close the modal
-        $('#deleteModal').modal('hide');
-    });
-
-    function deleteSelectedRecords(selectedValues) {
-        // Perform AJAX post request
-        jQuery.ajax({
-            url: '/contactstatus/deletebulk',
-            type: 'POST',
-            data: {
-                selectedValues: selectedValues
-            },
-            success: function(response) {
-                if (response.leadsCount) {
-                    toastr.success(response.message);
-                } else {
-                    toastr.error(response.message);
-                }
-                jQuery('#contact_status_datatable').DataTable().draw(true);
-                jQuery('.select-all, .select-row').prop('checked', false);
-            },
-            error: function(xhr, status, error) {
-                toastr.error("Something went wrong.Please contact administrator.");
-            },
-            complete: function() {
-                // Re-enable the button and hide loader after AJAX request completes
+            if (selectedValues.length > 0) {
+                // Open the modal
+                $('#deleteModal').modal('show');
+            } else {
+                toastr.error('Please check at least one checkbox to continue');
                 jQuery('#bulk_smsprovider_remove').prop('disabled', false);
                 jQuery('#contact_status_datatable_processing').hide();
+                return false;
             }
         });
-    }
-}
+        $('#deleteModal').on('hide.bs.modal', function() {
+            // Clear the selected values when modal is closed
+            $('#deleteModal').removeData('selectedValues');
+            jQuery('.select-all, .select-row').prop('checked', false);
+            jQuery('#bulk_smsprovider_remove').prop('disabled', false);
+            jQuery('#contact_status_datatable_processing').hide();
+        });
+        $('#confirm').on('click', function() {
+            const selectedValues = $('.select-row:checked').map(function() {
+                return this.value;
+            }).get();
 
-$('.form-check-input').change(function() {
-    let columnValue = $(this).val();
-    let isChecked = this.checked;
+            if (selectedValues.length > 0) {
 
-    // Save the state of the checkbox in sessionStorage
-    sessionStorage.setItem(columnValue, isChecked);
-    let columnIndex = jQuery('#contact_status_datatable').DataTable().column(columnValue + ':name').index();
-    if (isChecked) {
-        jQuery('#contact_status_datatable').DataTable().column(columnIndex).visible(true);
-    } else {
-        jQuery('#contact_status_datatable').DataTable().column(columnIndex).visible(false);
+                // function to delete bulk ajax
+                deleteSelectedRecords(selectedValues);
+            }
+            // Close the modal
+            $('#deleteModal').modal('hide');
+        });
+
+        function deleteSelectedRecords(selectedValues) {
+            // Perform AJAX post request
+            jQuery.ajax({
+                url: '/contactstatus/deletebulk',
+                type: 'POST',
+                data: {
+                    selectedValues: selectedValues
+                },
+                success: function(response) {
+                    if (response.leadsCount) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                    jQuery('#contact_status_datatable').DataTable().draw(true);
+                    jQuery('.select-all, .select-row').prop('checked', false);
+                },
+                error: function(xhr, status, error) {
+                    toastr.error("Something went wrong.Please contact administrator.");
+                },
+                complete: function() {
+                    // Re-enable the button and hide loader after AJAX request completes
+                    jQuery('#bulk_smsprovider_remove').prop('disabled', false);
+                    jQuery('#contact_status_datatable_processing').hide();
+                }
+            });
+        }
     }
+
+    $('.form-check-input').change(function() {
+        const columnValue = $(this).val();
+        const isChecked = this.checked;
+
+        // Save the state of the checkbox in sessionStorage
+        sessionStorage.setItem(columnValue, isChecked);
+        const columnIndex = jQuery('#contact_status_datatable').DataTable().column(columnValue + ':name').index();
+        if (isChecked) {
+            jQuery('#contact_status_datatable').DataTable().column(columnIndex).visible(true);
+        } else {
+            jQuery('#contact_status_datatable').DataTable().column(columnIndex).visible(false);
+        }
+    });
+
 });
 </script>
-<!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css"
-    integrity="sha512-LDB28UFxGU7qq5q67S1iJbTIU33WtOJ61AVuiOnM6aTNlOLvP+sZORIHqbS9G+H40R3Pn2wERaAeJrXg+/nu6g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
- --><script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js">
+<script src="https://cdn.datatables.net/plug-ins/1.11.3/features/searchHighlight/dataTables.searchHighlight.min.js">
 </script>
 <script src="//bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css"> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script> -->
 @endpush
