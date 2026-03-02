@@ -49,7 +49,7 @@ function formatUSNumberJs(number, decimals = 2) {
 }
 
 function currencyValue(value) {
-    // console.log(value);
+
     if (!value) {
         return "$0.00";
     }
@@ -88,7 +88,7 @@ async function checkFilterValue() {
         if(error > 0){
             return false;
         }
-        // console.log(error);return false;
+return false;
     }
 
     return true;
@@ -214,8 +214,8 @@ $(document).on('keyup', '#customSearchBox', debounce(function (event) {
         $(this).after('<i class="fas fa-search position-absolute"></i>');
     }
 
-    // console.log(this.value);
-    // console.log(table);
+
+
 
     // Enter OR normal search – both do same
     table.search(this.value).draw();

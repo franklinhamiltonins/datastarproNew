@@ -167,7 +167,7 @@
             var session_lead_id = getFromSessionStorage('lead_id');
 
             var baseUrl = '/' + moduleName + '/list/' + apiEndpoint; // Define base URL
-            // console.log(baseUrl);
+
             var loadingSpinner = document.getElementById('moduleTableProcessing');
 
             var requestData = {
@@ -308,10 +308,10 @@
                 }
 
                 document.getElementById('{{ $moduleName }}_tbody').innerHTML = bodyHtml;
-                console.log(dailing_view_pagination_number + '--' + dailing_view_per_page + '---' + session_lead_id);
+
                 if (session_lead_id) {
                     var leadRow = document.getElementById('lead_view_custom_' + session_lead_id);
-                    console.log(leadRow);
+
                     if (leadRow) {
                         leadRow.setAttribute('style', 'border:2px solid #227ba4;');
                         leadRow.scrollIntoView({

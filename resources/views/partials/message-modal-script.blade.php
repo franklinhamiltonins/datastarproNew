@@ -118,7 +118,7 @@
         $('.hide-create-form-button').val('Please wait...');
 
         let formData = $('#myFormSendMessage').serializeArray();
-        console.log(formData);
+
         formData.push({
             name: 'message_content',
             value: message_content,
@@ -155,7 +155,7 @@
                         return false;
                     }
                 } catch (error) {
-                    console.log(error);
+
                     toastr.error('Internal server error');
                     $('.hide-create-form-button').prop('disabled', false);
                     $('.hide-create-form-button').val('Send');

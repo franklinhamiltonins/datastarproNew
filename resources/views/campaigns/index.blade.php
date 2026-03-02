@@ -211,9 +211,8 @@
                     },
                 ],
                 // createdCell: function (td, cellData, rowData, row, col)  {
-                //     console.log(cellData);
+
                 //         if ( cellData == "PENDING" ) {
-                //             //console.log(row);
                 //         $(td).addClass( 'text-warning' );
                 //         }else if(cellData['status'] == "COMPLETED" ) {
                 //             // $(row).addClass( 'text-success' );
@@ -274,7 +273,7 @@
                 'input',
                 debounce(function (event) {
                     if (!event.target.value) {
-                        console.log('cross clicked');
+
                         let localCustomSearchVal = localStorage.getItem(
                             'DataTables_campaignsTable_/marketing-campaigns',
                         );

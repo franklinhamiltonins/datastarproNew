@@ -243,7 +243,7 @@ jQuery(document).ready(function() {
         var user_id = $(this).val();
         if(user_id > 0) {
             var logged_user_id = $("#logged_user_id").val();
-            console.log(logged_user_id+"=="+user_id);
+
             if(user_id == logged_user_id)
                 $(".requiredForLoggedUser").css("display","inherit");
             else
@@ -254,7 +254,7 @@ jQuery(document).ready(function() {
                 success: function(responseData) {
                     try {
                         var user_details = responseData.agent;
-                        console.log(user_details);
+
                         $("input[name='username']").val(user_details.email);
                         $("input[name='from_name']").val(user_details.name);
                     } catch (error) {

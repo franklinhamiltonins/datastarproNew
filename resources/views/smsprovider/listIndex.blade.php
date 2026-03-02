@@ -223,7 +223,7 @@ $(document).ready(function() {
         let lead_id = $(this).data('lead_id');
         // sessionStorage.setItem('lastLeadsManagementUrl', '');
 
-        // console.log(contact_id, lead_id);
+
         let encryptedId = btoa(lead_id);  // base64 encode
         let url = '{{ url("leads/edit") }}/' + encryptedId;
 
@@ -274,7 +274,7 @@ $(document).ready(function() {
                 $('#confirm_chat').prop('disabled', false);
             }
         });
-        // console.log(contact_id);
+
     });
 
     $(document).on('click', '#stop_chat', function() {
@@ -308,7 +308,7 @@ $(document).ready(function() {
                 $('#stop_chat').prop('disabled', false);
             }
         });
-        // console.log(contact_id);
+
     });
 });
 
@@ -459,7 +459,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute')
@@ -645,7 +645,7 @@ function applySavedTemplate(templateId, singleContactId) {
 
 
             } catch (error) {
-                console.log(error);
+
                 toastr.error('Invalid server response');
                 return;
             }

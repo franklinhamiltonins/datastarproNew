@@ -91,7 +91,7 @@
 @endsection
 
 @push("styles")
-    
+
 @endpush
 
 @push("scripts")
@@ -127,7 +127,7 @@
                         return this.value ? this.value : '';
                     })
                     .get();
-                console.log(selectedValues);
+
 
                 if (currentPageLeadId <= 0) {
                     toastr.error("Url doesn't seems to be valid one. Please contact administrator");
@@ -156,7 +156,7 @@
                             sessionStorage.setItem('assignContactKey', response.message);
                             window.location.href = '/scrap_sunbiz';
                             // location.reload();
-                            console.log(response);
+
                         },
                         error: function (xhr, status, error) {
                             toastr.error(response.message);

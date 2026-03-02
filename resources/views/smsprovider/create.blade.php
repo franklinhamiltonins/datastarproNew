@@ -193,7 +193,7 @@ jQuery(document).ready(function() {
     function updateCharCount() {
         let content = theEditor.getData().trim();
         let textContent = getTextContentWithoutTags(content);
-        console.log(textContent);
+
         let currentLength = getContentLength(textContent);
         $('#charCount').text(currentLength);
 

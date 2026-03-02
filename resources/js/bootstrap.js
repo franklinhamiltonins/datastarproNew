@@ -12,7 +12,7 @@ try {
 	require('bootstrap');
 	require('admin-lte');
 } catch (e) {
-	console.log('nope ' + e)
+
 }
 
 /**

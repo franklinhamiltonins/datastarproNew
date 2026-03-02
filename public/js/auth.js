@@ -1822,7 +1822,6 @@ function forEach(obj, fn) {
  *
  * ```js
  * var result = merge({foo: 123}, {foo: 456});
- * console.log(result.foo); // outputs 456
  * ```
  *
  * @param {Object} obj1 Object to merge
@@ -23968,10 +23967,8 @@ return jQuery;
      * var array = [1];
      * var other = _.concat(array, 2, [3], [[4]]);
      *
-     * console.log(other);
      * // => [1, 2, 3, [4]]
      *
-     * console.log(array);
      * // => [1]
      */
     function concat() {
@@ -24256,7 +24253,6 @@ return jQuery;
      * var array = [1, 2, 3];
      *
      * _.fill(array, 'a');
-     * console.log(array);
      * // => ['a', 'a', 'a']
      *
      * _.fill(Array(3), 2);
@@ -24758,7 +24754,6 @@ return jQuery;
      * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
      *
      * _.pull(array, 'a', 'c');
-     * console.log(array);
      * // => ['b', 'b']
      */
     var pull = baseRest(pullAll);
@@ -24780,7 +24775,6 @@ return jQuery;
      * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
      *
      * _.pullAll(array, ['a', 'c']);
-     * console.log(array);
      * // => ['b', 'b']
      */
     function pullAll(array, values) {
@@ -24809,7 +24803,6 @@ return jQuery;
      * var array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
      *
      * _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
-     * console.log(array);
      * // => [{ 'x': 2 }]
      */
     function pullAllBy(array, values, iteratee) {
@@ -24838,7 +24831,6 @@ return jQuery;
      * var array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
      *
      * _.pullAllWith(array, [{ 'x': 3, 'y': 4 }], _.isEqual);
-     * console.log(array);
      * // => [{ 'x': 1, 'y': 2 }, { 'x': 5, 'y': 6 }]
      */
     function pullAllWith(array, values, comparator) {
@@ -24865,10 +24857,8 @@ return jQuery;
      * var array = ['a', 'b', 'c', 'd'];
      * var pulled = _.pullAt(array, [1, 3]);
      *
-     * console.log(array);
      * // => ['a', 'c']
      *
-     * console.log(pulled);
      * // => ['b', 'd']
      */
     var pullAt = flatRest(function(array, indexes) {
@@ -24904,10 +24894,8 @@ return jQuery;
      *   return n % 2 == 0;
      * });
      *
-     * console.log(array);
      * // => [1, 3]
      *
-     * console.log(evens);
      * // => [2, 4]
      */
     function remove(array, predicate) {
@@ -24951,7 +24939,6 @@ return jQuery;
      * _.reverse(array);
      * // => [3, 2, 1]
      *
-     * console.log(array);
      * // => [3, 2, 1]
      */
     function reverse(array) {
@@ -25945,17 +25932,14 @@ return jQuery;
      * var array = [1, 2];
      * var wrapped = _(array).push(3);
      *
-     * console.log(array);
      * // => [1, 2]
      *
      * wrapped = wrapped.commit();
-     * console.log(array);
      * // => [1, 2, 3]
      *
      * wrapped.last();
      * // => 3
      *
-     * console.log(array);
      * // => [1, 2, 3]
      */
     function wrapperCommit() {
@@ -26077,7 +26061,6 @@ return jQuery;
      * _(array).reverse().value()
      * // => [3, 2, 1]
      *
-     * console.log(array);
      * // => [3, 2, 1]
      */
     function wrapperReverse() {
@@ -26394,12 +26377,10 @@ return jQuery;
      * @example
      *
      * _.forEach([1, 2], function(value) {
-     *   console.log(value);
      * });
      * // => Logs `1` then `2`.
      *
      * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
-     *   console.log(key);
      * });
      * // => Logs 'a' then 'b' (iteration order is not guaranteed).
      */
@@ -26424,7 +26405,6 @@ return jQuery;
      * @example
      *
      * _.forEachRight([1, 2], function(value) {
-     *   console.log(value);
      * });
      * // => Logs `2` then `1`.
      */
@@ -27019,7 +26999,6 @@ return jQuery;
      * @example
      *
      * _.defer(function(stamp) {
-     *   console.log(_.now() - stamp);
      * }, _.now());
      * // => Logs the number of milliseconds it took for the deferred invocation.
      */
@@ -27045,7 +27024,6 @@ return jQuery;
      * var saves = ['profile', 'settings'];
      *
      * var done = _.after(saves.length, function() {
-     *   console.log('done saving!');
      * });
      *
      * _.forEach(saves, function(type) {
@@ -27506,7 +27484,6 @@ return jQuery;
      * @example
      *
      * _.defer(function(text) {
-     *   console.log(text);
      * }, 'deferred');
      * // => Logs 'deferred' after one millisecond.
      */
@@ -27529,7 +27506,6 @@ return jQuery;
      * @example
      *
      * _.delay(function(text) {
-     *   console.log(text);
      * }, 1000, 'later');
      * // => Logs 'later' after one second.
      */
@@ -28055,7 +28031,6 @@ return jQuery;
      * // => []
      *
      * var array = [1, 2, 3];
-     * console.log(_.castArray(array) === array);
      * // => true
      */
     function castArray() {
@@ -28089,7 +28064,6 @@ return jQuery;
      * var objects = [{ 'a': 1 }, { 'b': 2 }];
      *
      * var shallow = _.clone(objects);
-     * console.log(shallow[0] === objects[0]);
      * // => true
      */
     function clone(value) {
@@ -28120,11 +28094,8 @@ return jQuery;
      *
      * var el = _.cloneWith(document.body, customizer);
      *
-     * console.log(el === document.body);
      * // => false
-     * console.log(el.nodeName);
      * // => 'BODY'
-     * console.log(el.childNodes.length);
      * // => 0
      */
     function cloneWith(value, customizer) {
@@ -28147,7 +28118,6 @@ return jQuery;
      * var objects = [{ 'a': 1 }, { 'b': 2 }];
      *
      * var deep = _.cloneDeep(objects);
-     * console.log(deep[0] === objects[0]);
      * // => false
      */
     function cloneDeep(value) {
@@ -28175,11 +28145,8 @@ return jQuery;
      *
      * var el = _.cloneDeepWith(document.body, customizer);
      *
-     * console.log(el === document.body);
      * // => false
-     * console.log(el.nodeName);
      * // => 'BODY'
-     * console.log(el.childNodes.length);
      * // => 20
      */
     function cloneDeepWith(value, customizer) {
@@ -30006,7 +29973,6 @@ return jQuery;
      * Foo.prototype.c = 3;
      *
      * _.forIn(new Foo, function(value, key) {
-     *   console.log(key);
      * });
      * // => Logs 'a', 'b', then 'c' (iteration order is not guaranteed).
      */
@@ -30038,7 +30004,6 @@ return jQuery;
      * Foo.prototype.c = 3;
      *
      * _.forInRight(new Foo, function(value, key) {
-     *   console.log(key);
      * });
      * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
      */
@@ -30072,7 +30037,6 @@ return jQuery;
      * Foo.prototype.c = 3;
      *
      * _.forOwn(new Foo, function(value, key) {
-     *   console.log(key);
      * });
      * // => Logs 'a' then 'b' (iteration order is not guaranteed).
      */
@@ -30102,7 +30066,6 @@ return jQuery;
      * Foo.prototype.c = 3;
      *
      * _.forOwnRight(new Foo, function(value, key) {
-     *   console.log(key);
      * });
      * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
      */
@@ -30729,11 +30692,9 @@ return jQuery;
      * var object = { 'a': [{ 'b': { 'c': 3 } }] };
      *
      * _.set(object, 'a[0].b.c', 4);
-     * console.log(object.a[0].b.c);
      * // => 4
      *
      * _.set(object, ['x', '0', 'y', 'z'], 5);
-     * console.log(object.x[0].y.z);
      * // => 5
      */
     function set(object, path, value) {
@@ -30892,13 +30853,11 @@ return jQuery;
      * _.unset(object, 'a[0].b.c');
      * // => true
      *
-     * console.log(object);
      * // => { 'a': [{ 'b': {} }] };
      *
      * _.unset(object, ['a', '0', 'b', 'c']);
      * // => true
      *
-     * console.log(object);
      * // => { 'a': [{ 'b': {} }] };
      */
     function unset(object, path) {
@@ -30925,11 +30884,9 @@ return jQuery;
      * var object = { 'a': [{ 'b': { 'c': 3 } }] };
      *
      * _.update(object, 'a[0].b.c', function(n) { return n * n; });
-     * console.log(object.a[0].b.c);
      * // => 9
      *
      * _.update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
-     * console.log(object.x[0].y.z);
      * // => 0
      */
     function update(object, path, updater) {
@@ -32341,7 +32298,6 @@ return jQuery;
      * var view = {
      *   'label': 'docs',
      *   'click': function() {
-     *     console.log('clicked ' + this.label);
      *   }
      * };
      *
@@ -32449,10 +32405,8 @@ return jQuery;
      *
      * var objects = _.times(2, _.constant({ 'a': 1 }));
      *
-     * console.log(objects);
      * // => [{ 'a': 1 }, { 'a': 1 }]
      *
-     * console.log(objects[0] === objects[1]);
      * // => true
      */
     function constant(value) {
@@ -32545,7 +32499,6 @@ return jQuery;
      *
      * var object = { 'a': 1 };
      *
-     * console.log(_.identity(object) === object);
      * // => true
      */
     function identity(value) {
@@ -33072,10 +33025,8 @@ return jQuery;
      *
      * var arrays = _.times(2, _.stubArray);
      *
-     * console.log(arrays);
      * // => [[], []]
      *
-     * console.log(arrays[0] === arrays[1]);
      * // => false
      */
     function stubArray() {
@@ -33111,10 +33062,8 @@ return jQuery;
      *
      * var objects = _.times(2, _.stubObject);
      *
-     * console.log(objects);
      * // => [{}, {}]
      *
-     * console.log(objects[0] === objects[1]);
      * // => false
      */
     function stubObject() {
@@ -37095,7 +37044,7 @@ try {
 
   __webpack_require__(/*! admin-lte */ "./node_modules/admin-lte/dist/js/adminlte.min.js");
 } catch (e) {
-  console.log('nope ' + e);
+
 }
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests

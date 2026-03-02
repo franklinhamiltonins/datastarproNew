@@ -1,7 +1,7 @@
 // public/js/pagination.js
 
 function renderPagination(currentPage, lastPage, containerId, fetchFunctionName,pagelength=0) {
-    // console.log(currentPage, lastPage, containerId,pagelength);
+
     if(pagelength == 1){
         $(`#${containerId}`).html('');
         return;
@@ -24,7 +24,7 @@ function renderPagination(currentPage, lastPage, containerId, fetchFunctionName,
 
     paginationHTML += `</ul></nav>`;
 
-    // console.log(paginationHTML);
+
 
     $(`#${containerId}`).html(paginationHTML);
 

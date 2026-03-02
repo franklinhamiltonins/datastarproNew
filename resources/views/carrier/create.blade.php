@@ -150,12 +150,12 @@ jQuery(document).ready(function() {
                 check_validation = 0;
             }
         }
-        // console.log(check_validation);
+
         if(check_validation == 1 && ($("#insutance_type_selection").val().length == 0 || $("#insutance_type_selection").val()[0] == '')){
             toastr.error('Please Select Insurance Type');
             return false; // Prevent form submission
         }
-        // console.log($("#insutance_type_selection").val());
+.val());
         // if($("#priority").val() == ''){
         //     toastr.error('Priority should not be blank');
         //     return false; // Prevent form submission

@@ -55,7 +55,7 @@
 @endsection
 
 @push("styles")
-    
+
 @endpush
 
 @push("scripts")
@@ -129,7 +129,7 @@
                         success: function (response) {
                             toastr.success(response.message);
                             location.reload();
-                            console.log(response);
+
                         },
                         error: function (xhr, status, error) {
                             toastr.error(response.message);
@@ -137,7 +137,7 @@
                         },
                     });
                 } else {
-                    console.log('No column selected.');
+
                 }
             });
         });

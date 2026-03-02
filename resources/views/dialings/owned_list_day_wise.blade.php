@@ -154,7 +154,7 @@ document.getElementById('download-button').addEventListener('click', function() 
     let start = document.getElementById('min_time').value;
     let end = document.getElementById('max_time').value;
 
-    // console.log(start, end);
+
 
     if (start && end) {
         // Prepare FormData for POST request
@@ -347,7 +347,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute')

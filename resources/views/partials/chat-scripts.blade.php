@@ -12,23 +12,23 @@
             $('#chat-wrapper .chat-person:last-child').remove();
 
             // const indexToRemove = prevChatContactIds.indexOf(removableContactId);
-            // console.log(removableContactId,prevChatContactIds,indexToRemove);
+
 
             // if (indexToRemove !== -1) {
             //     prevChatContactIds.splice(indexToRemove, 1);
             // }
-            // console.log(removableContactId,prevChatContactIds,indexToRemove);
+
         }
     }
 
     // Function to append a new chat person
     function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, is_newsletter_contact) {
         const borderClass = getBorderClass();
-        // console.log(chatContactId,is_newsletter_contact);
+
 
         // Fetch chat content from Laravel using Ajax
         fetchChatContent(chatContactId, is_newsletter_contact, function (data) {
-            console.log(data);
+
 
             // check the checkMaxExecTime - START
             checkMaxExecTime(chatContactId);
@@ -121,7 +121,7 @@
 
             clickCount++;
             prevChatContactIds.push(chatContactId); // Add the current chatContactId to the array
-            // console.log(prevChatContactIds);
+
         });
     }
 
@@ -134,7 +134,7 @@
         // if ($("#chat-wrapper .chat-person").length >= maxDivs) {
 
         // }
-        // console.log("on next");
+
         const contact_id = $(this).data('contact_id');
         const newsletter_id = $(this).data('newsletter_id');
         const chatContactId = parseInt(contact_id ? contact_id : newsletter_id);
@@ -179,7 +179,7 @@
             },
             error: function (xhr, status, error) {
                 console.error('Error:', error);
-                console.log('Response:', xhr.responseText);
+
             },
         });
     }
@@ -203,20 +203,20 @@
         let closeDiv = $(this).closest('.chat-person');
         let removableContactId = parseInt($(this).attr('data-id'));
 
-        // console.log(prevChatContactIds,removableContactId);
+
 
         prevChatContactIds = prevChatContactIds.filter(function (id) {
             return id !== removableContactId;
         });
         closeDiv.remove();
-        // console.log(prevChatContactIds,removableContactId);
+
 
         // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
         // closeDiv.remove();
 
         // if (indexToRemove !== -1) {
         //     prevChatContactIds.splice(indexToRemove, 1);
-        //     console.log(prevChatContactIds);
+
         // }
     });
 
@@ -233,7 +233,7 @@
         let chatContent = $(this).siblings('.text-input').val();
         const chatContactId = $(this).attr('id').replace('chat_send_', '');
         const isNewsletterContact = $(this).attr('data-is_newsletter_contact');
-        // console.log(isNewsletterContact);
+
 
         let dataMsgs = document.getElementById(`chat_message_${chatContactId}`);
         let viewContent = chatContent;
@@ -242,7 +242,7 @@
         }
         if (chatContent.trim() !== '') {
             // function to save data in mesage and append data in msg
-            // console.log(isNewsletterContact); return false;
+ return false;
             saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact);
 
             // Clear the textarea after posting the chat
@@ -251,7 +251,7 @@
     });
 
     function saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact) {
-        // console.log(isNewsletterContact+"  2"); return false;
+ return false;
         $.ajax({
             url: '/chat',
             method: 'POST',

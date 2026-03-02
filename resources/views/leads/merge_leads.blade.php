@@ -63,7 +63,7 @@
 @endsection
 
 @push("styles")
-    
+
 @endpush
 
 @push("scripts")
@@ -150,7 +150,7 @@
                 if (selectedColumnIndex) {
                     $('#assign_slug_to_lead' + selectedColumnIndex).hide();
                 }
-                // console.log(selectedColumnIndex);
+
             });
 
             // Event handler for rows in other columns
@@ -199,7 +199,7 @@
                         success: function (response) {
                             toastr.success(response.message);
                             location.reload();
-                            console.log(response);
+
                         },
                         error: function (xhr, status, error) {
                             toastr.error(response.message);

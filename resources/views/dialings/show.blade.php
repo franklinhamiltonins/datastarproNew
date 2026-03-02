@@ -195,7 +195,7 @@
             if (previous_clicked_lead_id) {
                 let leadRow = $('#lead_custom_display_' + previous_clicked_lead_id);
                 if (leadRow) {
-                    console.log(leadRow);
+
                     $('html, body').animate(
                         {
                             scrollTop: $('#lead_custom_display_' + previous_clicked_lead_id).offset().top,
@@ -207,7 +207,7 @@
             resetBackClickedSessionData();
 
             $('#bulk_aggent_reassign').on('click', function () {
-                // console.log("hello");
+
                 $('#leads_datatable_processing').show();
                 var selectedValues = $('.select-row:checked')
                     .map(function () {
@@ -224,7 +224,7 @@
                 }
             });
 
-            // console.log($('#bulk_aggent_reassign').length);
+.length);
         });
 
         /**** Draw dataTable ****/
@@ -234,8 +234,8 @@
 
             const savedOrder = JSON.parse(getFromSessionStorage('datatable_sort_order')) || [[8, 'asc']];
 
-            // console.log(pagination_number + '=>' + previous_clicked_lead_id);
-            console.log(savedOrder);
+
+
 
             var isAdmin = @json($isAdmin);
 
@@ -271,7 +271,7 @@
                     data: 'name',
                     name: 'name',
                     render: function (data, type, row, meta) {
-                        // console.log(row);
+
                         let encryptedId = btoa(row.id); // base64 encode
                         return `<a class="anchortag"  href="/leads/edit/${encryptedId}" >${data}</a>`;
                     },
@@ -372,7 +372,7 @@
                 'input',
                 debounce(function (event) {
                     if (!event.target.value) {
-                        console.log('contact search cross clicked');
+
                         $(event.target).blur(); // to remove cursiour from search field.
 
                         $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
@@ -450,7 +450,7 @@
                     dialing_id: agentListId,
                 },
                 success: function (data, status, xhr) {
-                    console.log(data);
+
                     // jQuery('#bulk_aggent_reassign').prop('disabled', false);
                     if (data.status) {
                         toastr.success(data.message);

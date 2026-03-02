@@ -154,7 +154,7 @@
             if (previous_clicked_lead_id) {
                 let leadRow = $('#lead_custom_display_' + previous_clicked_lead_id);
                 if (leadRow) {
-                    console.log(leadRow);
+
                     $('html, body').animate(
                         {
                             scrollTop: $('#lead_custom_display_' + previous_clicked_lead_id).offset().top,
@@ -198,7 +198,7 @@
         function draw_table() {
             let pagination_number = parseInt(getFromSessionStorage('pagination_number')) || 1;
             let previous_clicked_lead_id = parseInt(getFromSessionStorage('lead_id')) || 1;
-            // console.log(pagination_number + '=>' + previous_clicked_lead_id);
+
 
             let columns = [
                 {
@@ -217,7 +217,7 @@
                     data: 'name',
                     name: 'name',
                     render: function (data, type, row, meta) {
-                        // console.log(row);
+
                         let encryptedId = btoa(row.id); // base64 encode
                         return `<a  class="anchortag" href="/leads/edit/${encryptedId}">${data}</a>`;
                     },
@@ -337,7 +337,7 @@
                 'input',
                 debounce(function (event) {
                     if (!event.target.value) {
-                        console.log('contact search cross clicked');
+
                         $(event.target).blur(); // to remove cursiour from search field.
 
                         $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
@@ -358,7 +358,7 @@
             const dialingId = $(this).data('dialing_id');
             const owned_by_id = $(this).data('owned_by_id');
 
-            // console.log(owned_by_id);
+
 
             $('#reassign_agent_id').val(owned_by_id);
             $('#old_agent_id').val(owned_by_id);

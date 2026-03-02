@@ -144,7 +144,7 @@ jQuery(document).ready(function() {
 
         let editorContent = theEditor.getData().trim();
         let textContent = getTextContentWithoutTags(editorContent);
-        // console.log(textContent);
+
         $('#smsprovider_content').val(textContent);
         // $('#updateSmsproviderbtn').siblings("#smsprovider_content").val(textContent);
         // return false;
@@ -198,7 +198,7 @@ jQuery(document).ready(function() {
     function updateCharCount() {
         let content = theEditor.getData().trim();
         let textContent = getTextContentWithoutTags(content);
-        // console.log(textContent);
+
         let currentLength = getContentLength(textContent);
         $('#charCount').text(currentLength);
 

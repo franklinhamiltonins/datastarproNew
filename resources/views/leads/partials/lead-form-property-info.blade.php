@@ -2873,7 +2873,7 @@
                     $(inputContainer).fadeOut(500);
                 }
                 $(input).on('keyup', function() {
-                    console.log($(input).val());
+
                     $(elem).find('.other').attr('value', $(input).val());
                 });
             }

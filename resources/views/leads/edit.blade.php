@@ -35,7 +35,7 @@
                                 'method' => 'PATCH',
                                 'route' => ['leads.update', $lead->id],
                                 'id' => 'lead_update_form',
-                                'onsubmit' => 'return leadSubmissionValidation()' 
+                                'onsubmit' => 'return leadSubmissionValidation()'
                             ]) !!}
                                 @include('leads.partials.leads-header-secondtab')
                                 <div class="tab-content bg-white border-top-0 rounded rounded-top-0 edit-section" id="pills-tabContent-2" bis_skin_checked="1">
@@ -66,9 +66,9 @@
                                         </div>
                                     </div>
                                 </div>
-                               
+
                             {!! Form::close() !!}
-                            
+
                         </div>
                         {{-- lead form ends --}}
                         <div class="col-xl-5">
@@ -154,7 +154,7 @@
                                                                     @endif
                                                                     @if($contact->c_phone)
                                                                     <a  href="javascript:void(0)"
-                                                                            
+
                                                                      class="btn btn-sm btn-info text-white chat_intitialise contact-actions action-btn m-0"
                                                                         title="Text"
                                                                         id="chat_contact_{{ $contact->id }}"
@@ -259,7 +259,7 @@
                                 @endif
                             </div>
 
-                
+
                             {{-- Lead Notes --}}
                             <div class="card card-secondary">
                                 <div class="card-header">
@@ -456,7 +456,7 @@
                     <div class="card card-secondary actionTable">
                         <div class="card-header">
                             <h3 class="card-title">Insurence info</h3>
-                        </div>          
+                        </div>
                         @if($renewedLead == 1)
                             @include('leads.partials.leads-previous-filled-data-modal')
                         @else
@@ -721,7 +721,7 @@
 <script async>
 
     function leadSubmissionValidation() {
-        let isValid = true; 
+        let isValid = true;
 
         // Get form values
         const type = document.getElementById('type').value.trim();
@@ -857,7 +857,7 @@
                 isValid = false;
             }
 
-            // console.log(carrier,otherValue,isValid);
+
         });
 
 
@@ -940,7 +940,7 @@ function nextbuttonClicked(type) {
     // If a valid tab ID is determined, activate the tab
     if (tabId) {
         const tabElement = document.querySelector(tabId);
-        
+
         if (tabElement) {
             // Trigger the click event using pure JavaScript
             tabElement.click();
@@ -1026,32 +1026,32 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus) 
 
         $("#chat-wrapper").prepend(`
 				<div class="position-relative chat-person ml-3 ${borderClass} border rounded" id="chat_person_${chatContactId}">
-                    
+
 					<h4 class="bg-${borderClass.replace('border-', '')} mb-0 px-2 py-3 d-flex align-items-center justify-content-between">${chatContactName}
                     <div class="d-flex align-items-center">
                     <i class="fas fa-chevron-down minimise_chatbox mr-2" id="${chatContactId}"></i>
                     <div data-id="${chatContactId}" class="close_chatbox bg-${borderClass.replace('border-', '')} d-flex align-items-center justify-content-center rounded-circle cross-chat">
                         <i class="fas fa-times"></i>
                     </div>
-                        
+
                         </div>
                     </h4>
 					<div class="off-div" id="off-div-${chatContactId}">
 						<div class="chat-box p-2" id="chat_message_${chatContactId}">
-							
+
 					${html}
 
 						</div>
 						<div class="position-relative chat-footer" id="chat_footer_${chatContactId}">
 							<textarea type="text" class="text-input" placeholder="Write your text here"></textarea>
 
-                            
+
                             <select id="templateSelect" class="chat-template">
                                 <option>-- Templates --</option>
                                 <option>Create Template</option>
                                 <option>Saved Templates</option>
                             </select>
-							<button class="chat-send" id="chat_send_${chatContactId}"> 
+							<button class="chat-send" id="chat_send_${chatContactId}">
 								<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Uploaded to svgrepo.com" width="20px" height="20px" viewBox="0 0 32 32" xml:space="preserve">
 									<path class="stone_een" d="M10.774,23.619l-1.625,5.691C9.06,29.164,9,28.992,9,28.794v-5.57l13.09-12.793L10.774,23.619z   M10.017,29.786c0.243-0.002,0.489-0.084,0.69-0.285l3.638-3.639l-2.772-1.386L10.017,29.786z M28.835,2.009L3.802,14.326  c-2.226,1.095-2.236,4.266-0.017,5.375l4.89,2.445L27.464,3.79c0.204-0.199,0.516-0.234,0.759-0.086  c0.326,0.2,0.396,0.644,0.147,0.935l-16.3,18.976l8.84,4.4c1.746,0.873,3.848-0.128,4.27-2.034l5.071-22.858  C30.435,2.304,29.588,1.639,28.835,2.009z"/>
 								</svg>
@@ -1067,7 +1067,7 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus) 
 
         clickCount++;
         prevChatContactIds.push(chatContactId); // Add the current chatContactId to the array
-        console.log(prevChatContactIds);
+
     });
 
 }
@@ -1077,26 +1077,26 @@ $(document).on('click', '#chat-wrapper .close_chatbox', function(e) {
     let closeDiv = $(this).closest('.chat-person');
     let removableContactId = parseInt($(this).attr('data-id'));
 
-    console.log(prevChatContactIds,removableContactId);
+
 
     prevChatContactIds = prevChatContactIds.filter(function(id) {
         return id !== removableContactId;
     });
     closeDiv.remove();
-    console.log(prevChatContactIds,removableContactId);
+
 
     // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
     // closeDiv.remove();
-    
+
     // if (indexToRemove !== -1) {
     //     prevChatContactIds.splice(indexToRemove, 1);
-    //     console.log(prevChatContactIds);
+
     // }
 });
 
 // Function to handle chat initialization
 function handleChatInit(e) {
-    // console.log("hello");
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -1170,8 +1170,8 @@ function saveMessageInChat(chatContent, chatContactId, viewContent, timeString) 
 
         },
         success: function(response) {
-            // console.log(response.is_admin);
-            let appendhtml = 
+
+            let appendhtml =
                 `<p class="my-txt mb-2 p-2">`;
             if(response.is_admin){
                 let agent_name = response.logged_in_user_name ? response.logged_in_user_name : 'System';
@@ -1226,7 +1226,7 @@ function applySavedTemplate(templateId, singleContactId) {
 
 
                 // Create a temporary div element
-                // console.log(template_content);
+
                 let tempDiv = document.createElement('div');
                 tempDiv.innerHTML = template_content;
 
@@ -1246,7 +1246,7 @@ function applySavedTemplate(templateId, singleContactId) {
                 }
 
             } catch (error) {
-                console.log(error);
+
                 toastr.error('Invalid server response');
                 return;
             }
@@ -1288,16 +1288,16 @@ function checkMaxExecTime(contactId) {
         method: 'GET',
         success: function(response) {
             if (response.status == '200' && response.success == true && response.response > 0) {
-                // console.log($(`#chat_send_${contactId}`));
+);
                 $(`#chat_send_${contactId}`).attr('disabled', true);
             } else {
-                console.log($(`#chat_send_ELSEEEEEEEEEEEE`));
+
                 $(`#chat_send_${contactId}`).attr('disabled', false);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error:', error);
-            console.log('Response:', xhr.responseText);
+
         }
     });
 }
@@ -1317,7 +1317,7 @@ jQuery(document).ready(function() {
     let queryParams = new URLSearchParams(queryString);
     let contactQueryId = queryParams.get('chat_contact_open');
     if (queryParams && contactQueryId) {
-        // console.log($(`#chat_contact_${contactQueryId}`));
+);
         $(`#chat_contact_${contactQueryId}`).trigger("click");
     }
     // check page has query parameter chat_contact_open = STOP
@@ -1363,7 +1363,7 @@ jQuery(document).ready(function() {
 });
 $('.insert-placeholder').on('click', function () {
     let placeholder = $(this).data('placeholder');
-    console.log(placeholder);
+
     theEditor.model.change(writer => {
         let selection = theEditor.model.document.selection;
         let position = selection.getFirstPosition();
@@ -1587,7 +1587,7 @@ $('#myFormAddNewTemplate').on('submit', function(event) {
         toastr.error('Template content should not be blank');
         return false; // Prevent form submission
     }
-   
+
     let formData = $(this).serializeArray();
     formData.push({
         name: 'template_content',
@@ -1631,13 +1631,13 @@ $('#myFormAddNewTemplate').on('submit', function(event) {
             return false;
         }
     });
-    
+
 });
 
 
 let theEditorEdit;
 function setNoteModal(elem, $id) {
-    // console.log(elem);
+
     //ajax to get note data
     $.ajax({
         headers: {
@@ -1737,7 +1737,7 @@ function set_reload() {
     toastr.options.onHidden = function() {
         window.location.reload();
     }
-    //reload page when modal is closed    
+    //reload page when modal is closed
     $('#editNoteModal').on('hide.bs.modal', function(e) {
         location.reload();
     });
@@ -1749,7 +1749,7 @@ function set_reload() {
     toastr.options.onHidden = function() {
         window.location.reload();
     }
-    //reload page when modal is closed    
+    //reload page when modal is closed
     $('#editNoteModal').on('hide.bs.modal', function(e) {
         location.reload();
     });

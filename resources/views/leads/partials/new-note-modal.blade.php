@@ -74,7 +74,7 @@
         if (theNoteEditor) {
             const editorData = theNoteEditor.getData().trim();
 
-            // console.log(editorData);
+
 
             if (!editorData || editorData === '<p></p>') {
                 toastr.error('Description is required');

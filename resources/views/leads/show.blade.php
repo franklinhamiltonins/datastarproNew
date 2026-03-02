@@ -640,7 +640,7 @@ jQuery(document).ready(function() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('cross clicked');
+
             let localCustomSearchVal = localStorage.getItem('DataTables_leads_datatable_/leads');
             let updatedLocalCustomSearchVal = JSON.parse(localCustomSearchVal);
             updatedLocalCustomSearchVal.search.search = '';

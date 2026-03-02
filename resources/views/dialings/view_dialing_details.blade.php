@@ -161,7 +161,7 @@
             var viewEditId = '{{ $viewEditId }}';
 
             var baseUrl = '/' + moduleName + '/list/' + apiEndpoint; // Define base URL
-            console.log(baseUrl);
+
             var loadingSpinner = document.getElementById('moduleTableProcessing');
 
             var requestData = {

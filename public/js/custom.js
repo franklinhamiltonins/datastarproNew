@@ -21,7 +21,7 @@ function changeBackButtonLink(event) {
 	let backPageToUrl = getFromSessionStorage('backpage_url');
 	if (backPageToUrl) {
 		event.preventDefault();
-		// console.log(backPageToUrl);return false;
+return false;
 		window.location.href = backPageToUrl;
 	}
 }
@@ -67,7 +67,7 @@ function handlecallInitiation(params) {
 		},
 		success: function (data, status, xhr) {
 			setBackUrl(params);
-			// console.log(params);
+
 			if (data.is_admin) {
 				toastr.error(data.message);
 				return false;
@@ -176,7 +176,7 @@ function addNotification(dataInDetail) {
 
 	if (notificationList.children.length > 6) {
 
-		// console.log('notificationList.children.length -> ', notificationList.children.length);
+
 		let secondLastIndex = notificationList.children.length - 2;
 		let lastChild = notificationList.children[notificationList.children.length - 1];
 
@@ -211,13 +211,13 @@ function appendDataInChat(dataInDetail) {
 						$(`#chat_footer_${contact_id}`).show();
 					}
 				} else {
-					console.log("One or both elements do not exist.");
+
 				}
 			} else {
-				console.log("Required data is missing or invalid.");
+
 			}
 		} else {
-			console.log("You are not on the desired page URL.");
+
 		}
 	} catch (error) {
 		console.error("An error occurred:", error);
@@ -247,14 +247,14 @@ function createLi(fullName, msg, url_lead_id, contact_id) {
 	let hostName = window.location.hostname;
 	return `<li >
 				<a href="https://${hostName}/leads/edit/${url_lead_id}?chat_contact_open=${contact_id}">
-				
+
 					<h4> ${fullName} </h4>
 					<p > ${msg} </p>
 				</a>
 			</li>`;
 }
 
-// console.log("hi");
+
 $(document).ready(function () {
 	let debounceTimeout;
 
@@ -274,17 +274,17 @@ $(document).ready(function () {
 						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 					},
 					success: function (data) {
-						// console.log(data); // Log the response data
+ // Log the response data
 
 						if (Array.isArray(data)) {
 							let suggestions = '';
 							data.forEach(user => {
 								suggestions += `<a href="/impersonate/${user.id}" class="list-group-item list-group-item-action p-2 small">
-                                     <p class="mb-0 text-primary user-name font-weight-bold">${user.name}</p><italic class="text-break"> (${user.email}) </italic> 
-                                    ${user.role == 'Super Admin' ? `<p class="d-block text-success mb-0">${user.role}</p>` : `<p class="d-block text-info mb-0">${user.role}</p>`} 
+                                     <p class="mb-0 text-primary user-name font-weight-bold">${user.name}</p><italic class="text-break"> (${user.email}) </italic>
+                                    ${user.role == 'Super Admin' ? `<p class="d-block text-success mb-0">${user.role}</p>` : `<p class="d-block text-info mb-0">${user.role}</p>`}
                                 </a>`;
 							});
-							// console.log(suggestions);
+
 							$('#suggestions').html(suggestions).show();
 						} else {
 							console.error("Expected an array but received:", data);
@@ -339,7 +339,7 @@ $(document).ready(function () {
 	        }
 	    });
 	});
-   
+
     const tabSelectors = [".lowerpaneltab_leads",".upperpaneltab_leads"];
 
     // Loop through each tab selector
@@ -347,10 +347,10 @@ $(document).ready(function () {
         // Set up click event on tabs with the class `.lowerpaneltab_leads`
         $(selector).on('click', function (e) {
             e.preventDefault();
-            
+
             // Remove the 'active' class from all tabs
             $(selector).removeClass('active');
-            
+
             // Add the 'active' class to the clicked tab
             $(this).addClass('active');
         });

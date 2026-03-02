@@ -64,7 +64,7 @@
                     data_id: data_id,
                 },
                 success: function (response) {
-                    // console.log(response);
+
                     if (response.status) {
                         $('#newdeleteModal').modal('hide');
                         toastr.success('Carrier deleted successfully!');

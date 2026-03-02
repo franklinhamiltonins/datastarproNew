@@ -205,7 +205,7 @@
                         otp: $('#otp').val(),
                     },
                     success: function (res) {
-                        // console.log(res);return false;
+return false;
                         $('#verifyOtpBtn').prop('disabled', false);
                         hideLoader();
                         if (res.status) {

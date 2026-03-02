@@ -276,7 +276,7 @@ function draw_table() {
 
     $('#customSearchBox').on('input', debounce(function(event) {
         if (!event.target.value) {
-            console.log('contact search cross clicked');
+
             $(event.target).blur(); // to remove cursiour from search field.
 
             $(event.target).siblings('i.fas.fa-search.position-absolute').remove(); // remove search icon and the append
@@ -345,7 +345,7 @@ function draw_table() {
         }).get();
 
         if (selectedValues.length > 0) {
-            console.log("Selected values:", selectedValues);
+
             // function to delete bulk ajax
             deleteSelectedRecords(selectedValues);
         }

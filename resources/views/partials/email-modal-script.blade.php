@@ -200,7 +200,7 @@
         $('.hide-create-form-button').val('Please wait...');
 
         let formData = $('#myFormSendEmail').serializeArray();
-        console.log(formData);
+
         formData.push({
             name: 'template_content',
             value: editorContent,
@@ -240,7 +240,7 @@
                         return false;
                     }
                 } catch (error) {
-                    console.log(error);
+
                     toastr.error('Internal server error');
                     $('.hide-create-form-button').prop('disabled', false);
                     $('.hide-create-form-button').val('Send');
@@ -275,7 +275,7 @@
                     },
                 },
                 cancel: function () {
-                    console.log('the user clicked cancel');
+
                 },
             },
         });

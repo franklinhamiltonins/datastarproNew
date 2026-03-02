@@ -54,7 +54,7 @@
                             location.reload();
                         }, 3000);
                     } else {
-                        // console.log(response);
+
                         content.empty();
 
                         content.append(`
@@ -91,7 +91,7 @@
                     force_update: 1,
                 },
                 success: function (response) {
-                    // console.log(response);
+
                     if (response.status) {
                         $('#newreassignModal').modal('hide');
                         toastr.success(response.message);
