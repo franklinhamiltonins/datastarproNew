@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dialing List Confirmation</title>
-</head>
-<body style="margin: 0;">
-    <table style="background-color: #fff;border-spacing: 0;padding: 10px;width: 100%;">
-        <tr>
-            <td style="text-align: left;vertical-align: top;">
-            <div class="content">
-                {!! $data['message'] !!}
-            </div>
-            </td>
-        </tr>
-    </table>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dialing List Confirmation</title>
+    </head>
+    <body style="margin: 0">
+        <table style="background-color: #fff; border-spacing: 0; padding: 10px; width: 100%">
+            <tr>
+                <td style="text-align: left; vertical-align: top">
+                    <div class="content">
+                        {!! $data["message"] !!}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>

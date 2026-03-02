@@ -10,7 +10,9 @@
                 Outbound Calls
             </div>
             <div class="col-md-7 text-muted small">
-                Retrieved from <strong>Bigocean call logs</strong>.
+                Retrieved from
+                <strong>Bigocean call logs</strong>
+                .
             </div>
         </div>
         <div class="row mb-3">
@@ -19,7 +21,9 @@
                 Facebook, Mailer, SMS, Email, 611 Transfer, 611 Referral Email
             </div>
             <div class="col-md-7 text-muted small">
-                Captured from the <strong>Mailer Lead Tracker</strong> form submissions.
+                Captured from the
+                <strong>Mailer Lead Tracker</strong>
+                form submissions.
             </div>
         </div>
         <div class="row mb-1">
@@ -28,7 +32,9 @@
                 Appointments, Policies, Expiry Premium, AOR, Effective Month, AOR Premium
             </div>
             <div class="col-md-7 text-muted small">
-                Pulled from the <strong>Agent Activity</strong> form submissions.
+                Pulled from the
+                <strong>Agent Activity</strong>
+                form submissions.
             </div>
         </div>
     </div>

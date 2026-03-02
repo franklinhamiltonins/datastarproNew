@@ -1,92 +1,86 @@
 <script async>
-let prevChatContactIds = [];
-let clickCount = 0;
+    let prevChatContactIds = [];
+    let clickCount = 0;
 
+    // Function to remove excess chat persons
+    function removeExcessChatPersons() {
+        const maxDivs = 3;
+        if ($('#chat-wrapper .chat-person').length === maxDivs) {
+            // let removableContactId = $("#chat-wrapper .chat-person:last-child").attr('id').replace("chat_person_", "");
+            prevChatContactIds.shift();
 
+            $('#chat-wrapper .chat-person:last-child').remove();
 
-// Function to remove excess chat persons
-function removeExcessChatPersons() {
-    const maxDivs = 3;
-    if ($("#chat-wrapper .chat-person").length === maxDivs) {
-        // let removableContactId = $("#chat-wrapper .chat-person:last-child").attr('id').replace("chat_person_", "");
-        prevChatContactIds.shift();
+            // const indexToRemove = prevChatContactIds.indexOf(removableContactId);
+            // console.log(removableContactId,prevChatContactIds,indexToRemove);
 
-        $("#chat-wrapper .chat-person:last-child").remove();
-
-        // const indexToRemove = prevChatContactIds.indexOf(removableContactId);
-        // console.log(removableContactId,prevChatContactIds,indexToRemove);
-
-        // if (indexToRemove !== -1) {
-        //     prevChatContactIds.splice(indexToRemove, 1);
-        // }
-        // console.log(removableContactId,prevChatContactIds,indexToRemove);
+            // if (indexToRemove !== -1) {
+            //     prevChatContactIds.splice(indexToRemove, 1);
+            // }
+            // console.log(removableContactId,prevChatContactIds,indexToRemove);
+        }
     }
-}
 
+    // Function to append a new chat person
+    function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, is_newsletter_contact) {
+        const borderClass = getBorderClass();
+        // console.log(chatContactId,is_newsletter_contact);
 
-// Function to append a new chat person
-function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, is_newsletter_contact) {
-    const borderClass = getBorderClass();
-    // console.log(chatContactId,is_newsletter_contact);
+        // Fetch chat content from Laravel using Ajax
+        fetchChatContent(chatContactId, is_newsletter_contact, function (data) {
+            console.log(data);
 
-    // Fetch chat content from Laravel using Ajax
-    fetchChatContent(chatContactId,is_newsletter_contact, function(data) {
+            // check the checkMaxExecTime - START
+            checkMaxExecTime(chatContactId);
+            // check the checkMaxExecTime - STOP
 
-        console.log(data);
+            // Append the new chat person with dynamic content
+            // data = JSON.parse(data);
+            let html = '';
+            let prevDate = null;
 
-        // check the checkMaxExecTime - START
-        checkMaxExecTime(chatContactId);
-        // check the checkMaxExecTime - STOP
+            data.response.forEach((message) => {
+                const msgDate = new Date(message.created_at);
+                const currentDate = new Date();
 
-        // Append the new chat person with dynamic content
-        // data = JSON.parse(data);
-        let html = '';
-        let prevDate = null;
+                const differenceInDays = Math.floor((currentDate - msgDate) / (1000 * 60 * 60 * 24));
+                const formattedDateTime =
+                    differenceInDays <= 6
+                        ? msgDate.toLocaleDateString('en-US', {
+                              weekday: 'long',
+                          })
+                        : msgDate.toLocaleDateString();
+                let timeString = new Date(message.created_at).toLocaleTimeString();
+                let timeWithoutSecond = new Date(message.created_at).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                });
 
-        data.response.forEach(message => {
-            const msgDate = new Date(message.created_at);
-            const currentDate = new Date();
+                // let formattedDateTime = msgDate + ' ' + timeString;
 
-            const differenceInDays = Math.floor((currentDate - msgDate) / (1000 * 60 * 60 * 24));
-            const formattedDateTime = differenceInDays <= 6 ?
-                msgDate.toLocaleDateString('en-US', {
-                    weekday: 'long'
-                }) :
-                msgDate.toLocaleDateString();
-            let timeString = new Date(message.created_at).toLocaleTimeString();
-            let timeWithoutSecond = new Date(message.created_at).toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-
-            // let formattedDateTime = msgDate + ' ' + timeString;
-
-            if (formattedDateTime !== prevDate) {
-                html += `<div class="message-date"><span>${formattedDateTime}</span></div>`;
-                prevDate = formattedDateTime;
-            }
-
-            if (message.chat_type === 'outbound') {
-                html +=
-                    `<p class="my-txt mb-2 p-2">`;
-                if(data.is_admin){
-                    let agent_name = message.name ? message.name : 'System';
-
-                    html += `<span class="agent-name d-block mb-1 pb-1 text-right border-bottom font-weight-bold"> ${agent_name}</span>`;
+                if (formattedDateTime !== prevDate) {
+                    html += `<div class="message-date"><span>${formattedDateTime}</span></div>`;
+                    prevDate = formattedDateTime;
                 }
 
-                html += `<span class="d-block">${message.content}</span></p> <p class="snd-msg">${timeWithoutSecond}</p>`;
-            } else if (message.chat_type === 'inbound' && message.chat_sms_sent_status === 5) {
-                html += `<p class="other-txt mb-2 startstopmessage">${message.content}</p>`;
-            } else {
-                html +=
-                    `<p class="other-txt mb-2">${message.content}</p> <p class="rcv-msg">${timeWithoutSecond}</p>`;
-            }
-        });
+                if (message.chat_type === 'outbound') {
+                    html += `<p class="my-txt mb-2 p-2">`;
+                    if (data.is_admin) {
+                        let agent_name = message.name ? message.name : 'System';
 
+                        html += `<span class="agent-name d-block mb-1 pb-1 text-right border-bottom font-weight-bold"> ${agent_name}</span>`;
+                    }
 
-        $("#chat-wrapper").prepend(`
+                    html += `<span class="d-block">${message.content}</span></p> <p class="snd-msg">${timeWithoutSecond}</p>`;
+                } else if (message.chat_type === 'inbound' && message.chat_sms_sent_status === 5) {
+                    html += `<p class="other-txt mb-2 startstopmessage">${message.content}</p>`;
+                } else {
+                    html += `<p class="other-txt mb-2">${message.content}</p> <p class="rcv-msg">${timeWithoutSecond}</p>`;
+                }
+            });
+
+            $('#chat-wrapper').prepend(`
 				<div class="position-relative chat-person ml-3 ${borderClass} border rounded" id="chat_person_${chatContactId}">
 
 					<h4 class="bg-${borderClass.replace('border-', '')} mb-0 px-2 py-3 d-flex align-items-center justify-content-between">${chatContactName}
@@ -121,180 +115,173 @@ function appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, 
 				</div>
 			`);
 
-        if (chatContactStatus) {
-            $('#chat_footer_' + chatContactId).hide();
-        }
-
-        clickCount++;
-        prevChatContactIds.push(chatContactId); // Add the current chatContactId to the array
-        // console.log(prevChatContactIds);
-    });
-
-}
-
-$(document).off("click").on("click", '.chat_initialise',handleChatInit);
-// Function to handle chat initialization
-function handleChatInit(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const maxDivs = 3;
-    // if ($("#chat-wrapper .chat-person").length >= maxDivs) {
-
-    // }
-    // console.log("on next");
-    const contact_id = $(this).data("contact_id");
-    const newsletter_id = $(this).data("newsletter_id");
-    const chatContactId = parseInt(contact_id ? contact_id : newsletter_id);
-    const is_newsletter_contact = contact_id ? "no" : "yes";
-    const chatContactName = $(this).data("name");
-    const chatContactStatus = $(this).data("chat_contact_status") == null ? 0 : $(this).data("chat_contact_status");
-
-    // Check if the clicked chatContactId is not in the array of previous ones
-
-    if (!prevChatContactIds.includes(chatContactId)) {
-        removeExcessChatPersons();
-        appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, is_newsletter_contact);
-    }
-};
-
-
-function getBorderClass() {
-    const borderClasses = ['border-danger', 'border-info', 'border-dark'];
-    return borderClasses[clickCount % 3];
-}
-
-
-function fetchChatContent(chatContactId,is_newsletter_contact, successCallback) {
-    $.ajax({
-        url: `/chat/${chatContactId}/${is_newsletter_contact}`, // Replace with your Laravel route
-        type: 'GET',
-        success: successCallback,
-        error: function(error) {
-            console.error('Error fetching chat content:', error);
-        }
-    });
-}
-
-function checkMaxExecTime(contactId) {
-    $.ajax({
-        url: `/check-max-execution-time/${contactId}`,
-        method: 'GET',
-        success: function(response) {
-            if (response.status == '200' && response.success == true && response.response > 0) {
-                $(`#chat_send_${contactId}`).attr('disabled', true);
-            } else {
-                $(`#chat_send_${contactId}`).attr('disabled', false);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error:', error);
-            console.log('Response:', xhr.responseText);
-        }
-    });
-}
-
-$(document).on('click', '#chat-wrapper .fas.fa-chevron-down', function(e) {
-    e.preventDefault();
-    let offDivs = $(this).closest('.chat-person').find('.off-div');
-    $(this).css("transform-origin", "center");
-    if ($(this).hasClass('rotate-180')) {
-        $(this).css("transform", "rotate(0deg)");
-        $(this).removeClass('rotate-180');
-    } else {
-        $(this).css("transform", "rotate(180deg)");
-        $(this).addClass('rotate-180');
-    }
-    offDivs.toggle('slow');
-});
-
-$(document).on('click', '#chat-wrapper .close_chatbox', function(e) {
-    e.preventDefault();
-    let closeDiv = $(this).closest('.chat-person');
-    let removableContactId = parseInt($(this).attr('data-id'));
-
-    // console.log(prevChatContactIds,removableContactId);
-
-    prevChatContactIds = prevChatContactIds.filter(function(id) {
-        return id !== removableContactId;
-    });
-    closeDiv.remove();
-    // console.log(prevChatContactIds,removableContactId);
-
-    // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
-    // closeDiv.remove();
-
-    // if (indexToRemove !== -1) {
-    //     prevChatContactIds.splice(indexToRemove, 1);
-    //     console.log(prevChatContactIds);
-    // }
-});
-
-$("#chat-wrapper").on("click", ".chat-send", function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    let timeString = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    });
-
-    let chatContent = $(this).siblings(".text-input").val();
-    const chatContactId = $(this).attr("id").replace("chat_send_", "");
-    const isNewsletterContact = $(this).attr('data-is_newsletter_contact');
-    // console.log(isNewsletterContact);
-
-    let dataMsgs = document.getElementById(`chat_message_${chatContactId}`);
-    let viewContent = chatContent;
-    if (dataMsgs.children.length === 0) {
-        viewContent = chatContent + `</br> Please text "STOP" to stop the conversation.`;
-    }
-    if (chatContent.trim() !== "") {
-
-        // function to save data in mesage and append data in msg
-        // console.log(isNewsletterContact); return false;
-        saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact);
-
-        // Clear the textarea after posting the chat
-        $(this).siblings(".text-input").val("");
-    }
-});
-
-function saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact) {
-    // console.log(isNewsletterContact+"  2"); return false;
-    $.ajax({
-        url: '/chat',
-        method: "POST",
-        data: {
-            content: chatContent,
-            chatContactId: chatContactId,
-            isNewsletter: isNewsletterContact
-
-        },
-        success: function(response) {
-            let appendhtml =
-                `<p class="my-txt mb-2 p-2">`;
-            if(response.is_admin){
-                let agent_name = response.logged_in_user_name ? response.logged_in_user_name : 'System';
-
-                appendhtml += `<span class="agent-name d-block mb-1 pb-1 text-right border-bottom font-weight-bold"> ${agent_name}</span>`;
+            if (chatContactStatus) {
+                $('#chat_footer_' + chatContactId).hide();
             }
 
-            appendhtml += `<span class="d-block">${viewContent}</span></p> <p class="snd-msg">${timeString}</p>`;
+            clickCount++;
+            prevChatContactIds.push(chatContactId); // Add the current chatContactId to the array
+            // console.log(prevChatContactIds);
+        });
+    }
 
-            $(`#chat_message_${chatContactId}`).append(appendhtml);
+    $(document).off('click').on('click', '.chat_initialise', handleChatInit);
+    // Function to handle chat initialization
+    function handleChatInit(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const maxDivs = 3;
+        // if ($("#chat-wrapper .chat-person").length >= maxDivs) {
 
-            // $(`#chat_message_${chatContactId}`).append(
-            //     `<p class="my-txt mb-2">${viewContent}</p>
-			// 		<p class="snd-msg">${timeString}</p>`);
-            $(`#chat_contact_${chatContactId} .text-input`).val("");
-        },
-        error: function(xhr, status, error) {
-            let jsonResponse = JSON.parse(xhr.responseText);
-            toastr.error(jsonResponse.response);
+        // }
+        // console.log("on next");
+        const contact_id = $(this).data('contact_id');
+        const newsletter_id = $(this).data('newsletter_id');
+        const chatContactId = parseInt(contact_id ? contact_id : newsletter_id);
+        const is_newsletter_contact = contact_id ? 'no' : 'yes';
+        const chatContactName = $(this).data('name');
+        const chatContactStatus = $(this).data('chat_contact_status') == null ? 0 : $(this).data('chat_contact_status');
+
+        // Check if the clicked chatContactId is not in the array of previous ones
+
+        if (!prevChatContactIds.includes(chatContactId)) {
+            removeExcessChatPersons();
+            appendNewChatPerson(chatContactId, chatContactName, chatContactStatus, is_newsletter_contact);
+        }
+    }
+
+    function getBorderClass() {
+        const borderClasses = ['border-danger', 'border-info', 'border-dark'];
+        return borderClasses[clickCount % 3];
+    }
+
+    function fetchChatContent(chatContactId, is_newsletter_contact, successCallback) {
+        $.ajax({
+            url: `/chat/${chatContactId}/${is_newsletter_contact}`, // Replace with your Laravel route
+            type: 'GET',
+            success: successCallback,
+            error: function (error) {
+                console.error('Error fetching chat content:', error);
+            },
+        });
+    }
+
+    function checkMaxExecTime(contactId) {
+        $.ajax({
+            url: `/check-max-execution-time/${contactId}`,
+            method: 'GET',
+            success: function (response) {
+                if (response.status == '200' && response.success == true && response.response > 0) {
+                    $(`#chat_send_${contactId}`).attr('disabled', true);
+                } else {
+                    $(`#chat_send_${contactId}`).attr('disabled', false);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                console.log('Response:', xhr.responseText);
+            },
+        });
+    }
+
+    $(document).on('click', '#chat-wrapper .fas.fa-chevron-down', function (e) {
+        e.preventDefault();
+        let offDivs = $(this).closest('.chat-person').find('.off-div');
+        $(this).css('transform-origin', 'center');
+        if ($(this).hasClass('rotate-180')) {
+            $(this).css('transform', 'rotate(0deg)');
+            $(this).removeClass('rotate-180');
+        } else {
+            $(this).css('transform', 'rotate(180deg)');
+            $(this).addClass('rotate-180');
+        }
+        offDivs.toggle('slow');
+    });
+
+    $(document).on('click', '#chat-wrapper .close_chatbox', function (e) {
+        e.preventDefault();
+        let closeDiv = $(this).closest('.chat-person');
+        let removableContactId = parseInt($(this).attr('data-id'));
+
+        // console.log(prevChatContactIds,removableContactId);
+
+        prevChatContactIds = prevChatContactIds.filter(function (id) {
+            return id !== removableContactId;
+        });
+        closeDiv.remove();
+        // console.log(prevChatContactIds,removableContactId);
+
+        // let indexToRemove = prevChatContactIds.indexOf(removableContactId);
+        // closeDiv.remove();
+
+        // if (indexToRemove !== -1) {
+        //     prevChatContactIds.splice(indexToRemove, 1);
+        //     console.log(prevChatContactIds);
+        // }
+    });
+
+    $('#chat-wrapper').on('click', '.chat-send', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let timeString = new Date().toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
+
+        let chatContent = $(this).siblings('.text-input').val();
+        const chatContactId = $(this).attr('id').replace('chat_send_', '');
+        const isNewsletterContact = $(this).attr('data-is_newsletter_contact');
+        // console.log(isNewsletterContact);
+
+        let dataMsgs = document.getElementById(`chat_message_${chatContactId}`);
+        let viewContent = chatContent;
+        if (dataMsgs.children.length === 0) {
+            viewContent = chatContent + `</br> Please text "STOP" to stop the conversation.`;
+        }
+        if (chatContent.trim() !== '') {
+            // function to save data in mesage and append data in msg
+            // console.log(isNewsletterContact); return false;
+            saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact);
+
+            // Clear the textarea after posting the chat
+            $(this).siblings('.text-input').val('');
         }
     });
-}
 
+    function saveMessageInChat(chatContent, chatContactId, viewContent, timeString, isNewsletterContact) {
+        // console.log(isNewsletterContact+"  2"); return false;
+        $.ajax({
+            url: '/chat',
+            method: 'POST',
+            data: {
+                content: chatContent,
+                chatContactId: chatContactId,
+                isNewsletter: isNewsletterContact,
+            },
+            success: function (response) {
+                let appendhtml = `<p class="my-txt mb-2 p-2">`;
+                if (response.is_admin) {
+                    let agent_name = response.logged_in_user_name ? response.logged_in_user_name : 'System';
 
-</script>indexOf
+                    appendhtml += `<span class="agent-name d-block mb-1 pb-1 text-right border-bottom font-weight-bold"> ${agent_name}</span>`;
+                }
+
+                appendhtml += `<span class="d-block">${viewContent}</span></p> <p class="snd-msg">${timeString}</p>`;
+
+                $(`#chat_message_${chatContactId}`).append(appendhtml);
+
+                // $(`#chat_message_${chatContactId}`).append(
+                //     `<p class="my-txt mb-2">${viewContent}</p>
+                // 		<p class="snd-msg">${timeString}</p>`);
+                $(`#chat_contact_${chatContactId} .text-input`).val('');
+            },
+            error: function (xhr, status, error) {
+                let jsonResponse = JSON.parse(xhr.responseText);
+                toastr.error(jsonResponse.response);
+            },
+        });
+    }
+</script>
+indexOf

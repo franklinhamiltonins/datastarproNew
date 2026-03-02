@@ -7,16 +7,18 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            
+
             <div class="modal-body">
                 <div class="form-group">
                     <strong>Filter Name:</strong>
-                    <input id="filter_save_type" type="text" class="d-none" value="" name="filter_save_type">
-                    {!! Form::text('save_filter_name', null, array('placeholder' => 'Filter Name','class' => 'form-control','required')) !!}
+                    <input id="filter_save_type" type="text" class="d-none" value="" name="filter_save_type" />
+                    {!! Form::text("save_filter_name", null, ["placeholder" => "Filter Name", "class" => "form-control", "required"]) !!}
                 </div>
             </div>
             <div class="modal-footer flex-column">
-                <button type="submit" class="btn btn-primary" id="save-filter-button" onclick="saveFilter()">Save Filter</button>
+                <button type="submit" class="btn btn-primary" id="save-filter-button" onclick="saveFilter()">
+                    Save Filter
+                </button>
             </div>
         </div>
     </div>

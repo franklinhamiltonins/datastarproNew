@@ -8,17 +8,25 @@
                     <div class="form-group col-md-6">
                         <h6>Start Date</h6>
                         <div class="controls">
-                            <input type="date" name="start_date" id="start_date"
-                                   class="form-control datepicker-autoclose"
-                                   placeholder="Please select start date">
+                            <input
+                                type="date"
+                                name="start_date"
+                                id="start_date"
+                                class="form-control datepicker-autoclose"
+                                placeholder="Please select start date"
+                            />
                         </div>
                     </div>
                     <div class="form-group col-md-6">
                         <h6>End Date</h6>
                         <div class="controls">
-                            <input type="date" name="end_date" id="end_date"
-                                   class="form-control datepicker-autoclose"
-                                   placeholder="Please select end date">
+                            <input
+                                type="date"
+                                name="end_date"
+                                id="end_date"
+                                class="form-control datepicker-autoclose"
+                                placeholder="Please select end date"
+                            />
                         </div>
                     </div>
                 </div>
@@ -29,19 +37,14 @@
 
 <div class="dropdown-divider mb-4 mt-4"></div>
 
-<div class="row flex-wrap align-items-center justify-content-center 
-            justify-content-md-between">
+<div class="row flex-wrap align-items-center justify-content-center justify-content-md-between">
     <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
-        <button type="submit"
-                id="btnFiterSubmitSearch"
-                onclick="filter_table()"
-                class="btn btn-primary mb-2">
+        <button type="submit" id="btnFiterSubmitSearch" onclick="filter_table()" class="btn btn-primary mb-2">
             Filter
         </button>
     </div>
     <div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
-        <div class="btn btn-danger text-light andClose mb-2"
-             onclick="resetCloseFiltersTab(this)">
+        <div class="btn btn-danger text-light andClose mb-2" onclick="resetCloseFiltersTab(this)">
             Reset Filters and Close
         </div>
     </div>

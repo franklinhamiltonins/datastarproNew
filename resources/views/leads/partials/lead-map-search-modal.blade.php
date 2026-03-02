@@ -22,7 +22,7 @@
     #map-canvas {
         height: 77vh;
         margin: 0px;
-        padding: 0px
+        padding: 0px;
     }
 
     #map-canvas-overlay {
@@ -68,9 +68,16 @@
         width: 345px;
     }
 </style>
-<div class="modal fade" id="mapsearch" data-source="" style="display: none;" data-backdrop="static" data-keyboard="false">
+<div
+    class="modal fade"
+    id="mapsearch"
+    data-source=""
+    style="display: none"
+    data-backdrop="static"
+    data-keyboard="false"
+>
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content ">
+        <div class="modal-content">
             <div class="modal-header p-2 p-lg-3 align-items-center">
                 <h5 class="modal-title">Map Search</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
