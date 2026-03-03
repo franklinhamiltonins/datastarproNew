@@ -127,9 +127,9 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var insutance_type_selection = document.getElementById('insutance_type_selection');
-    var pageType = <?= $page_type ?>;
-    var gl_choices = new Choices(insutance_type_selection, {
+    const insutance_type_selection = document.getElementById('insutance_type_selection');
+    const pageType = <?= $page_type ?>;
+    const gl_choices = new Choices(insutance_type_selection, {
         removeItemButton: true,  // Show remove button for selected items
         placeholder: pageType != 3,  // Show placeholder text
         placeholderValue: 'Select Insurance Type'
@@ -157,21 +157,16 @@ jQuery(document).ready(function() {
             toastr.error('Please Select Insurance Type');
             return false; // Prevent form submission
         }
-.val());
-        // if($("#priority").val() == ''){
-        //     toastr.error('Priority should not be blank');
-        //     return false; // Prevent form submission
-        // }
         $('#rating').submit();
     });
 
     $(document).on('change','#acceptance_data',function(event) {
-        acceptance_data_function();
+        acceptanceDataFunction();
     });
 
-    acceptance_data_function();
+    acceptanceDataFunction();
 
-    function acceptance_data_function() {
+    function acceptanceDataFunction() {
         if(parseInt("{{$pending}}") != 1){
             if(parseInt($('#acceptance_data').val()) == 3){
                 $("#updateRating").text("Reject Rating");
@@ -181,8 +176,6 @@ jQuery(document).ready(function() {
             }
         }
     }
-
-
 
 })
 </script>
