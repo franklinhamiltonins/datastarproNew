@@ -7,7 +7,6 @@ use App\Model\LeadsModel\Contact;
 use App\Model\LeadsModel\ScrapApiPlatform;
 use App\Model\LeadsModel\ScrapContactApiPlatform;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ScrapContactController extends Controller
 {

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Leads;
 use App\Exports\LeadsExport;
 use App\Http\Controllers\Controller;
 use App\Model\Campaign;
-use App\Model\LeadsModel\Action;
 use App\Model\LeadsModel\Contact;
 use App\Model\LeadsModel\Lead;
 use App\Model\LeadsModel\Log;

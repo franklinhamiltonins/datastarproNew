@@ -33,7 +33,7 @@ class ShootDailyAgentWiseLeadStatus extends Command
      */
     public function __construct(ProcessAgentWiseLeadWiseReport $processAgentWise)
     {
-        parent::__construct(); 
+        parent::__construct();
         $this->processAgentWise = $processAgentWise;
     }
 

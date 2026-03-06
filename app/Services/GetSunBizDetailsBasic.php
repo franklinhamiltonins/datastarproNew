@@ -11,6 +11,17 @@ class GetSunBizDetailsBasic
 {
     use CommonFunctionsTrait;
 
+    // Status constants
+    private const STATUS_ACTIVE = 'Active';
+    private const STATUS_SELECTED = 'selected';
+    private const STATUS_NOT_SELECTED = 'not_selected';
+
+    // Entity types for similarity matching
+    private const ENTITY_TYPES = ['CONDOMINIUM', 'ASSOCIATION', 'INC', 'LLC', 'LIMITED'];
+
+    // Minimum similarity threshold
+    private const MIN_SIMILARITY = 0.5;
+
     /**
      * Get replacement mappings part 1
      */
@@ -163,7 +174,7 @@ class GetSunBizDetailsBasic
     }
 
     /**
-     * Get all replacements
+     * Get all replacement mappings merged together
      */
     protected function getAllReplacements(): array
     {
@@ -177,10 +188,13 @@ class GetSunBizDetailsBasic
         );
     }
 
+    /**
+     * Replace substrings in string based on mapping
+     */
     public function replaceSubstrings($string)
     {
         $replacements = $this->getAllReplacements();
-        $string = $string.' ';
+        $string = $string . ' ';
 
         foreach ($replacements as $search => $replace) {
             $string = str_replace($search, $replace, $string);
@@ -189,92 +203,149 @@ class GetSunBizDetailsBasic
         return trim($string);
     }
 
-    public function scrapSunbiz($lead_name = 'Ocean 14')
+    /**
+     * Scrape Sunbiz for business data
+     */
+    public function scrapeSunbiz($leadName = 'Ocean 14')
     {
+        $upperName = strtoupper($leadName);
+        $entityName = str_replace(' ', '%20', $upperName);
+        $searchNameOrder = strtoupper(str_replace(' ', '', $upperName));
 
-        $lead_name = strtoupper($lead_name);
-        $entity_name = str_replace('', '%20', $lead_name);
-        $searchNameOrder = strtoupper(str_replace(' ', '', $lead_name));
+        $listUrl = 'https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResults/EntityName/' . $entityName . '/Page1?searchNameOrder=' . $searchNameOrder;
 
-        $list_url = 'https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResults/EntityName/'.$entity_name.'/Page1?searchNameOrder='.$searchNameOrder;
+        $html = $this->fetchHtml($listUrl);
 
+        if (empty($html)) {
+            return [];
+        }
+
+        return $this->parseSearchResults($html, $leadName, $listUrl);
+    }
+
+    /**
+     * Fetch HTML content from URL using Browsershot
+     */
+    private function fetchHtml(string $url): string
+    {
         try {
-
-            $html = Browsershot::url($list_url)
+            return Browsershot::url($url)
                 ->timeout(60)
                 ->waitUntilNetworkIdle()
                 ->userAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64)')
                 ->bodyHtml();
-
         } catch (\Exception $e) {
+            \Log::error('Browsershot failed for URL: ' . $url . ' | ' . $e->getMessage());
 
-            \Log::error('Browsershot failed for URL: '.$list_url.' | '.$e->getMessage());
-
-            return [];
+            return '';
         }
-
-        $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
-
-        $entity_name_probability_arr = ['CONDOMINIUM', 'ASSOCIATION', 'INC', 'LLC', 'LIMITED'];
-        $scrap_response = [];
-        $match_found = false;
-
-        $crawler->filter('[id^="search-results"]>table>tbody>tr')->each(function ($node) use (&$scrap_response, &$match_found, $lead_name, $entity_name_probability_arr, $list_url) {
-            $status = $node->filter('.small-width')->text();
-
-            if ($status != 'Active') {
-                return;
-            }
-
-            $business_name = $node->filter('.large-width')->text();
-            $business_name_href = $node->filter('.large-width > a')->attr('href');
-            $document_number = $node->filter('.medium-width')->text();
-
-            $similarity = $this->calculateSimilarity($lead_name, $business_name, $entity_name_probability_arr);
-
-            if ($similarity['similarity'] >= 0.5 && ! $match_found) {
-                $status = ($lead_name === $business_name) ? 'selected' : 'not_selected';
-                $scrap_response['handle_data'] = $this->getcontactDetails($business_name_href, $list_url);
-                $match_found = true;
-            }
-        });
-        return $scrap_response;
     }
 
-    public function calculateSimilarity($lead_name, $business_name, $entity_name_probability_arr)
+    /**
+     * Parse search results and find matching business
+     */
+    private function parseSearchResults(string $html, string $leadName, string $listUrl): array
     {
-        $original_business_name = $business_name;
+        $crawler = new Crawler($html);
+        $scrapResponse = [];
+        $matchFound = false;
 
-        $lead_name = strtolower(str_replace([' ', '(', ')', '.', ',', '\''], '', $lead_name));
-        $business_name = strtolower(str_replace([' ', '(', ')', '.', ',', '\''], '', $business_name));
+        $crawler->filter('[id^="search-results"]>table>tbody>tr')->each(
+            function ($node) use (&$scrapResponse, &$matchFound, $leadName, $listUrl) {
+                $status = $node->filter('.small-width')->text();
 
+                if ($status != self::STATUS_ACTIVE) {
+                    return;
+                }
+
+                $businessName = $node->filter('.large-width')->text();
+                $businessNameHref = $node->filter('.large-width > a')->attr('href');
+
+                $similarity = $this->calculateSimilarity($leadName, $businessName);
+
+                if ($similarity['similarity'] >= self::MIN_SIMILARITY && !$matchFound) {
+                    $selectionStatus = ($leadName === $businessName) ? self::STATUS_SELECTED : self::STATUS_NOT_SELECTED;
+                    $scrapResponse['handle_data'] = $this->getContactDetails($businessNameHref, $listUrl);
+                    $matchFound = true;
+                }
+            }
+        );
+
+        return $scrapResponse;
+    }
+
+    /**
+     * Calculate similarity between lead name and business name
+     */
+    public function calculateSimilarity(string $leadName, string $businessName): array
+    {
+        $originalBusinessName = $businessName;
+
+        $normalizedLead = $this->normalizeString($leadName);
+        $normalizedBusiness = $this->normalizeString($businessName);
+
+        $similarity = $this->computeSimilarity($normalizedLead, $normalizedBusiness);
+
+        echo 'similarity' . $similarity;
+
+        return ['similarity' => $similarity, 'business_name' => $originalBusinessName];
+    }
+
+    /**
+     * Normalize string for comparison
+     */
+    private function normalizeString(string $str): string
+    {
+        return strtolower(str_replace([' ', '(', ')', '.', ',', '\''], '', $str));
+    }
+
+    /**
+     * Compute similarity score between two strings
+     */
+    private function computeSimilarity(string $leadName, string $businessName): float
+    {
         $similarity = 0;
-        if (strpos($business_name, $lead_name) !== false) {
+
+        if (strpos($businessName, $leadName) !== false) {
             $similarity += 0.5;
         }
-        foreach ($entity_name_probability_arr as $entity) {
-            if (strpos($business_name, $entity) !== false) {
+
+        foreach (self::ENTITY_TYPES as $entity) {
+            if (strpos($businessName, strtolower($entity)) !== false) {
                 $similarity += 0.1;
             }
         }
-        echo 'similarity'.$similarity;
 
-        return ['similarity' => $similarity, 'business_name' => $original_business_name];
+        return $similarity;
     }
 
-    public function getcontactDetails($url, $list_url)
+    /**
+     * Get contact details from Sunbiz detail page
+     */
+    public function getContactDetails(string $url, string $listUrl): array
     {
-        $fullUrl = 'https://search.sunbiz.org'.$url;
-
+        $fullUrl = 'https://search.sunbiz.org' . $url;
         $client = new Client;
         $crawler = $client->request('GET', $fullUrl);
 
-        if (! $crawler) {
+        if (!$crawler) {
             return [];
         }
 
-        $finalArr = [
-            'list_url' => $list_url,
+        $finalArr = $this->initContactDetailsArray($listUrl, $fullUrl);
+        $data = $this->extractSpanData($crawler, $finalArr);
+        $membersNames = $this->extractMemberNames($crawler);
+
+        return $this->processContactData($crawler, $data, $membersNames, $finalArr);
+    }
+
+    /**
+     * Initialize contact details array with default values
+     */
+    private function initContactDetailsArray(string $listUrl, string $fullUrl): array
+    {
+        return [
+            'list_url' => $listUrl,
             'details_url' => $fullUrl,
             'principal_address' => null,
             'mailing_address' => null,
@@ -282,7 +353,13 @@ class GetSunBizDetailsBasic
             'registered_address' => '',
             'members' => [],
         ];
+    }
 
+    /**
+     * Extract span data from crawler and populate final array
+     */
+    private function extractSpanData(Crawler $crawler, array &$finalArr): array
+    {
         $spans = $crawler->filter('div.detailSection > span');
         $data = [];
 
@@ -290,43 +367,76 @@ class GetSunBizDetailsBasic
         for ($i = 0; $i < $spanCount; $i++) {
             $text = trim($spans->eq($i)->text());
             $data[] = $text;
-
-            switch ($text) {
-                case 'Mailing Address':
-                    $finalArr['mailing_address'] = trim($spans->eq($i + 1)->text());
-                    break;
-
-                case 'Registered Agent Name & Address':
-                    $finalArr['registered_name'] = trim($spans->eq($i + 1)->text());
-
-                    $addressDiv = $spans->eq($i + 2)->filter('div');
-                    if ($addressDiv->count()) {
-                        $rawHtml = $addressDiv->html();
-                        $addressLines = array_filter(array_map('trim',
-                            preg_split('/<br[^>]*>/i', strip_tags($rawHtml, '<br>'))
-                        ));
-                        $finalArr['registered_address'] = implode(' ', $addressLines);
-                    }
-                    break;
-                default:
-                    $finalArr['principal_address'] = trim($spans->eq($i + 1)->text());
-                    break;
-            }
+            $this->processSpanText($text, $i, $spans, $finalArr);
         }
 
+        return $data;
+    }
+
+    /**
+     * Process span text based on content type
+     */
+    private function processSpanText(string $text, int $i, Crawler $spans, array &$finalArr): void
+    {
+        switch ($text) {
+            case 'Mailing Address':
+                $finalArr['mailing_address'] = trim($spans->eq($i + 1)->text());
+                break;
+
+            case 'Registered Agent Name & Address':
+                $finalArr['registered_name'] = trim($spans->eq($i + 1)->text());
+                $addressDiv = $spans->eq($i + 2)->filter('div');
+                if ($addressDiv->count()) {
+                    $finalArr['registered_address'] = $this->parseAddress($addressDiv);
+                }
+                break;
+            default:
+                $finalArr['principal_address'] = trim($spans->eq($i + 1)->text());
+                break;
+        }
+    }
+
+    /**
+     * Parse address from HTML div element
+     */
+    private function parseAddress(Crawler $addressDiv): string
+    {
+        $rawHtml = $addressDiv->html();
+        $addressLines = array_filter(array_map('trim',
+            preg_split('/<br[^>]*>/i', strip_tags($rawHtml, '<br>'))
+        ));
+
+        return implode(' ', $addressLines);
+    }
+
+    /**
+     * Extract member names from detail sections
+     */
+    private function extractMemberNames(Crawler $crawler): array
+    {
         $membersNames = [];
         $sections = $crawler->filter('.detailSection');
 
         foreach ($sections as $section) {
-            $crawler = new Crawler($section->ownerDocument->saveHTML($section));
-            $crawler->filterXPath('//div[@class="detailSection"]/text()')->each(function ($node) use (&$membersNames) {
-                $val = trim($node->text());
-                if (! empty($val)) {
-                    $membersNames[] = $val;
+            $sectionCrawler = new Crawler($section);
+            $sectionCrawler->filterXPath('//text()[normalize-space()]')->each(
+                function ($node) use (&$membersNames) {
+                    $val = trim($node->text());
+                    if (!empty($val)) {
+                        $membersNames[] = $val;
+                    }
                 }
-            });
+            );
         }
 
+        return $membersNames;
+    }
+
+    /**
+     * Process contact data and extract members
+     */
+    private function processContactData(Crawler $crawler, array $data, array $membersNames, array $finalArr): array
+    {
         $officerIndex = array_search('Officer/Director Detail', $data);
         if ($officerIndex === false) {
             $officerIndex = array_search('Authorized Person(s) Detail', $data);
@@ -335,20 +445,35 @@ class GetSunBizDetailsBasic
         $nameAddrIndex = array_search('Name & Address', $data);
 
         if ($officerIndex === false || $nameAddrIndex === false) {
-            return $finalArr; // nothing to extract
+            return $finalArr;
         }
 
+        $members = $this->extractMembers($data, $officerIndex);
+
+        if (count($members) && count($membersNames) && count($members) === count($membersNames)) {
+            $finalArr['members'] = $this->populateMemberNames($members, $membersNames);
+        }
+
+        return $finalArr;
+    }
+
+    /**
+     * Extract members array from data
+     */
+    private function extractMembers(array $data, int $officerIndex): array
+    {
+        $members = [];
         $readIndex = $officerIndex + 2;
         $dataCount = count($data);
 
-        $members = [];
         while ($readIndex < $dataCount) {
-
             if ($data[$readIndex] === 'Annual Reports') {
                 break;
             }
 
-            $title = isset($data[$readIndex]) ? preg_replace('/^Title\s*/', '', $data[$readIndex]) : '';
+            $title = isset($data[$readIndex])
+                ? preg_replace('/^Title\s*/', '', $data[$readIndex])
+                : '';
             $address = $data[$readIndex + 1] ?? '';
 
             $members[] = [
@@ -359,25 +484,44 @@ class GetSunBizDetailsBasic
             $readIndex += 2;
         }
 
-        if (count($members) && count($membersNames) && count($members) === count($membersNames)) {
+        return $members;
+    }
 
-            for ($i = 0; $i < count($members); $i++) {
-
-                $first_name = $membersNames[$i];
-                $last_name = '';
-
-                if (strpos($membersNames[$i], ',') !== false) {
-                    $parts = preg_split('/,\s*/', $membersNames[$i]);
-                    $first_name = end($parts);
-                    $last_name = implode(' ', array_slice($parts, 0, -1));
-                }
-                $full_name = trim($first_name.' '.$last_name);
-                $members[$i]['member_name'] = $full_name;
-            }
-
-            $finalArr['members'] = $members;
+    /**
+     * Populate member names from extracted names array
+     */
+    private function populateMemberNames(array $members, array $membersNames): array
+    {
+        for ($i = 0; $i < count($members); $i++) {
+            $parsedName = $this->parseMemberName($membersNames[$i]);
+            $members[$i]['member_name'] = $parsedName['full_name'];
+            $members[$i]['first_name'] = $parsedName['first_name'];
+            $members[$i]['last_name'] = $parsedName['last_name'];
         }
 
-        return $finalArr;
+        return $members;
+    }
+
+    /**
+     * Parse member name into first and last name
+     */
+    private function parseMemberName(string $name): array
+    {
+        $firstName = $name;
+        $lastName = '';
+
+        if (strpos($name, ',') !== false) {
+            $parts = preg_split('/,\s*/', $name);
+            $firstName = end($parts);
+            $lastName = implode(' ', array_slice($parts, 0, -1));
+        }
+
+        $fullName = trim($firstName . ' ' . $lastName);
+
+        return [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'full_name' => $fullName,
+        ];
     }
 }

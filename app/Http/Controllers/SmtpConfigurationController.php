@@ -440,7 +440,7 @@ class SmtpConfigurationController extends Controller
         // Get email providers
         $emailProviders = $this->getEmailProviders();
 
-        
+
         if (empty($agentUsers)) {
             toastr()->success('No user left - SMTP has been configured for all');
             return redirect('/smtps');
@@ -604,7 +604,7 @@ class SmtpConfigurationController extends Controller
      */
     public function edit(Request $request)
     {
-        $id = $request->route('id'); 
+        $id = $request->route('id');
         $decodedId = base64_decode($id);
         $smtpConfiguration = SmtpConfiguration::where('id', $decodedId)->with('user')->first();
 

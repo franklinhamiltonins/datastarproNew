@@ -20,7 +20,7 @@
         "phpoffice/phpspreadsheet": "^1.18",
         "pusher/pusher-php-server": "^7.0",
         "slim/slim": "3.8",
-        "spatie/browsershot": "~3.40",
+        "spatie/browsershot": "~5.2.0",
         "spatie/laravel-permission": "^5.0",
         "symfony/dom-crawler": "^6.0",
         "vonage/client": "^2.3",

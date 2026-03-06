@@ -28,8 +28,6 @@ class NoteController extends Controller
 
             return back();
         }
-
-        // return note data
         return response()->json($note);
     }
 
@@ -42,12 +40,9 @@ class NoteController extends Controller
     public function note_update(Request $request, $id)
     {
         $rules = [
-            // 'title' => 'required|string|max:191',
-            // 'contact_id' => 'required|integer',
             'description' => 'required|string',
         ];
         $niceNames = [
-            //   'title'=> 'Note Title',
             'contact_id' => 'contact id',
             'description' => 'Note Description',
         ];

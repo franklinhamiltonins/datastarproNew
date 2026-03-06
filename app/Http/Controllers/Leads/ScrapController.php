@@ -1,7 +1,4 @@
 <?php
-
-// namespace App\Http\Controllers;
-
 namespace App\Http\Controllers\Leads;
 
 use App\Http\Controllers\Controller;
@@ -538,7 +535,7 @@ class ScrapController extends Controller
         }
     }
 
-    public function scrap_county(REQUEST $request)
+    public function scrap_county(Request $request)
     {
         $url = 'https://www.fl-counties.com/about-floridas-counties/florida-cities-by-county/';
         $response = Http::get($url);
@@ -576,7 +573,7 @@ class ScrapController extends Controller
         }
     }
 
-    public function scrap_white_pages(REQUEST $request)
+    public function scrap_white_pages(Request $request)
     {
         // $url = "https://www.whitepages.com/name/Jeremy-Lambert/FL?fs=1&searchedName=jeremy%20lambert&searchedLocation=Florida";
         // $url = "https://pbcpao.gov/MasterSearch/SearchResults?propertyType=RE&searchvalue=Weinbaum%20";
@@ -586,18 +583,8 @@ class ScrapController extends Controller
         if ($response->successful()) {
             // Create a new Crawler instance
             $crawler = new Crawler($response->body());
-            dd($crawler);
             $crawler->filter('[id^="searchGrid"]')->filter('tr')->each(
                 function ($node) use (&$data) {
-                    // dd($node->getContent());
-                    // $node->filter('tr')->each(function ($node1) use (&$data) {
-                    // dd($node);
-                    // });
-                    // dd($node->filter('tr')->filter('td'));
-                    dd($node->filter('td.propertyDetails'));
-                    // dd($node->filterXPath('td'));
-
-                    // $data[] = $node->filter('td')->siblings();
 
                 }
             );

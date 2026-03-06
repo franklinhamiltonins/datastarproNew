@@ -6,50 +6,61 @@ use App\Model\LeadsModel\Contact;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Command to update contact phone numbers to exclude +1 prefix
+ */
 class UpdateContactPhone extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string Command signature */
     protected $signature = 'command:contact-phone-update';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string Command description */
     protected $description = 'Update contact phone to exclude +1';
 
-    public function handle():void
+    // Processing constants
+    private const CHUNK_SIZE = 200;
+    private const MIN_PHONE_LENGTH = 10;
+
+    /**
+     * Execute the console command
+     */
+    public function handle(): void
     {
         try {
-            Contact::chunk(200, function ($contacts) {
-                $updateData = [];
-
-                foreach ($contacts as $contact) {
-                    $updateData[] = $this->prepareContactUpdateData($contact);
-                }
-
-                Contact::upsert(
-                    $updateData,
-                    ['id'],
-                    ['c_phone', 'c_phone_updated', 'c_phone_update_status']
-                );
-            });
-
+            $this->processContacts();
         } catch (\Exception $e) {
             Log::error('Failed to update contact: ' . $e->getMessage());
         }
     }
 
-    // Prepare a single contact update array
+    /**
+     * Process contacts in chunks
+     */
+    private function processContacts(): void
+    {
+        Contact::chunk(self::CHUNK_SIZE, function ($contacts) {
+            $updateData = [];
+
+            foreach ($contacts as $contact) {
+                $updateData[] = $this->prepareContactUpdateData($contact);
+            }
+
+            Contact::upsert(
+                $updateData,
+                ['id'],
+                ['c_phone', 'c_phone_updated', 'c_phone_update_status']
+            );
+        });
+    }
+
+    /**
+     * Prepare contact update data
+     */
     private function prepareContactUpdateData($contact)
     {
         $id = $contact->id;
         $phone = $contact->c_phone;
-        
+
         if (!$phone) {
             return [
                 'id' => $id,
@@ -59,32 +70,39 @@ class UpdateContactPhone extends Command
             ];
         }
 
-        // Initialize defaults
-        $cleanPhone = $phone;
-        $updated = 0;
-        $status = '';
+        return $this->processPhoneNumber($id, $phone);
+    }
 
-        // Check if phone contains +1
+    /**
+     * Process phone number to remove +1 prefix
+     */
+    private function processPhoneNumber(int $id, string $phone): array
+    {
         if (!str_contains($phone, '+1')) {
-            $status = 'Phone no does not contain +1';
-        } else {
-            // Strip +1
-            $cleanPhone = str_replace('+1', '', $phone);
+            return [
+                'id' => $id,
+                'c_phone' => $phone,
+                'c_phone_updated' => 0,
+                'c_phone_update_status' => 'Phone no does not contain +1',
+            ];
+        }
 
-            if (strlen($cleanPhone) < 10) {
-                $status = 'Not Updated! Phone length is ' . strlen($cleanPhone) . ' (excluding +1).';
-            } else {
-                $updated = 1;
-                $status = 'Updated successfully.';
-            }
+        $cleanPhone = str_replace('+1', '', $phone);
+
+        if (strlen($cleanPhone) < self::MIN_PHONE_LENGTH) {
+            return [
+                'id' => $id,
+                'c_phone' => $cleanPhone,
+                'c_phone_updated' => 0,
+                'c_phone_update_status' => 'Not Updated! Phone length is ' . strlen($cleanPhone) . ' (excluding +1).',
+            ];
         }
 
         return [
             'id' => $id,
             'c_phone' => $cleanPhone,
-            'c_phone_updated' => $updated,
-            'c_phone_update_status' => $status,
+            'c_phone_updated' => 1,
+            'c_phone_update_status' => 'Updated successfully.',
         ];
     }
-
 }

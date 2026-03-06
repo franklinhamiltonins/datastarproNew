@@ -139,11 +139,6 @@ class CampaignController extends Controller
             return back();
 
         }
-        // if(count($campaign->files) == 0){ //if there is no file in db for this campaign
-
-        //         toastr()->error('The Creative file is required');
-        //         return back();
-        //     }
 
         $campaign->update($input);
 
@@ -198,7 +193,6 @@ class CampaignController extends Controller
         // find and remove from db and storage the uploaded files
         if (count($campaign->files) > 0) {
             foreach ($campaign->files as $file) {
-                // unlink(storage_path($file->file_path)); // this model is using soft delete , this line is not longer necesary
                 $file->delete();
             }
         }

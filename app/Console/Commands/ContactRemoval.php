@@ -6,53 +6,42 @@ use App\Model\LeadsModel\Contact;
 use DB;
 use Illuminate\Console\Command;
 
+/**
+ * Command to update contact information
+ */
 class ContactRemoval extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string Command signature */
     protected $signature = 'contact:removal {tablename} {actiontype}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'update contact infomation - actiontype = 1 - removal of field, actiontype = 2 update of fields';
+    /** @var string Command description */
+    protected $description = 'update contact information - actiontype = 1 removal of field, actiontype = 2 update of fields';
 
-    public $verified_status = 'Verified';
+    // Status constant
+    private const VERIFIED_STATUS = 'Verified';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
-        $tablename = $this->argument('tablename');
-        $actiontype = $this->argument('actiontype');
+        $tableName = $this->argument('tablename');
+        $actionType = $this->argument('actiontype');
 
-        while (DB::table($tablename)
-            ->where('status', 0)->count() > 0) {
-
-            DB::table($tablename)
+        while (DB::table($tableName)->where('status', 0)->count() > 0) {
+            DB::table($tableName)
                 ->where('status', 0)
                 ->orderBy('id')
-                ->chunk(500, function ($nonmatcheddata) use ($tablename, $actiontype) {
-                    foreach ($nonmatcheddata as $key => $nonmatched) {
-                        $contact = Contact::withTrashed()->find($nonmatched->Contact_id);
+                ->chunk(500, function ($nonMatchedData) use ($tableName, $actionType) {
+                    foreach ($nonMatchedData as $key => $nonMatched) {
+                        $contact = Contact::withTrashed()->find($nonMatched->Contact_id);
                         if ($contact) {
-                            if ($actiontype == 1) {
-                                $this->blankcontactcolumndata($contact);
-                            } elseif ($actiontype == 2) {
-                                $this->updatecontactcolumndata($contact, $nonmatched);
+                            if ($actionType == 1) {
+                                $this->blankContactColumnData($contact);
+                            } elseif ($actionType == 2) {
+                                $this->updateContactColumnData($contact, $nonMatched);
                             }
 
-                            $this->updatenonmatcheddatastatus($tablename, $nonmatched->id, 1);
+                            $this->updateNonMatchedDataStatus($tableName, $nonMatched->id, 1);
                         } else {
-                            $this->updatenonmatcheddatastatus($tablename, $nonmatched->id, 2);
+                            $this->updateNonMatchedDataStatus($tableName, $nonMatched->id, 2);
                         }
                     }
                 });
@@ -61,10 +50,12 @@ class ContactRemoval extends Command
         $this->info('Success');
 
         return 0;
-
     }
 
-    public function blankcontactcolumndata($contact)
+    /**
+     * Blank contact column data
+     */
+    private function blankContactColumnData($contact)
     {
         $contact = Contact::withTrashed()->find($contact->id);
         if ($contact) {
@@ -74,32 +65,39 @@ class ContactRemoval extends Command
             $contact->c_state = null;
             $contact->c_zip = null;
             $contact->c_county = null;
-
-            $contact->verified_status = $this->verified_status;
+            $contact->verified_status = self::VERIFIED_STATUS;
             $contact->save();
         }
     }
 
-    public function updatecontactcolumndata($contact, $nonmatched)
+    /**
+     * Update contact column data
+     */
+    private function updateContactColumnData($contact, $nonMatched)
     {
         $contact = Contact::withTrashed()->find($contact->id);
         if ($contact) {
-
-            $contact->verified_status = $this->verified_status;
+            $contact->verified_status = self::VERIFIED_STATUS;
             $contact->save();
         }
     }
 
-    public function beautifyphonenumberformat($phone_number)
+    /**
+     * Beautify phone number format
+     */
+    private function beautifyPhoneNumberFormat($phoneNumber)
     {
-        return preg_replace('/\D/', '', $phone_number);
+        return preg_replace('/\D/', '', $phoneNumber);
     }
 
-    public function updatenonmatcheddatastatus($tablename, $nonmatchedid, $status)
+    /**
+     * Update non-matched data status
+     */
+    private function updateNonMatchedDataStatus($tableName, $nonMatchedId, $status)
     {
-        DB::table($tablename)
+        DB::table($tableName)
             ->where('status', 0)
-            ->where('id', $nonmatchedid)
+            ->where('id', $nonMatchedId)
             ->update(['status' => $status]);
 
         return 0;

@@ -11,67 +11,92 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * Command to send arbitrary number of emails to Klaviyo
+ */
 class SendArbitaryOnlyKlaviyo extends Command
 {
-    use CommonFunctionsTrait,KlaviyoFunctionsTrait,SendSmsToQueueTrait;
+    use CommonFunctionsTrait, KlaviyoFunctionsTrait, SendSmsToQueueTrait;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string Command signature */
     protected $signature = 'sendarbitary:onlyklaviyo {min} {max}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'send a arbitary number of email to  klaviyo';
+    /** @var string Command description */
+    protected $description = 'send a arbitrary number of email to klaviyo';
 
     /**
-     * Execute the console command.
-     *
-     * @return int
+     * Execute the console command
      */
     public function handle()
     {
         try {
-            $check_time_validity = $this->promotionalMsgSendingCheck();
-
-            if ($check_time_validity) {
-                $min = $this->argument('min');
-                $max = $this->argument('max');
-
-                $max_enteries_loop = $this->generateSecureRandomNumber($min, $max);
-
-                $total_entry = Contact::select('id', 'c_email')
-                    ->whereNull('email_sent_to_klaviyo')
-                    ->whereNotNull('c_email')
-                    ->where('c_email', '<>', '')
-                    ->where('verified_status', 'like', 'Verified%')
-                    ->orderBy('id')->limit($max_enteries_loop)->get();
-
-                // echo "<pre>";print_r($total_entry);exit;
-
-                foreach ($total_entry as $keyentry => $valuentry) {
-                    $this->sendKalviyo($valuentry, $keyentry);
-                }
-                $this->info('Execution Done');
-
-                return 0;
-            } else {
+            if (!$this->isWithinAllowedTime()) {
                 $this->error('cant run at this time - time restriction 09:00 to 19:00 est');
+                return 0;
             }
-        } catch (Throwable $e) {
-            Log::error('SendArbitaryKlaviyo command failed: '.$e->getMessage());
-            $this->info('Error  Occured');
 
-            // Re-throw the exception to allow Laravel to handle retries
-            // throw $e;
+            $this->processContacts();
+
+            $this->info('Execution Done');
+        } catch (Throwable $e) {
+            Log::error('SendArbitaryKlaviyo command failed: ' . $e->getMessage());
+            $this->info('Error Occurred');
         } finally {
-            // Ensure the connection is closed after job execution
             DB::disconnect();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Check if current time is within allowed sending time
+     */
+    private function isWithinAllowedTime(): bool
+    {
+        return $this->promotionalMsgSendingCheck();
+    }
+
+    /**
+     * Process contacts to send to Klaviyo
+     */
+    private function processContacts(): void
+    {
+        $contacts = $this->getContactsToProcess();
+
+        if ($contacts->isEmpty()) {
+            $this->error('No Entry');
+            return;
+        }
+
+        $this->sendToKlaviyo($contacts);
+    }
+
+    /**
+     * Get contacts that need to be processed
+     */
+    private function getContactsToProcess()
+    {
+        $min = $this->argument('min');
+        $max = $this->argument('max');
+        $limit = $this->generateSecureRandomNumber($min, $max);
+
+        return Contact::select('id', 'c_email')
+            ->whereNull('email_sent_to_klaviyo')
+            ->whereNotNull('c_email')
+            ->where('c_email', '<>', '')
+            ->where('verified_status', 'like', 'Verified%')
+            ->orderBy('id')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Send contacts to Klaviyo
+     */
+    private function sendToKlaviyo($contacts): void
+    {
+        foreach ($contacts as $key => $contact) {
+            $this->sendKalviyo($contact, $key);
         }
     }
 }

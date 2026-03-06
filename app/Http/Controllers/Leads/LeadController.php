@@ -333,11 +333,11 @@ class LeadController extends Controller
 
         $searchValue = $request->input('search')['value'] ?? null;
         $filters = $request->searchFields ?: '';
-        $locationLeadsId = $request->locationLeadsId
-            ? json_decode($request->locationLeadsId)
+        $locationLeadsId = $request->location_leads_id
+            ? json_decode($request->location_leads_id)
             : '';
-        $locationLeadsIdFlag = $request->locationLeadsIdSearch ?? false;
-        $dialingFiltersClicked = $request->dialingFiltersClicked;
+        $locationLeadsIdFlag = $request->location_leads_id_search ?? false;
+        $dialingFiltersClicked = $request->dialing_filters_clicked;
         $columnsType = Lead::Get_column_type();
         $campaignId = $request->campaign ?? '';
         $isAdminUser = auth()->user()->can('agent-create');

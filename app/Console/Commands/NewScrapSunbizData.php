@@ -9,15 +9,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\DomCrawler\Crawler;
 
+/**
+ * Command to scrape Sunbiz data with new logic
+ */
 class NewScrapSunbizData extends Command
 {
     use SunbizDataTrait;
 
+    /** @var string Command signature */
     protected $signature = 'newLogic:SunBizScrap {looplimit?}';
 
+    /** @var string Command description */
     protected $description = 'new logic for scrap sunbiz Api';
 
-    private $responseArr = [
+    // Default response array structure
+    private const DEFAULT_RESPONSE = [
         'list_url' => null,
         'details_url' => null,
         'principal_address' => null,
@@ -27,38 +33,56 @@ class NewScrapSunbizData extends Command
         'members' => [],
     ];
 
+    // Lead status constants
+    private const LEAD_BOT_STATUS_CRAWLED = 2;
+    private const LEAD_BOT_STATUS_DETAILS_FETCHED = 3;
+    private const LEAD_BOT_STATUS_NO_URL = 4;
+    private const LEAD_BOT_STATUS_ERROR = 5;
+
+    // Instance response array
+    private $responseArr = [];
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->responseArr = self::DEFAULT_RESPONSE;
+    }
+
+    /**
+     * Execute the console command
+     */
     public function handle()
     {
-        $max_limit = $this->argument('looplimit');
-        $entry_made = 0;
+        $maxLimit = $this->argument('looplimit');
+        $entryMade = 0;
         $chunkSize = 50;
         $stopLoop = false;
 
-        while (Lead::where('is_added_by_bot', 2)->first()) {
-            Lead::where('is_added_by_bot', 2)
+        while (Lead::where('is_added_by_bot', self::LEAD_BOT_STATUS_CRAWLED)->first()) {
+            Lead::where('is_added_by_bot', self::LEAD_BOT_STATUS_CRAWLED)
                 ->orderBy('id', 'asc')
                 ->select('id', 'name')
-                ->chunk($chunkSize, function ($leads) use (&$entry_made, $max_limit, &$stopLoop) {
+                ->chunk($chunkSize, function ($leads) use (&$entryMade, $maxLimit, &$stopLoop) {
                     foreach ($leads as $lead) {
                         try {
                             DB::beginTransaction();
 
                             $this->getContactDetails($lead->id);
-                            $entry_made++;
+                            $entryMade++;
 
-                            Lead::where('id', $lead->id)->update(['is_added_by_bot' => 3]);
+                            Lead::where('id', $lead->id)->update(['is_added_by_bot' => self::LEAD_BOT_STATUS_DETAILS_FETCHED]);
 
                             DB::commit();
                         } catch (\Exception $e) {
                             DB::rollBack();
-                            Lead::where('id', $lead->id)->update(['is_added_by_bot' => 5]);
-                            \Log::error("SunBiz Scraper Error for lead ID {$lead->id}: ".$e->getMessage());
+                            Lead::where('id', $lead->id)->update(['is_added_by_bot' => self::LEAD_BOT_STATUS_ERROR]);
+                            \Log::error("SunBiz Scraper Error for lead ID {$lead->id}: " . $e->getMessage());
                             $stopLoop = true;
 
                             return false;
                         }
 
-                        if (! empty($max_limit) && $entry_made >= $max_limit) {
+                        if (!empty($maxLimit) && $entryMade >= $maxLimit) {
                             $stopLoop = true;
 
                             return false;
@@ -67,46 +91,49 @@ class NewScrapSunbizData extends Command
                 });
 
             if ($stopLoop) {
-                break; // manually break while loop
+                break;
             }
         }
 
-        $this->info("{$entry_made} Leads operation has been done");
+        $this->info("{$entryMade} Leads operation has been done");
     }
 
-    private function getContactDetails($lead_id)
+    /**
+     * Get contact details from Sunbiz for a lead
+     */
+    private function getContactDetails($leadId)
     {
-        $lead = Lead::find($lead_id);
-        if (! $lead) {
+        $lead = Lead::find($leadId);
+        if (!$lead) {
             return;
         }
 
         $url = $lead->sunbiz_details_url;
         if (empty($url)) {
-            Lead::where('id', $lead->id)->update(['is_added_by_bot' => 4]);
+            Lead::where('id', $lead->id)->update(['is_added_by_bot' => self::LEAD_BOT_STATUS_NO_URL]);
 
             return [];
         }
-        $list_url = $lead->sunbiz_list_url;
+        $listUrl = $lead->sunbiz_list_url;
 
         $client = new Client;
         $crawler = $client->request('GET', $url);
-        if (! $crawler) {
+        if (!$crawler) {
             return [];
         }
 
-        $this->responseArr['list_url'] = $list_url;
+        $this->responseArr['list_url'] = $listUrl;
         $this->responseArr['details_url'] = $url;
 
-        $finalArrres = $this->crawlResponseAddress($crawler);
-        $finalArr = $finalArrres['responsearr'];
-        $data = $finalArrres['responsedata'];
+        $finalArrRes = $this->crawlResponseAddress($crawler);
+        $finalArr = $finalArrRes['responsearr'];
+        $data = $finalArrRes['responsedata'];
 
         $members = $this->extractMemberDetails($crawler, $data);
-        $this->saveMembers($members, $lead_id);
+        $this->saveMembers($members, $leadId);
 
-        if (! empty($finalArr['registered_name']) || ! empty($finalArr['registered_address'])) {
-            Lead::where('id', $lead_id)->update([
+        if (!empty($finalArr['registered_name']) || !empty($finalArr['registered_address'])) {
+            Lead::where('id', $leadId)->update([
                 'sunbiz_registered_name' => $finalArr['registered_name'],
                 'sunbiz_registered_address' => $finalArr['registered_address'],
             ]);
@@ -115,6 +142,9 @@ class NewScrapSunbizData extends Command
         return $finalArr;
     }
 
+    /**
+     * Crawl response address from the page
+     */
     private function crawlResponseAddress($crawler)
     {
         $finalArr = $this->responseArr;
@@ -150,6 +180,9 @@ class NewScrapSunbizData extends Command
         ];
     }
 
+    /**
+     * Extract member details from the page
+     */
     private function extractMemberDetails($crawler, $data)
     {
         $sections = $crawler->filter('.detailSection');
@@ -160,17 +193,17 @@ class NewScrapSunbizData extends Command
             $crawler = new Crawler($section->ownerDocument->saveHTML($section));
             $crawler->filterXPath('//div[@class="detailSection"]/text()')->each(function ($node) use (&$membersNames) {
                 $val = trim($node->text());
-                if (! empty($val)) {
+                if (!empty($val)) {
                     $membersNames[] = $val;
                 }
             });
         }
 
-        $selected_index = $this->findStartIndex($data);
+        $selectedIndex = $this->findStartIndex($data);
 
-        if ($selected_index) {
-            for ($j = $selected_index; $j <= count($data); $j += 2) {
-                if (! isset($data[$j]) || $data[$j] === 'Annual Reports') {
+        if ($selectedIndex) {
+            for ($j = $selectedIndex; $j <= count($data); $j += 2) {
+                if (!isset($data[$j]) || $data[$j] === 'Annual Reports') {
                     break;
                 }
 
@@ -184,6 +217,9 @@ class NewScrapSunbizData extends Command
         return $this->combineNamesWithMembers($membersNames, $members);
     }
 
+    /**
+     * Find start index for member data extraction
+     */
     private function findStartIndex($data)
     {
         $officerIndex = array_search('Officer/Director Detail', $data);
@@ -195,6 +231,9 @@ class NewScrapSunbizData extends Command
         return ($officerIndex !== false && $nameAddrIndex !== false) ? $officerIndex + 2 : 0;
     }
 
+    /**
+     * Combine names with members array
+     */
     private function combineNamesWithMembers($names, $members)
     {
         if (count($members) === 0 || count($names) !== count($members)) {

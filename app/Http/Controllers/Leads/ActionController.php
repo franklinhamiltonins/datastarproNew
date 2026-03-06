@@ -76,7 +76,7 @@ class ActionController extends Controller
     {
         return $date ? date('m/d/Y', strtotime($date)) : '';
     }
-    
+
     /**
      * Create actions.
      *

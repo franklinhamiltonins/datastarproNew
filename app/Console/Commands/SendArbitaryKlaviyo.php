@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Model\SmsProvider;
 use App\Model\SmsProviderQueue;
 use App\Traits\CommonFunctionsTrait;
 use App\Traits\KlaviyoFunctionsTrait;
@@ -13,69 +12,92 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+/**
+ * Command to send arbitrary contact info to Klaviyo
+ */
 class SendArbitaryKlaviyo extends Command
 {
-    use CommonFunctionsTrait,KlaviyoFunctionsTrait,SendSmsToQueueTrait,VontageunctionsTrait;
+    use CommonFunctionsTrait, KlaviyoFunctionsTrait, SendSmsToQueueTrait, VontageunctionsTrait;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string Command signature */
     protected $signature = 'sendarbitary:klaviyo {min} {max}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string Command description */
     protected $description = 'arbitary send contact info to klaviyo';
 
+    // Time restriction constants
+    private const MIN_HOUR = 9;
+    private const MAX_HOUR = 19;
+
     /**
-     * Execute the console command.
-     *
-     * @return int
+     * Execute the console command
      */
     public function handle()
     {
         try {
-            $check_time_validity = $this->promotionalMsgSendingCheck();
-
-            if ($check_time_validity) {
-                $min = $this->argument('min');
-                $max = $this->argument('max');
-
-                $max_enteries_loop = $this->generateSecureRandomNumber($min, $max);
-
-                $count_of_enteries_query = SmsProviderQueue::where('sms_sent_flag', 0);
-
-                $count_of_enteries = $count_of_enteries_query->count();
-
-                if ($count_of_enteries == 0) {
-                    $this->error('No Entry');
-                } else {
-
-                    $loop_pick_entry = $max_enteries_loop;
-
-                    $count_of_enteries_obj = $count_of_enteries_query->select('id', 'contact_id', 'sms_sent_flag', 'sms_provider_id', 'day_delay')
-                        ->orderBy('id')->limit($loop_pick_entry)->get();
-
-                    foreach ($count_of_enteries_obj as $keyentry => $valuentry) {
-                        $this->sendVonageSmsFromQueue($valuentry, $keyentry);
-                    }
-
-                    $this->info('Execution Done');
-                }
-
-                return 0;
-            } else {
+            if (!$this->isWithinAllowedTime()) {
                 $this->error('cant run at this time - time restriction 09:00 to 19:00 est');
+                return 0;
             }
+
+            $this->processQueueEntries();
+
+            $this->info('Execution Done');
         } catch (Throwable $e) {
-            Log::error('SendArbitaryKlaviyo command failed: '.$e->getMessage());
+            Log::error('SendArbitaryKlaviyo command failed: ' . $e->getMessage());
         } finally {
-            // Ensure the connection is closed after job execution
             DB::disconnect();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Check if current time is within allowed sending time
+     */
+    private function isWithinAllowedTime(): bool
+    {
+        return $this->promotionalMsgSendingCheck();
+    }
+
+    /**
+     * Process queue entries
+     */
+    private function processQueueEntries(): void
+    {
+        $entries = $this->getQueueEntries();
+
+        if ($entries->isEmpty()) {
+            $this->error('No Entry');
+            return;
+        }
+
+        $this->sendEntries($entries);
+    }
+
+    /**
+     * Get pending queue entries
+     */
+    private function getQueueEntries()
+    {
+        $min = $this->argument('min');
+        $max = $this->argument('max');
+        $limit = $this->generateSecureRandomNumber($min, $max);
+
+        return SmsProviderQueue::where('sms_sent_flag', 0)
+            ->select('id', 'contact_id', 'sms_sent_flag', 'sms_provider_id', 'day_delay')
+            ->orderBy('id')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Send entries to Vonage
+     */
+    private function sendEntries($entries): void
+    {
+        foreach ($entries as $key => $entry) {
+            $this->sendVonageSmsFromQueue($entry, $key);
         }
     }
 }

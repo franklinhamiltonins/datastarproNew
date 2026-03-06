@@ -423,10 +423,6 @@ class RatingController extends Controller
         return redirect()->route('rating.index');
     }
 
-    // ============================================================================
-    // Private Helper Methods
-    // ============================================================================
-
     /**
      * Find rating by ID or redirect with error.
      *

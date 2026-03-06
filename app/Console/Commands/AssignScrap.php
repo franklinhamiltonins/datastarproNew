@@ -8,153 +8,380 @@ use App\Model\LeadsModel\Lead;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
+// Command to assign scraped contact data to leads.
 class AssignScrap extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string Command signature */
     protected $signature = 'assign:scrapdata';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string Command description */
     protected $description = 'Assign Scrap data to leads';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
+    // Status constants for lead sunbiz processing
+    private const STATUS_CRAWLED = 'crawled';
+    private const STATUS_FAILED_CRAWL = 'failedcrawl';
+    private const STATUS_MIGRATED = 'migrated';
+    private const BOT_ADDED = 1;
+    private const BOT_MIGRATED = 2;
+
+    // Execute the console command.
     public function handle()
     {
-        $pendingBusinesses = Lead::where('is_added_by_bot', 1)->where(function ($query) {
-            $query->where('sunbiz_status', 'crawled')
-                ->orWhere('sunbiz_status', 'failedcrawl');
-        })->orderBy('name', 'asc')
-            ->select('id', 'name', 'sunbiz_status', 'sunbiz_list_url', 'sunbiz_details_url')
-            ->get();
-        $count = 0;
-
-        if ($pendingBusinesses->count() > 0) {
-            $bar = $this->output->createProgressBar($pendingBusinesses->count());
-            foreach ($pendingBusinesses as $business) {
-                $contactsId = [];
-                $contacts = Contact::where('lead_id', $business->id)->get();
-                $tempContacts = ContactScrap::where('lead_id', $business->id)->get();
-                foreach ($contacts as $contact) {
-                    array_push($contactsId, $contact->id);
-                }
-                foreach ($tempContacts as $tempcontact) {
-                    array_push($contactsId, 'temp-'.$tempcontact->id);
-                }
-
-                Log::channel('scrap_sunbiz')->info($business->id.', ');
-
-                $this->migratecommandcontacts($business->id, $contactsId);
-
-                $count++;
-                $bar->advance();
-                Log::channel('scrap_sunbiz')->info(' assigned successfully.');
-            }
-            $bar->finish();
-            $this->info($count.' businesses has been assigned successfully.');
-        }
+        return $this->executeCommand();
     }
 
-    public function migratecommandcontacts($currentPageLeadId, $contactsId)
+    // Execute the assign scrap command.
+    private function executeCommand()
     {
+        $pendingBusinesses = $this->fetchPendingLeads();
 
-        $leadIds = $contactsId;
-
-        if (count($leadIds) <= 0) {
-            Log::channel('scrap_sunbiz')->info('Please check at least one checkbox to continue.');
-
-            return;
-        }
-        if ($currentPageLeadId <= 0) {
-            Log::channel('scrap_sunbiz')->info('Mandatory Parameter missing.PLease contact administrator.');
-
-            return;
+        if ($pendingBusinesses->isEmpty()) {
+            return $this->info('No pending businesses found.');
         }
 
-        $intArray = [];
-        $tempArray = [];
-        foreach ($leadIds as $item) {
-            if (is_numeric($item)) {
-                $intArray[] = $item;
-            } else {
-                $item = $this->extractInteger($item);
-                $tempArray[] = $item;
-            }
+        return $this->runMigrationLoop($pendingBusinesses);
+    }
+
+    // Fetch leads that need scrap data assigned.
+    private function fetchPendingLeads()
+    {
+        return Lead::where('is_added_by_bot', self::BOT_ADDED)
+            ->where(function ($query) {
+                return $this->applyStatusFilter($query);
+            })
+            ->orderBy('name', 'asc')
+            ->select('id', 'name', 'sunbiz_status', 'sunbiz_list_url', 'sunbiz_details_url')
+            ->get();
+    }
+
+    // Apply status filter to query.
+    private function applyStatusFilter($query)
+    {
+        return $query->where('sunbiz_status', self::STATUS_CRAWLED)
+            ->orWhere('sunbiz_status', self::STATUS_FAILED_CRAWL);
+    }
+
+
+    private function runMigrationLoop($pendingBusinesses)
+    {
+        $bar = $this->initProgressBar($pendingBusinesses);
+        $count = $this->processBusinessesLoop($pendingBusinesses, $bar);
+        $this->finishProgressBar($bar);
+
+        return $this->info($count . ' businesses assigned.');
+    }
+
+
+    private function initProgressBar($pendingBusinesses)
+    {
+        return $this->output->createProgressBar($pendingBusinesses->count());
+    }
+
+    // Process businesses in loop.
+    private function processBusinessesLoop($pendingBusinesses, $bar)
+    {
+        $count = 0;
+
+        foreach ($pendingBusinesses as $business) {
+            $this->processSingleBusiness($business);
+            $count++;
+            $bar->advance();
         }
 
-        $insertedOrUpdatedIds = [];
-        if (count($tempArray) > 0 && $currentPageLeadId > 0) {
-            $tempCollection = ContactScrap::whereIn('id', $tempArray)->get();
+        return $count;
+    }
 
-            foreach ($tempCollection as $temps) {
 
-                $contact = Contact::where([
-                    'lead_id' => $temps->lead_id,
-                    'c_first_name' => $temps->c_first_name,
-                    'c_last_name' => $temps->c_last_name,
-                    'c_full_name' => $temps->c_full_name,
-                ])->first();
+    private function finishProgressBar($bar)
+    {
+        $bar->finish();
+    }
 
-                if ($contact) {
-                    // Record exists, update it
-                    $contact->update([
-                        'c_title' => $temps->c_title,
-                        'c_full_name' => $temps->c_full_name,
-                        'added_by_scrap_apis' => 1,
-                        'prospect_verified' => 'pending',
-                    ]);
-                    array_push($insertedOrUpdatedIds, $contact->id);
-                } else {
-                    // Record does not exist, insert it
-                    $contact = Contact::create([
-                        'lead_id' => $temps->lead_id,
-                        'c_first_name' => $temps->c_first_name,
-                        'c_last_name' => $temps->c_last_name,
-                        'c_title' => $temps->c_title,
-                        'c_full_name' => $temps->c_full_name,
-                        'added_by_scrap_apis' => 1,
-                        'prospect_verified' => 'pending',
-                    ]);
-                    array_push($insertedOrUpdatedIds, $contact->id);
-                }
-                // You can use the $lastInsertedOrUpdatedId as needed
 
-                ContactScrap::where('id', $temps->id)->delete();
-            }
+    private function processSingleBusiness($business)
+    {
+        $contactsId = $this->collectAllContactIds($business->id);
+        $this->logBusinessStart($business->id);
+        $this->migrateContacts($business->id, $contactsId);
+        Log::channel('scrap_sunbiz')->info(' assigned successfully.');
+    }
 
-            if (count($insertedOrUpdatedIds) > 0 && count($intArray) > 0 && $currentPageLeadId > 0) {
-                Contact::whereNotIn('id', $insertedOrUpdatedIds)->where('lead_id', $currentPageLeadId)->delete();
-            }
 
-            if ($currentPageLeadId >= 1) {
-                Lead::where('id', $currentPageLeadId)->update([
-                    'sunbiz_status' => 'migrated',
-                    'is_added_by_bot' => '2',
-                    // Add more fields to update as needed
-                ]);
-            }
+    private function logBusinessStart($businessId)
+    {
+        Log::channel('scrap_sunbiz')->info($businessId . ', ');
+    }
+
+
+    private function collectAllContactIds($leadId)
+    {
+        $contactIds = $this->getContactIds($leadId);
+        $tempContactIds = $this->getTempContactIds($leadId);
+
+        return array_merge($contactIds, $tempContactIds);
+    }
+
+
+    private function getContactIds($leadId)
+    {
+        $ids = [];
+        $contacts = Contact::where('lead_id', $leadId)->get();
+
+        foreach ($contacts as $contact) {
+            $ids[] = $contact->id;
         }
-        Log::channel('scrap_sunbiz')->info('Migration of contacts done.');
+
+        return $ids;
+    }
+
+    // Get temp contact IDs from ContactScrap table.
+    private function getTempContactIds($leadId)
+    {
+        $ids = [];
+        $tempContacts = ContactScrap::where('lead_id', $leadId)->get();
+
+        foreach ($tempContacts as $tempcontact) {
+            $ids[] = 'temp-' . $tempcontact->id;
+        }
+
+        return $ids;
+    }
+
+
+    public function migrateContacts($leadId, $contactIds)
+    {
+        if ($this->validateMigrationParams($leadId, $contactIds)) {
+            return '';
+        }
+
+        $separatedIds = $this->separateContactIds($contactIds);
+        $insertedOrUpdatedIds = $this->processTempContacts(
+            $separatedIds['temp'],
+            $leadId
+        );
+        $this->finalizeMigration($leadId, $insertedOrUpdatedIds, $separatedIds);
 
         return '';
     }
 
+    // Finalize migration by cleanup and status update.
+    private function finalizeMigration($leadId, $insertedOrUpdatedIds, $separatedIds)
+    {
+        $this->cleanupAndUpdateStatus(
+            $leadId,
+            $insertedOrUpdatedIds,
+            $separatedIds['numeric']
+        );
+        Log::channel('scrap_sunbiz')->info('Migration of contacts done.');
+    }
+
+
+    private function validateMigrationParams($leadId, $contactIds)
+    {
+        if ($this->isContactIdsEmpty($contactIds)) {
+            return true;
+        }
+
+        if ($this->isLeadIdInvalid($leadId)) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private function isContactIdsEmpty($contactIds)
+    {
+        if (empty($contactIds)) {
+            Log::channel('scrap_sunbiz')
+                ->info('Please check at least one checkbox to continue.');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isLeadIdInvalid($leadId)
+    {
+        if ($leadId <= 0) {
+            Log::channel('scrap_sunbiz')
+                ->info('Mandatory Parameter missing. Please contact administrator.');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // Cleanup and update lead status in one call.
+    private function cleanupAndUpdateStatus($leadId, $insertedOrUpdatedIds, $numericIds)
+    {
+        $this->cleanupContacts($leadId, $insertedOrUpdatedIds, $numericIds);
+        $this->updateLeadStatus($leadId);
+    }
+
+    // Separate contact IDs into numeric and temp arrays.
+    private function separateContactIds($contactIds)
+    {
+        $intArray = $this->extractNumericIds($contactIds);
+        $tempArray = $this->extractTempIds($contactIds);
+
+        return ['numeric' => $intArray, 'temp' => $tempArray];
+    }
+
+    private function extractNumericIds($contactIds)
+    {
+        $intArray = [];
+
+        foreach ($contactIds as $item) {
+            if (is_numeric($item)) {
+                $intArray[] = $item;
+            }
+        }
+
+        return $intArray;
+    }
+
+
+    private function extractTempIds($contactIds)
+    {
+        $tempArray = [];
+
+        foreach ($contactIds as $item) {
+            if (!is_numeric($item)) {
+                $tempArray[] = $this->extractInteger($item);
+            }
+        }
+
+        return $tempArray;
+    }
+
+    private function processTempContacts($tempArray, $leadId)
+    {
+        if ($this->hasNoTempContacts($tempArray)) {
+            return [];
+        }
+
+        $tempCollection = ContactScrap::whereIn('id', $tempArray)->get();
+
+        return $this->migrateEachTempContact($tempCollection);
+    }
+
+    // Check if there are no temp contacts.
+    private function hasNoTempContacts($tempArray)
+    {
+        return empty($tempArray);
+    }
+
+    // Migrate each temp contact to Contact table.
+    private function migrateEachTempContact($tempCollection)
+    {
+        $insertedOrUpdatedIds = [];
+
+        foreach ($tempCollection as $temps) {
+            $id = $this->migrateSingleTempContact($temps);
+            $insertedOrUpdatedIds[] = $id;
+        }
+
+        return $insertedOrUpdatedIds;
+    }
+
+
+    private function migrateSingleTempContact($temps)
+    {
+        $contact = $this->findExistingContact($temps);
+
+        if ($contact) {
+            return $this->updateAndReturnId($contact, $temps);
+        }
+
+        return $this->createAndReturnId($temps);
+    }
+
+
+    private function updateAndReturnId($contact, $temps)
+    {
+        $this->updateExistingContact($contact, $temps);
+        $this->deleteTempContact($temps->id);
+
+        return $contact->id;
+    }
+
+
+    private function createAndReturnId($temps)
+    {
+        $newContact = $this->createNewContact($temps);
+        $this->deleteTempContact($temps->id);
+
+        return $newContact->id;
+    }
+
+
+    private function deleteTempContact($id)
+    {
+        ContactScrap::where('id', $id)->delete();
+    }
+
+
+    private function findExistingContact($temps)
+    {
+        return Contact::where([
+            'lead_id' => $temps->lead_id,
+            'c_first_name' => $temps->c_first_name,
+            'c_last_name' => $temps->c_last_name,
+            'c_full_name' => $temps->c_full_name,
+        ])->first();
+    }
+
+
+    private function updateExistingContact($contact, $temps)
+    {
+        $contact->update([
+            'c_title' => $temps->c_title,
+            'c_full_name' => $temps->c_full_name,
+            'added_by_scrap_apis' => 1,
+            'prospect_verified' => 'pending',
+        ]);
+    }
+
+    private function createNewContact($temps)
+    {
+        return Contact::create([
+            'lead_id' => $temps->lead_id,
+            'c_first_name' => $temps->c_first_name,
+            'c_last_name' => $temps->c_last_name,
+            'c_title' => $temps->c_title,
+            'c_full_name' => $temps->c_full_name,
+            'added_by_scrap_apis' => 1,
+            'prospect_verified' => 'pending',
+        ]);
+    }
+
+    // Delete contacts that were not migrated.
+    private function cleanupContacts($leadId, $insertedOrUpdatedIds, $numericIds)
+    {
+        if (!empty($insertedOrUpdatedIds) && !empty($numericIds)) {
+            Contact::whereNotIn('id', $insertedOrUpdatedIds)
+                ->where('lead_id', $leadId)
+                ->delete();
+        }
+    }
+
+    private function updateLeadStatus($leadId)
+    {
+        if ($leadId >= 1) {
+            Lead::where('id', $leadId)->update([
+                'sunbiz_status' => self::STATUS_MIGRATED,
+                'is_added_by_bot' => self::BOT_MIGRATED,
+            ]);
+        }
+    }
+
     public function extractInteger($str)
     {
-        // Use a regular expression to find the first sequence of digits in the string
         preg_match('/\d+/', $str, $matches);
 
-        // Convert the result to an integer
-        return isset($matches[0]) ? intval($matches[0]) : null;
+        return isset($matches[0]) ? (int) $matches[0] : null;
     }
 }

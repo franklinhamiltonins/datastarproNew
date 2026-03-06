@@ -10,303 +10,525 @@ use DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * Command to update contacts by People Search API
+ */
 class UpdateContactsByPeopleSearch extends Command
 {
     use CommonFunctionsTrait;
 
+    // API platform ID
     public $apiPlatformId = 9;
 
+    // Priority tracking
     public $currentApiPriority = 0;
-
     public $maxApiPriority = 0;
 
+    // Prospect verified status
     public $prospectVerified = ['pending'];
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string Command signature */
     protected $signature = 'command:update-contacts-by-people-search';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string Command description */
     protected $description = 'This is update the contacts by the peoplesearch ';
 
     /**
-     * Execute the console command.
-     *
-     * @return int
+     * Execute the console command
      */
     public function handle()
     {
-        ini_set('display_startup_errors', 1);
-        ini_set('display_errors', 1);
-        error_reporting(-1);
+        $this->configureErrorReporting();
 
-        $openSearchApi = ScrapApiPlatform::find($this->apiPlatformId)->toArray();
-        $this->currentApiPriority = (isset($openSearchApi['priority_order']) && $openSearchApi['priority_order'] > 1) ? $openSearchApi['priority_order'] : 0;
-        $this->maxApiPriority = ScrapApiPlatform::count('id');
+        $openSearchApi = $this->fetchApiConfiguration();
+        $this->configureApiPriority($openSearchApi);
 
-        if (isset($openSearchApi['priority_order']) && $openSearchApi['priority_order'] > 1) {
-            $this->prospectVerified = ['unavailable', 'partial'];
-        }
-
-        $notUpdatedContacts = Contact::whereIn('prospect_verified', $this->prospectVerified)->where('added_by_scrap_apis', 1)
-            // ->where(function ($query) {
-            // 	$query->whereNull('c_phone')
-            // 		->orWhere('c_phone', '')
-            // 		->whereNull('c_address1')
-            // 		->orWhere('c_address1', '')
-            // 		->whereNull('c_zip')
-            // 		->orWhere('c_zip', '')
-            // 		->whereNull('c_city')
-            // 		->orWhere('c_city', '')
-            // 		->whereNull('c_state')
-            // 		->orWhere('c_state', '');
-            // })
-            // ->orderBy('id', 'asc')->limit(30)->get();
-            ->orderBy('id', 'asc')->limit(1)->get();
+        $notUpdatedContacts = $this->getNotUpdatedContacts();
 
         foreach ($notUpdatedContacts as $soloContact) {
             $this->fetchDataFromOpenSearch($soloContact, $openSearchApi, 9);
         }
     }
 
-    public function callOpenPeopleAuthentication($auth_url, $username_and_key, $api_id)
+    /**
+     * Configure error reporting settings
+     */
+    private function configureErrorReporting(): void
     {
+        ini_set('display_startup_errors', 1);
+        ini_set('display_errors', 1);
+        error_reporting(-1);
+    }
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post($auth_url, json_decode($username_and_key, true));
+    /**
+     * Fetch API configuration
+     */
+    private function fetchApiConfiguration(): array
+    {
+        return ScrapApiPlatform::find($this->apiPlatformId)->toArray();
+    }
 
-        if ($response->successful()) {
-            $Lead = ScrapApiPlatform::where('id', $api_id)
-                ->update([
-                    'api_auth_token' => $response->json()['token'],
-                    'auth_expiry_date' => date($response->json()['token_expiry_utc']),
-                ]);
+    /**
+     * Configure API priority settings
+     */
+    private function configureApiPriority(array $openSearchApi): void
+    {
+        $this->currentApiPriority = (isset($openSearchApi['priority_order']) && $openSearchApi['priority_order'] > 1)
+            ? $openSearchApi['priority_order']
+            : 0;
 
-            return $response->json()['token'];
-        } else {
-            $this->error('Error: '.$response->body());
+        $this->maxApiPriority = ScrapApiPlatform::count('id');
 
-            return null;
+        if (isset($openSearchApi['priority_order']) && $openSearchApi['priority_order'] > 1) {
+            $this->prospectVerified = ['unavailable', 'partial'];
         }
     }
 
-    public function fetchDataFromOpenSearch($soloContact, $openSearchApi, $platform_id)
+    /**
+     * Get contacts that need to be updated
+     */
+    private function getNotUpdatedContacts()
+    {
+        return Contact::whereIn('prospect_verified', $this->prospectVerified)
+            ->where('added_by_scrap_apis', 1)
+            ->orderBy('id', 'asc')
+            ->limit(1)
+            ->get();
+    }
+
+    /**
+     * Fetch data from Open Search API
+     */
+    public function fetchDataFromOpenSearch($soloContact, $openSearchApi, $platformId)
     {
         try {
-
-            if (empty($soloContact->leads->address1)) {
-                DB::table('contacts')->where('id', $soloContact->id)->update(['verified_status' => 'Unverified - By Scrap Api', 'prospect_verified' => 'pending_lead_deleted']);
-
+            if ($this->isLeadDeleted($soloContact)) {
                 return ['status' => false, 'data' => 'Lead deleted '];
             }
 
-            $sanitizedAddress = $this->removeAfterKeywords($soloContact->leads->address1);
-
-            // Validate the required parameters
-            $requiredParams = [
-                'first_name' => $soloContact->c_first_name,
-                'last_name' => $soloContact->c_last_name,
-                'address' => $sanitizedAddress,
-                'city' => $soloContact->leads->city,
-                'state' => $soloContact->leads->state,
-                'lead_zip' => $soloContact->leads->zip,
-            ];
-
-            foreach ($requiredParams as $key => $value) {
-                if (empty($value)) {
-                    DB::table('contacts')->where('id', $soloContact->id)->update(['verified_status' => 'Unverified - By Scrap Api', 'prospect_verified' => 'required_fields_for_open_search_api_missing:'.$key]);
-
-                    return ['status' => false, 'data' => 'Missing parameter: '.$key];
-                }
+            $validationResult = $this->validateRequiredParams($soloContact, $openSearchApi);
+            if ($validationResult !== null) {
+                return $validationResult;
             }
 
-            $apiAuthToken = '';
-            // Check for the authentication token start
-            if ($openSearchApi['auth_token_required'] == 1) {
-                $expiryDate = new DateTime($openSearchApi['auth_expiry_date']);
-                $now = new DateTime('now');
-
-                if (! empty($openSearchApi['api_auth_token']) && $expiryDate > $now) {
-
-                    $apiAuthToken = $openSearchApi['api_auth_token'];
-
-                } else {
-
-                    $username_and_key = [
-                        'username' => $openSearchApi['api_username'],
-                        'password' => $openSearchApi['api_key'],
-                    ];
-
-                    $apiAuthToken = $this->callOpenPeopleAuthentication(
-                        $openSearchApi['api_auth_url'],
-                        json_encode($username_and_key),
-                        $this->apiPlatformId
-                    );
-                }
-            }
-
-            // Check for the authentication token end
-
-            if (! $apiAuthToken) {
+            $apiAuthToken = $this->getAuthToken($openSearchApi);
+            if (!$apiAuthToken) {
                 return ['status' => false, 'data' => 'Auth token Issue '];
             }
 
-            // Construct the URL and query parameters
-            $url = $openSearchApi['api_contact_search_url'];
+            $response = $this->makeApiRequest($soloContact, $openSearchApi, $apiAuthToken);
 
-            $contact['firstName'] = $soloContact->c_first_name;
-            $contact['lastName'] = $soloContact->c_last_name;
-            $contact['address'] = $sanitizedAddress;
-            $contact['unit'] = null;
-            $contact['city'] = $soloContact->leads->city;
-            $contact['state'] = $soloContact->leads->state;
-
-            $curl = curl_init();
-            curl_setopt_array($curl, [
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => json_encode($contact),
-                CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/json',
-                    'Authorization: Bearer '.$apiAuthToken,
-                ],
-            ]);
-
-            $original_response = $response = curl_exec($curl);
-            curl_close($curl);
-            $response = json_decode($response, true);
-
-            if ($response != null || ! empty($response)) {
-
-                if (isset($response['results']) && count($response['results']) > 0) {
-
-                    $this->updateWithOpenSearchData($response['results'], $soloContact, $original_response, $platform_id);
-                    // die();
-                } else {
-                    $status = $this->verifyProspectStatus($this->currentApiPriority, $this->maxApiPriority, $soloContact->prospect_verified, '', '', '', '');
-                    DB::table('scrap_contact_api_platforms')->insert(['contact_id' => $soloContact->id, 'api_platform_id' => $platform_id, 'api_response' => $original_response, 'status' => $status]);
-                    DB::table('contacts')->where('id', $soloContact->id)->update(['verified_status' => 'Unverified - By Scrap Api', 'prospect_verified' => $status]);
-                }
-
-                return ['status' => true, 'data' => $response['results']];
-            } else {
-                return false;
-            }
+            return $this->processApiResponse($response, $soloContact, $platformId);
         } catch (\Throwable $err) {
-            // Log the error details
-            \Log::error('Error in fetchDataFromOpenSearch', [
-                'message' => $err->getMessage(),
-                'line' => $err->getLine(),
-                'file' => $err->getFile(),
-                'trace' => $err->getTraceAsString(),
-            ]);
+            $this->logError($err);
             throw $err;
         }
     }
 
+    /**
+     * Check if lead is deleted
+     */
+    private function isLeadDeleted($soloContact): bool
+    {
+        if (empty($soloContact->leads->address1)) {
+            DB::table('contacts')->where('id', $soloContact->id)->update([
+                'verified_status' => 'Unverified - By Scrap Api',
+                'prospect_verified' => 'pending_lead_deleted'
+            ]);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Validate required parameters
+     */
+    private function validateRequiredParams($soloContact, $openSearchApi)
+    {
+        $sanitizedAddress = $this->removeAfterKeywords($soloContact->leads->address1);
+
+        $requiredParams = [
+            'first_name' => $soloContact->c_first_name,
+            'last_name' => $soloContact->c_last_name,
+            'address' => $sanitizedAddress,
+            'city' => $soloContact->leads->city,
+            'state' => $soloContact->leads->state,
+            'lead_zip' => $soloContact->leads->zip,
+        ];
+
+        foreach ($requiredParams as $key => $value) {
+            if (empty($value)) {
+                DB::table('contacts')->where('id', $soloContact->id)->update([
+                    'verified_status' => 'Unverified - By Scrap Api',
+                    'prospect_verified' => 'required_fields_for_open_search_api_missing:' . $key
+                ]);
+                return ['status' => false, 'data' => 'Missing parameter: ' . $key];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get authentication token
+     */
+    private function getAuthToken($openSearchApi): string
+    {
+        if ($openSearchApi['auth_token_required'] != 1) {
+            return '';
+        }
+
+        $expiryDate = new DateTime($openSearchApi['auth_expiry_date']);
+        $now = new DateTime('now');
+
+        if (!empty($openSearchApi['api_auth_token']) && $expiryDate > $now) {
+            return $openSearchApi['api_auth_token'];
+        }
+
+        $usernameAndKey = [
+            'username' => $openSearchApi['api_username'],
+            'password' => $openSearchApi['api_key'],
+        ];
+
+        return $this->callOpenPeopleAuthentication(
+            $openSearchApi['api_auth_url'],
+            json_encode($usernameAndKey),
+            $this->apiPlatformId
+        );
+    }
+
+    /**
+     * Make API request
+     */
+    private function makeApiRequest($soloContact, $openSearchApi, $apiAuthToken)
+    {
+        $sanitizedAddress = $this->removeAfterKeywords($soloContact->leads->address1);
+        $url = $openSearchApi['api_contact_search_url'];
+
+        $contact = [
+            'firstName' => $soloContact->c_first_name,
+            'lastName' => $soloContact->c_last_name,
+            'address' => $sanitizedAddress,
+            'unit' => null,
+            'city' => $soloContact->leads->city,
+            'state' => $soloContact->leads->state,
+        ];
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($contact),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $apiAuthToken,
+            ],
+        ]);
+
+        $originalResponse = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($originalResponse, true);
+    }
+
+    /**
+     * Process API response
+     */
+    private function processApiResponse($response, $soloContact, $platformId)
+    {
+        if ($response == null || empty($response)) {
+            return false;
+        }
+
+        if (isset($response['results']) && count($response['results']) > 0) {
+            $this->updateWithOpenSearchData($response['results'], $soloContact, $response, $platformId);
+            return ['status' => true, 'data' => $response['results']];
+        }
+
+        $status = $this->verifyProspectStatus(
+            $this->currentApiPriority,
+            $this->maxApiPriority,
+            $soloContact->prospect_verified,
+            '',
+            '',
+            '',
+            ''
+        );
+
+        DB::table('scrap_contact_api_platforms')->insert([
+            'contact_id' => $soloContact->id,
+            'api_platform_id' => $platformId,
+            'api_response' => json_encode($response),
+            'status' => $status
+        ]);
+
+        DB::table('contacts')->where('id', $soloContact->id)->update([
+            'verified_status' => 'Unverified - By Scrap Api',
+            'prospect_verified' => $status
+        ]);
+
+        return ['status' => true, 'data' => $response['results']];
+    }
+
+    /**
+     * Call OpenPeople authentication API
+     */
+    public function callOpenPeopleAuthentication($authUrl, $usernameAndKey, $apiId)
+    {
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($authUrl, json_decode($usernameAndKey, true));
+
+        if ($response->successful()) {
+            ScrapApiPlatform::where('id', $apiId)->update([
+                'api_auth_token' => $response->json()['token'],
+                'auth_expiry_date' => date($response->json()['token_expiry_utc']),
+            ]);
+
+            return $response->json()['token'];
+        }
+
+        $this->error('Error: ' . $response->body());
+        return null;
+    }
+
+    /**
+     * Log error details
+     */
+    private function logError(\Throwable $err): void
+    {
+        \Log::error('Error in fetchDataFromOpenSearch', [
+            'message' => $err->getMessage(),
+            'line' => $err->getLine(),
+            'file' => $err->getFile(),
+            'trace' => $err->getTraceAsString(),
+        ]);
+    }
+
+    /**
+     * Normalize address by replacing abbreviations
+     */
     private function normalizeAddress($address)
     {
-        // Convert to uppercase
         $address = strtoupper($address);
-        // Replace common abbreviations with full words
+
         $replacements = [
-            'PKWY' => 'PARKWAY', 'PARKWAY' => 'PARKWAY', 'APT' => 'APARTMENT', 'UNIT' => 'UNIT',
-            'RD' => 'ROAD', 'Rd' => 'ROAD', 'ST' => 'STREET', 'ST.' => 'STREET', 'STR' => 'STREET', 'STR.' => 'STREET',
-            'AVE' => 'AVENUE', 'AVE.' => 'AVENUE', 'CT' => 'COURT', 'CT.' => 'COURT',
-            'DR' => 'DRIVE', 'DR.' => 'DRIVE', 'DRV' => 'DRIVE', 'BLVD' => 'BOULEVARD', 'BLVD.' => 'BOULEVARD',
-            'HWY' => 'HIGHWAY', 'HWY.' => 'HIGHWAY', 'LN' => 'LANE', 'LN.' => 'LANE',
-            'TER' => 'TERRACE', 'TER.' => 'TERRACE', 'CIR' => 'CIRCLE', 'CIR.' => 'CIRCLE',
-            'PL' => 'PLACE', 'PL.' => 'PLACE', 'TR' => 'TRAIL', 'TR.' => 'TRAIL',
+            'PKWY' => 'PARKWAY',
+            'PARKWAY' => 'PARKWAY',
+            'APT' => 'APARTMENT',
+            'UNIT' => 'UNIT',
+            'RD' => 'ROAD',
+            'Rd' => 'ROAD',
+            'ST' => 'STREET',
+            'ST.' => 'STREET',
+            'STR' => 'STREET',
+            'STR.' => 'STREET',
+            'AVE' => 'AVENUE',
+            'AVE.' => 'AVENUE',
+            'CT' => 'COURT',
+            'CT.' => 'COURT',
+            'DR' => 'DRIVE',
+            'DR.' => 'DRIVE',
+            'DRV' => 'DRIVE',
+            'BLVD' => 'BOULEVARD',
+            'BLVD.' => 'BOULEVARD',
+            'HWY' => 'HIGHWAY',
+            'HWY.' => 'HIGHWAY',
+            'LN' => 'LANE',
+            'LN.' => 'LANE',
+            'TER' => 'TERRACE',
+            'TER.' => 'TERRACE',
+            'CIR' => 'CIRCLE',
+            'CIR.' => 'CIRCLE',
+            'PL' => 'PLACE',
+            'PL.' => 'PLACE',
+            'TR' => 'TRAIL',
+            'TR.' => 'TRAIL',
         ];
+
         $address = str_replace(array_keys($replacements), array_values($replacements), $address);
-        // Remove extraneous characters
         $address = preg_replace('/[^A-Z0-9\s]/', '', $address);
 
         return trim($address);
     }
 
+    /**
+     * Filter Open Search data by criteria
+     */
     public function filterOpenScrapData($data, $searchZipcode, $searchAddress)
     {
-        // echo $searchZipcode . '---' . $searchAddress;
-        $final_contact_arr = [];
-        $new = strtotime('-3 years');
+        $filteredRecords = $this->filterByCategoryAndDate($data, $searchZipcode);
 
-        // Step 1: Filter records by 'Property', 'Voters', 'Hunt/Fish Licenses' and reported within the last 3 years
-        $zipcounter = 0;
+        if (count($filteredRecords) === 1) {
+            return $filteredRecords[0];
+        }
 
+        return $this->filterByAddressMatch($filteredRecords, $searchAddress);
+    }
+
+    /**
+     * Filter by category, date, and zipcode
+     */
+    private function filterByCategoryAndDate($data, $searchZipcode): array
+    {
+        $finalContactArr = [];
+        $threeYearsAgo = strtotime('-3 years');
         $catArray = ['Property', 'Voters', 'Hunt/Fish Licenses'];
 
         foreach ($data as $val) {
-            if (in_array($val['dataCategoryName'], $catArray) && strtotime($val['reportedDate']) >= $new && strpos($val['zip'], $searchZipcode) !== false) {
-                $final_contact_arr[] = $val;
-                $zipcounter++;
+            if ($this->matchesFilterCriteria($val, $catArray, $threeYearsAgo, $searchZipcode)) {
+                $finalContactArr[] = $val;
             }
         }
 
-        // Step 2: If there is only one record, return it
-        if (count($final_contact_arr) === 1) {
-            return $final_contact_arr[0];
-        }
-
-        // Function to normalize addresses
-
-        // Step 3: Normalize the search address
-        $normalizedSearchAddress = $this->normalizeAddress($searchAddress);
-
-        // Step 4: If there are multiple records, filter by matching address
-        $address_matched_records = [];
-        $i = 0;
-        foreach ($final_contact_arr as $record) {
-            $sanitizedapi_response = strtolower($this->removeAfterKeywords($record['address']));
-            similar_text($sanitizedapi_response, strtolower($searchAddress), $percent);
-            if ($percent >= 80) { // 80% similarity
-                $address_matched_records[] = $record;
-                $i++;
-            }
-        }
-
-        // Step 5: If there is only one or more record after address match, return it
-        if (count($address_matched_records) >= 1) {
-            return $address_matched_records[0];
-        }
-
-        return [];
+        return $finalContactArr;
     }
 
-    public function updateWithOpenSearchData($OpenSearchData, $soloContact, $response, $platform_id)
+    /**
+     * Check if record matches filter criteria
+     */
+    private function matchesFilterCriteria($record, $catArray, $threeYearsAgo, $searchZipcode): bool
     {
-        $c_email = $c_phone = $c_address1 = $c_city = $c_state = $c_zip = '';
-        $FilteredSearchResult = count($OpenSearchData) > 0 ? $this->filterOpenScrapData($OpenSearchData, $soloContact->leads->zip, $this->removeAfterKeywords($soloContact->leads->address1)) : [];
+        return in_array($record['dataCategoryName'], $catArray)
+            && strtotime($record['reportedDate']) >= $threeYearsAgo
+            && strpos($record['zip'], $searchZipcode) !== false;
+    }
 
-        if (is_array($FilteredSearchResult) && count($FilteredSearchResult) > 1) {
-
-            $c_phone = ($soloContact->c_phone) ? ($soloContact->c_phone) : $FilteredSearchResult['phone'];
-            $c_email = ($soloContact->c_email) ? ($soloContact->c_email) : $FilteredSearchResult['email'];
-            $c_city = ($soloContact->c_city) ? ($soloContact->c_city) : $FilteredSearchResult['city'];
-            $c_zip = ($soloContact->c_zip) ? ($soloContact->c_zip) : $FilteredSearchResult['zip'];
-            $c_address1 = ($soloContact->c_address1) ? ($soloContact->c_address1) : $FilteredSearchResult['address'];
-            $c_state = ($soloContact->c_state) ? ($soloContact->c_state) : $FilteredSearchResult['state'];
+    /**
+     * Filter by address match
+     */
+    private function filterByAddressMatch($records, $searchAddress): array
+    {
+        if (count($records) <= 1) {
+            return $records;
         }
 
-        $prospect_verified = $this->verifyProspectStatus($this->currentApiPriority, $this->maxApiPriority, $soloContact->prospect_verified, $c_address1, $c_city, $c_zip, $c_email);
+        $addressMatchedRecords = [];
 
-        // update contacts table
-        DB::table('contacts')->updateOrInsert(['id' => $soloContact->id], ['verified_status' => 'Unverified - By Scrap Api', 'prospect_verified' => $prospect_verified, 'c_zip' => $c_zip, 'c_city' => $c_city,  'c_phone' => $c_phone, 'c_email' => $c_email, 'c_state' => $c_state, 'c_address1' => $c_address1]);
+        foreach ($records as $record) {
+            if ($this->isAddressMatched($record, $searchAddress)) {
+                $addressMatchedRecords[] = $record;
+            }
+        }
 
-        DB::table('scrap_contact_api_platforms')->insert(['contact_id' => $soloContact->id, 'api_platform_id' => $platform_id, 'api_response' => $response, 'status' => $prospect_verified]);
+        return $addressMatchedRecords;
+    }
+
+    /**
+     * Check if address matches with similarity
+     */
+    private function isAddressMatched($record, $searchAddress): bool
+    {
+        $sanitizedApiResponse = strtolower($this->removeAfterKeywords($record['address']));
+        similar_text($sanitizedApiResponse, strtolower($searchAddress), $percent);
+
+        return $percent >= 80;
+    }
+
+    /**
+     * Update contact with Open Search data
+     */
+    public function updateWithOpenSearchData($openSearchData, $soloContact, $response, $platformId)
+    {
+        $filteredSearchResult = $this->getFilteredSearchResult($openSearchData, $soloContact);
+        $contactData = $this->prepareContactData($soloContact, $filteredSearchResult);
+        $prospectVerified = $this->getProspectStatus($soloContact, $contactData);
+
+        $this->updateContactRecord($soloContact->id, $contactData, $prospectVerified);
+        $this->insertApiPlatformRecord($soloContact->id, $platformId, $response, $prospectVerified);
+    }
+
+    /**
+     * Get filtered search result
+     */
+    private function getFilteredSearchResult($openSearchData, $soloContact)
+    {
+        if (count($openSearchData) === 0) {
+            return [];
+        }
+
+        return $this->filterOpenScrapData(
+            $openSearchData,
+            $soloContact->leads->zip,
+            $this->removeAfterKeywords($soloContact->leads->address1)
+        );
+    }
+
+    /**
+     * Prepare contact data for update
+     */
+    private function prepareContactData($soloContact, $filteredSearchResult): array
+    {
+        if (is_array($filteredSearchResult) && count($filteredSearchResult) > 1) {
+            return [
+                'phone' => $soloContact->c_phone ?: ($filteredSearchResult['phone'] ?? ''),
+                'email' => $soloContact->c_email ?: ($filteredSearchResult['email'] ?? ''),
+                'city' => $soloContact->c_city ?: ($filteredSearchResult['city'] ?? ''),
+                'zip' => $soloContact->c_zip ?: ($filteredSearchResult['zip'] ?? ''),
+                'address1' => $soloContact->c_address1 ?: ($filteredSearchResult['address'] ?? ''),
+                'state' => $soloContact->c_state ?: ($filteredSearchResult['state'] ?? ''),
+            ];
+        }
+
+        return [
+            'phone' => '',
+            'email' => '',
+            'city' => '',
+            'zip' => '',
+            'address1' => '',
+            'state' => '',
+        ];
+    }
+
+    /**
+     * Get prospect verified status
+     */
+    private function getProspectStatus($soloContact, $contactData): string
+    {
+        return $this->verifyProspectStatus(
+            $this->currentApiPriority,
+            $this->maxApiPriority,
+            $soloContact->prospect_verified,
+            $contactData['address1'],
+            $contactData['city'],
+            $contactData['zip'],
+            $contactData['email']
+        );
+    }
+
+    /**
+     * Update contact record in database
+     */
+    private function updateContactRecord($contactId, $contactData, $prospectVerified): void
+    {
+        DB::table('contacts')->updateOrInsert(['id' => $contactId], [
+            'verified_status' => 'Unverified - By Scrap Api',
+            'prospect_verified' => $prospectVerified,
+            'c_zip' => $contactData['zip'],
+            'c_city' => $contactData['city'],
+            'c_phone' => $contactData['phone'],
+            'c_email' => $contactData['email'],
+            'c_state' => $contactData['state'],
+            'c_address1' => $contactData['address1']
+        ]);
+    }
+
+    /**
+     * Insert API platform record
+     */
+    private function insertApiPlatformRecord($contactId, $platformId, $response, $prospectVerified): void
+    {
+        DB::table('scrap_contact_api_platforms')->insert([
+            'contact_id' => $contactId,
+            'api_platform_id' => $platformId,
+            'api_response' => json_encode($response),
+            'status' => $prospectVerified
+        ]);
     }
 }
